@@ -12,7 +12,7 @@ An entirely browser-based planning tool for the transition from flexible investm
 - Interactive, keyboard-accessible portfolio, withdrawal, and scenario charts; detailed annual cash flows.
 - Seeded Monte Carlo in a worker, with spending cuts, withdrawal stops, income interventions, and separate depletion/unfunded-spending outcomes.
 - Annual check-in with an original baseline, inflation-adjusted comparison, and updated spending, return, and arrival estimates.
-- Local browser saving, JSON export/import, responsive layouts, light/dark themes.
+- Local browser saving, responsive layouts, light/dark themes.
 
 ## Run and test
 
@@ -48,4 +48,4 @@ The app does not guarantee financial safety. Returns should be entered after fee
 
 ## Privacy
 
-Financial inputs stay in the browser and exported files. There are no analytics, account services, or API calls carrying financial data. Fonts load from Google Fonts with system fallbacks. Browser storage can be cleared by the browser/user; export a backup for durability. Exported plans contain financial inputs and should be stored accordingly.
+Financial inputs stay in the browser. There are no analytics, account services, or API calls carrying financial data. Fonts load from Google Fonts with system fallbacks. Browser storage can be cleared by the browser/user, which removes locally saved plans.

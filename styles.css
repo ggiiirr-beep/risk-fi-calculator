@@ -39,3 +39,9 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 
 [data-theme=dark] .pill{background:#3c2b1b;color:#efb06d;border-color:#8f643e}
 [data-theme=dark] .answer .eyebrow{color:#efb06d}
+
+/* Each tab opens directly below navigation, including on narrow screens. */
+.tabs{flex-wrap:wrap;gap:0 24px;overflow:visible}
+.workspace:not([data-view="plan"]){grid-template-columns:minmax(0,1fr)}
+.workspace:not([data-view="plan"]) .input-panel{display:none}
+.workspace:not([data-view="plan"]) .results{width:100%}
