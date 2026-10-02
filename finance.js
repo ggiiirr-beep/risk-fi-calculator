@@ -7,7 +7,8 @@ export const fiTarget = p=>p.targetOverride?p.target:p.spending/p.fiRate;
 export const cashAmount = p=>p.cashMode==='years'?p.cashYears*p.spending:p.cash;
 export const expectedReturn = p=>p.returnMode==='real'?p.real:realReturn(p.nominal,p.inflation);
 export function validate(p){
- for(const k of ['portfolio','spending',p.cashMode==='years'?'cashYears':'cash','cashMinimum','income','incomeStart','incomeEnd','age']) if(!Number.isFinite(p[k])||p[k]<0) throw Error(`${k}: enter a nonnegative number.`);
+ if(p.age!=null&&(!Number.isFinite(p.age)||p.age<0))throw Error('Age: enter a nonnegative number or leave it blank.');
+ for(const k of ['portfolio','spending',p.cashMode==='years'?'cashYears':'cash','cashMinimum','income','incomeStart','incomeEnd']) if(!Number.isFinite(p[k])||p[k]<0) throw Error(`${k}: enter a nonnegative number.`);
  for(const k of [p.returnMode==='real'?'real':'nominal','inflation','cashNominal']) if(!Number.isFinite(p[k])||p[k]<=-1) throw Error(`${k}: must be greater than −100%.`);
  for(const [key,allowed] of Object.entries({returnMode:['real','nominal'],cashMode:['dollars','years'],cashStrategy:['reserve','first','downturn'],timing:['begin','end']})) if(!allowed.includes(p[key])) throw Error('Invalid '+key+'.');
  if(!Number.isFinite(p.years)||p.years<0||p.years>100)throw Error('Choose a time period between 0 and 100 years.');

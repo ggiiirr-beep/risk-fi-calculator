@@ -66,3 +66,7 @@ test('Inactive return and cash entry formats do not block a plan',()=>{
  const plan=p({nominal:null,cashYears:null});assert.doesNotThrow(()=>project(plan));
  assert.doesNotThrow(()=>project({...plan,returnMode:'nominal',nominal:.09,real:null,cashMode:'years',cashYears:2,cash:null}));
 });
+test('Age is optional and does not affect the FI arrival calculation',()=>{
+ const noAge=p({age:null});close(solve(noAge,'time').value,solve(p(),'time').value);
+ assert.throws(()=>project(p({age:-1})),/Age/);
+});

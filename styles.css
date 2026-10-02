@@ -45,3 +45,5 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 .workspace:not([data-view="plan"]){grid-template-columns:minmax(0,1fr)}
 .workspace:not([data-view="plan"]) .input-panel{display:none}
 .workspace:not([data-view="plan"]) .results{width:100%}
+
+.answer h2.plan-status{font-size:clamp(1.6rem,3.2vw,2.35rem);letter-spacing:-.6px}

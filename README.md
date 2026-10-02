@@ -6,7 +6,7 @@ An entirely browser-based planning tool for the transition from flexible investm
 
 ## Features
 
-- Solve for annual spending, starting investments, reachable ending target, years, target date/age, required real return, implied withdrawal rate, or temporary earned income.
+- Five questions: how much can I spend, how much do I need invested, when will I reach Traditional FI, what return do I need, and check my plan. Time results combine years, date, and age. Additional engine solvers remain available internally.
 - Check a fixed plan against a desired date. A missed date shows the later projected FI date and extends the chart. Unfunded or unreachable plans are explicitly reported.
 - Separate invested assets and cash, nominal/real returns and displays, three cash strategies, temporary income, and beginning/end-of-year withdrawals.
 - Interactive, keyboard-accessible portfolio, withdrawal, and scenario charts; detailed annual cash flows.
