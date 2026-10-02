@@ -43,3 +43,26 @@ test('Annual check-in rebases original dollars and temporary income',()=>{const 
 test('Annual check-in comparison honors ahead, on-track, behind',()=>{const b=p({inflation:0}),planned=project(b,{years:2}).end.investment;for(const [ratio,status]of [[1.1,'Ahead of plan'],[1,'On track'],[.9,'Behind plan']])assert.equal(annualCheckIn(b,{portfolio:planned*ratio,cash:0,spending:60000},2).status,status);});
 test('Cash reserve cannot disguise an investment-only FI target',()=>assert.equal(solve(p({portfolio:0,cash:2000000,cashStrategy:'reserve'}),'time').value,undefined));
 test('Simulation rejects invalid guardrail cuts and nonfinite volatility',()=>{assert.throws(()=>monteCarlo(p(),{volatility:NaN}));assert.throws(()=>monteCarlo(p(),{guards:{enabled:true,reduceBelow:1,stopBelow:0,incomeBelow:0,extraIncome:0,cashMonths:0,reducePercent:2,cashReducePercent:0}}));});
+
+test('Every solver ignores a blank or conflicting value without changing entered assumptions',()=>{
+ for(const [unknown,key] of Object.entries({spending:'spending',portfolio:'portfolio',income:'income',return:'real',target:'target',fiRate:'fiRate',time:'years',date:'years'})){
+  const base=p({targetOverride:unknown==='target'||unknown==='fiRate'}),expected=solve(base,unknown);
+  assert.equal(expected.error,undefined,unknown);
+  for(const value of [null,-123,999999999]){
+   const entered={...base,[key]:value},before={...entered},actual=solve(entered,unknown);
+   close(actual.value,expected.value);assert.deepEqual(entered,before);
+  }
+ }
+});
+test('Nominal return can be blank when it is the selected unknown',()=>{
+ const entered={...defaults,nominal:null};const actual=solve(entered,'return');
+ close(actual.value,solve(defaults,'return').value);assert.equal(entered.nominal,null);
+});
+test('A blank known input still needs a value',()=>{
+ assert.throws(()=>solve(p({portfolio:null}),'spending'),/portfolio/);
+ assert.throws(()=>project(p({spending:null})),/spending/);
+});
+test('Inactive return and cash entry formats do not block a plan',()=>{
+ const plan=p({nominal:null,cashYears:null});assert.doesNotThrow(()=>project(plan));
+ assert.doesNotThrow(()=>project({...plan,returnMode:'nominal',nominal:.09,real:null,cashMode:'years',cashYears:2,cash:null}));
+});

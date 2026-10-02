@@ -7,8 +7,8 @@ export const fiTarget = p=>p.targetOverride?p.target:p.spending/p.fiRate;
 export const cashAmount = p=>p.cashMode==='years'?p.cashYears*p.spending:p.cash;
 export const expectedReturn = p=>p.returnMode==='real'?p.real:realReturn(p.nominal,p.inflation);
 export function validate(p){
- for(const k of ['portfolio','spending','cash','cashYears','cashMinimum','income','incomeStart','incomeEnd','age']) if(!Number.isFinite(p[k])||p[k]<0) throw Error(`${k}: enter a nonnegative number.`);
- for(const k of ['nominal','real','inflation','cashNominal']) if(!Number.isFinite(p[k])||p[k]<=-1) throw Error(`${k}: must be greater than −100%.`);
+ for(const k of ['portfolio','spending',p.cashMode==='years'?'cashYears':'cash','cashMinimum','income','incomeStart','incomeEnd','age']) if(!Number.isFinite(p[k])||p[k]<0) throw Error(`${k}: enter a nonnegative number.`);
+ for(const k of [p.returnMode==='real'?'real':'nominal','inflation','cashNominal']) if(!Number.isFinite(p[k])||p[k]<=-1) throw Error(`${k}: must be greater than −100%.`);
  for(const [key,allowed] of Object.entries({returnMode:['real','nominal'],cashMode:['dollars','years'],cashStrategy:['reserve','first','downturn'],timing:['begin','end']})) if(!allowed.includes(p[key])) throw Error('Invalid '+key+'.');
  if(!Number.isFinite(p.years)||p.years<0||p.years>100)throw Error('Choose a time period between 0 and 100 years.');
  if(!Number.isFinite(p.fiRate)||p.fiRate<=0||p.fiRate>1)throw Error('The FI withdrawal rate must be above 0% and at most 100%.');
@@ -63,6 +63,12 @@ function root(fn,lo,hi){
  return (lo+hi)/2;
 }
 export function solve(p,unknown){
+ // Work on a copy. The selected unknown is never an input to its own solver.
+ p={...p};
+ const key={time:'years',date:'years',return:p.returnMode==='real'?'real':'nominal'}[unknown]||unknown;
+ if(key in defaults)p[key]=defaults[key];
+ if(unknown==='return'){p.returnMode='real';p.real=0;}
+ if(unknown==='target'||unknown==='fiRate')p.targetOverride=false;
  validate(p);
  if(unknown==='time'||unknown==='date'){
   const target=fiTarget(p);if(p.portfolio>=target)return {value:0,plan:{...p,years:0}};
