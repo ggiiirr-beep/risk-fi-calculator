@@ -8,3 +8,15 @@
 @media(max-width:740px){.workspace{display:flex;flex-direction:column;gap:18px}.results,#view{display:contents}.input-panel{order:1;width:100%;margin-bottom:0}#view>*{order:2;width:100%;margin-top:0;margin-bottom:0}#view>.answer{order:0}.results>#error{order:0;width:100%}.metrics{margin:0}.field label{font-size:.875rem}}
 
 .page-heading>div:first-child{max-width:800px}.page-heading h1{font-size:2rem;letter-spacing:-.7px}.page-heading p:not(.eyebrow){max-width:760px;line-height:1.6}
+/* Red accents remain visible above the charts and detailed results. */
+.brand-icon span{color:#ffb0bf}
+.answer{border-top-color:var(--red)}
+.answer .eyebrow{color:var(--red)}
+.pill{background:#fff1f3;color:#b82740;border-color:#e3a0ac}
+.tabs button.active{border-bottom-color:var(--red)}
+#save{background:var(--red);border-color:var(--red);color:#fff}
+#save:hover{filter:brightness(.94)}
+.solve-select{border-left:3px solid var(--red)}
+input[type=range],.toggle-row input{accent-color:var(--red)}
+[data-theme=dark] .pill{background:#40222b;color:var(--red);border-color:#855064}
+[data-theme=dark] #save{color:#24151c}
