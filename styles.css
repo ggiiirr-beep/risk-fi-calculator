@@ -6,3 +6,5 @@
 [hidden]{display:none!important}
 .field label{font-size:.875rem}
 @media(max-width:740px){.workspace{display:flex;flex-direction:column;gap:18px}.results,#view{display:contents}.input-panel{order:1;width:100%;margin-bottom:0}#view>*{order:2;width:100%;margin-top:0;margin-bottom:0}#view>.answer{order:0}.results>#error{order:0;width:100%}.metrics{margin:0}.field label{font-size:.875rem}}
+
+.page-heading>div:first-child{max-width:800px}.page-heading h1{font-size:2rem;letter-spacing:-.7px}.page-heading p:not(.eyebrow){max-width:760px;line-height:1.6}
