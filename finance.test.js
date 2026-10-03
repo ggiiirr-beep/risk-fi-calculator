@@ -92,3 +92,53 @@ test('Separate FI withdrawal amount is inflation-rebased at annual check-in',()=
  assert.throws(()=>project({...plan,fiWithdrawals:null}),/Traditional FI/);
  assert.doesNotThrow(()=>project({...plan,separateFiWithdrawals:false,fiWithdrawals:null}));
 });
+
+test('Starting percentage matches equivalent inflation-adjusted dollars and ignores dollar entry',()=>{
+ const plan=p({withdrawalMode:'starting',withdrawalRate:.05,spending:null,inflation:.025});
+ assert.deepEqual(project(plan),project({...plan,withdrawalMode:'dollars',spending:50000}));
+ assert.equal(plan.spending,null);
+});
+test('Each-year percentage follows opening balances under both withdrawal timings',()=>{
+ for(const timing of ['begin','end']){
+  const plan=p({withdrawalMode:'annual',withdrawalRate:.05,real:.1,years:3,timing});
+  const growth=timing==='begin'?.95*1.1:1.1-.05,q=project(plan);
+  close(q.end.investment,1000000*growth**3);
+  close(q.rows[1].investmentWithdrawal,50000);close(q.rows[2].investmentWithdrawal,1000000*growth*.05);
+ }
+ const declining=project(p({withdrawalMode:'annual',withdrawalRate:.05,years:2}),{returns:[-.2,.1]});
+ close(declining.rows[2].investmentWithdrawal,37500);
+});
+test('Each-year percentage prorates a fractional final period',()=>{
+ const q=project(p({withdrawalMode:'annual',withdrawalRate:.05,real:.1,years:1.5}));
+ close(q.end.investment,1050000*Math.sqrt(1.1)-1050000*.05*.5);
+});
+test('Percentage withdrawals preserve separate FI target, initial cash reserve and income offsets',()=>{
+ const plan=p({withdrawalMode:'annual',withdrawalRate:.05,separateFiWithdrawals:true,fiWithdrawals:100000,cashMode:'years',cashYears:2,cashStrategy:'first',income:10000,years:2});
+ const q=project(plan);assert.equal(q.target,2500000);assert.equal(q.rows[0].cash,100000);
+ assert.equal(q.rows[1].cashWithdrawal,40000);assert.equal(q.rows[1].investmentWithdrawal,0);
+});
+test('All percentage solvers recover independent end-year benchmarks',()=>{
+ for(const withdrawalMode of ['starting','annual']){
+  const real=.08,rate=.05,years=10,portfolio=2000000;
+  const target=withdrawalMode==='annual'?portfolio*(1+real-rate)**years:portfolio*((1+real)**years-rate*((1+real)**years-1)/real);
+  const plan=p({withdrawalMode,withdrawalRate:rate,real,years,portfolio,separateFiWithdrawals:true,fiWithdrawals:target*.04});
+  const entered={...plan,withdrawalRate:null,spending:null};const solved=solve(entered,'spending');
+  assert.equal(solved.error,undefined);close(solved.plan.withdrawalRate,rate,1e-9);close(solved.value,portfolio*rate);assert.equal(entered.withdrawalRate,null);
+  close(solve({...plan,portfolio:null},'portfolio').value,portfolio);
+  close(solve({...plan,real:null},'return').value,real,1e-9);
+  close(solve({...plan,years:null},'time').value,years);
+ }
+});
+test('Percentage Monte Carlo uses each path balance, and zero volatility matches projection',()=>{
+ const plan=p({withdrawalMode:'annual',withdrawalRate:.05,years:5,separateFiWithdrawals:true,fiWithdrawals:100000});
+ const mc=monteCarlo(plan,{count:100,volatility:0});close(mc.median,project(plan).end.investment);
+ const varying=monteCarlo(plan,{count:100,volatility:.2});assert.ok(varying.p10<varying.p90);
+ assert.throws(()=>project({...plan,withdrawalRate:null}),/percentage/);
+ assert.throws(()=>project({...plan,withdrawalRate:1.01}),/percentage/);
+ assert.throws(()=>project({...plan,withdrawalMode:'invalid'}),/basis/);
+});
+test('Percentage baseline check-in honors current entered withdrawal dollars',()=>{
+ const original=p({withdrawalMode:'annual',withdrawalRate:.05,separateFiWithdrawals:true,fiWithdrawals:100000});
+ const check=annualCheckIn(original,{portfolio:1200000,cash:0,spending:42000},1);
+ assert.equal(check.plan.withdrawalMode,'dollars');assert.equal(project(check.plan).rows[1].spending,42000);
+});
