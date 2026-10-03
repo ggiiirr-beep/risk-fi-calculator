@@ -70,3 +70,25 @@ test('Age is optional and does not affect the FI arrival calculation',()=>{
  const noAge=p({age:null});close(solve(noAge,'time').value,solve(p(),'time').value);
  assert.throws(()=>project(p({age:-1})),/Age/);
 });
+test('Separate Traditional FI withdrawals set target without changing Risk FI cash flows',()=>{
+ const plan=p({spending:40000,separateFiWithdrawals:true,fiWithdrawals:100000});
+ assert.equal(fiTarget(plan),2500000);
+ const q=project(plan);assert.equal(q.rows[1].investmentWithdrawal,40000);
+ close(q.end.investment,project(p({spending:40000})).end.investment);
+ assert.equal(fiTarget({...plan,separateFiWithdrawals:false}),1000000);
+ assert.equal(fiTarget({...plan,targetOverride:true,target:3000000}),3000000);
+});
+test('Risk FI withdrawal solver holds separate retirement withdrawals fixed',()=>{
+ const plan=p({separateFiWithdrawals:true,fiWithdrawals:100000,portfolio:2000000});
+ const result=solve(plan,'spending');assert.equal(result.error,undefined);
+ const growth=(1+plan.real)**plan.years;
+ close(result.value,(plan.portfolio*growth-2500000)/((growth-1)/plan.real));
+ assert.equal(result.plan.fiWithdrawals,100000);close(project(result.plan).end.investment,2500000);
+});
+test('Separate FI withdrawal amount is inflation-rebased at annual check-in',()=>{
+ const plan=p({inflation:.025,separateFiWithdrawals:true,fiWithdrawals:100000});
+ const check=annualCheckIn(plan,{portfolio:1000000,cash:0,spending:40000},2);
+ close(check.plan.fiWithdrawals,100000*1.025**2);close(fiTarget(check.plan),2500000*1.025**2);
+ assert.throws(()=>project({...plan,fiWithdrawals:null}),/Traditional FI/);
+ assert.doesNotThrow(()=>project({...plan,separateFiWithdrawals:false,fiWithdrawals:null}));
+});

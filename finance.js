@@ -1,12 +1,14 @@
 /** All engine amounts are real, today's dollars. Rates are decimal annual rates. */
-export const defaults = {portfolio:1000000,spending:60000,nominal:.09,inflation:.025,real:.06341463414634152,returnMode:'nominal',fiRate:.04,targetOverride:false,target:1500000,years:10,age:35,cash:100000,cashYears:1.6666666667,cashMode:'dollars',cashNominal:.035,cashStrategy:'reserve',cashMinimum:0,income:0,incomeStart:0,incomeEnd:10,timing:'end',poor:.02,strong:.09};
+export const defaults = {portfolio:1000000,spending:60000,separateFiWithdrawals:false,fiWithdrawals:60000,nominal:.09,inflation:.025,real:.06341463414634152,returnMode:'nominal',fiRate:.04,targetOverride:false,target:1500000,years:10,age:35,cash:100000,cashYears:1.6666666667,cashMode:'dollars',cashNominal:.035,cashStrategy:'reserve',cashMinimum:0,income:0,incomeStart:0,incomeEnd:10,timing:'end',poor:.02,strong:.09};
 export const realReturn = (nominal,inflation)=>(1+nominal)/(1+inflation)-1;
 export const nominalReturn = (real,inflation)=>(1+real)*(1+inflation)-1;
 export const toNominal = (amount,inflation,years)=>amount*Math.pow(1+inflation,years);
-export const fiTarget = p=>p.targetOverride?p.target:p.spending/p.fiRate;
+export const traditionalWithdrawals = p=>p.separateFiWithdrawals?p.fiWithdrawals:p.spending;
+export const fiTarget = p=>p.targetOverride?p.target:traditionalWithdrawals(p)/p.fiRate;
 export const cashAmount = p=>p.cashMode==='years'?p.cashYears*p.spending:p.cash;
 export const expectedReturn = p=>p.returnMode==='real'?p.real:realReturn(p.nominal,p.inflation);
 export function validate(p){
+ if(p.separateFiWithdrawals&&!p.targetOverride&&(!Number.isFinite(p.fiWithdrawals)||p.fiWithdrawals<=0))throw Error('Enter positive Traditional FI annual withdrawals.');
  if(p.age!=null&&(!Number.isFinite(p.age)||p.age<0))throw Error('Age: enter a nonnegative number or leave it blank.');
  for(const k of ['portfolio','spending',p.cashMode==='years'?'cashYears':'cash','cashMinimum','income','incomeStart','incomeEnd']) if(!Number.isFinite(p[k])||p[k]<0) throw Error(`${k}: enter a nonnegative number.`);
  for(const k of [p.returnMode==='real'?'real':'nominal','inflation','cashNominal']) if(!Number.isFinite(p[k])||p[k]<=-1) throw Error(`${k}: must be greater than −100%.`);
@@ -85,7 +87,7 @@ export function solve(p,unknown){
   return {value:pr.end.investment,plan:{...p,targetOverride:true,target:pr.end.investment}};
  }
  if(unknown==='fiRate'){
-  const pr=project(p);const value=p.spending/pr.end.investment;
+  const pr=project(p);const value=traditionalWithdrawals(p)/pr.end.investment;
   if(pr.unfunded>1e-5||!Number.isFinite(value)||value<=0||value>1)return {error:'No withdrawal rate between 0% and 100% fits this funded plan.'};
   return {value,plan:{...p,fiRate:value,targetOverride:false}};
  }
@@ -119,7 +121,7 @@ export function monteCarlo(p,{count=2000,volatility=.16,seed=7301,guards=null}={
 export function annualCheckIn(originalPlan,current,elapsed){
  if(!Number.isFinite(elapsed)||elapsed<0||elapsed>100)throw Error('The check-in must be within 100 years after the original start.');
  const factor=Math.pow(1+originalPlan.inflation,elapsed),original=project(originalPlan,{years:elapsed}),planned=original.end.investment*factor,delta=planned?current.portfolio/planned-1:current.portfolio>0?1:0,remaining=Math.max(0,originalPlan.years-elapsed);
- const plan={...originalPlan,portfolio:current.portfolio,cash:current.cash,spending:current.spending,cashMode:'dollars',cashMinimum:originalPlan.cashMinimum*factor,years:remaining,target:originalPlan.target*factor,income:originalPlan.income*factor,incomeStart:Math.max(0,originalPlan.incomeStart-elapsed),incomeEnd:Math.max(0,originalPlan.incomeEnd-elapsed)};
+ const plan={...originalPlan,portfolio:current.portfolio,cash:current.cash,spending:current.spending,cashMode:'dollars',cashMinimum:originalPlan.cashMinimum*factor,years:remaining,target:originalPlan.target*factor,fiWithdrawals:originalPlan.fiWithdrawals==null?originalPlan.fiWithdrawals:originalPlan.fiWithdrawals*factor,income:originalPlan.income*factor,incomeStart:Math.max(0,originalPlan.incomeStart-elapsed),incomeEnd:Math.max(0,originalPlan.incomeEnd-elapsed)};
  validate(plan);
  return {factor,original,planned,delta,remaining,plan,spending:solve(plan,'spending'),requiredReturn:solve(plan,'return'),time:solve(plan,'time'),status:delta>.05?'Ahead of plan':delta<-.05?'Behind plan':'On track'};
 }

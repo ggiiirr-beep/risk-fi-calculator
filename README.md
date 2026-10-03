@@ -53,3 +53,5 @@ Financial inputs stay in the browser. There are no analytics, account services, 
 ## Withdrawal inputs
 
 Annual withdrawals means the amount needed from investments and cash after existing earnings. Optional additional income offsets only income not already reflected in those withdrawals, during the selected years; any excess is invested. The engine retains its legacy `spending` key for saved-plan compatibility. Dollar inputs display thousands separators while retaining numeric values for calculations.
+
+Traditional FI withdrawals can optionally differ from Risk FI withdrawals. The former divided by the FI rate determines the target; the latter drives projected cash flows and cash runway. A custom target overrides both. Saved plans default to linked withdrawal amounts.
