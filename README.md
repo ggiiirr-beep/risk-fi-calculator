@@ -6,7 +6,7 @@ An entirely browser-based planning tool for the transition from flexible investm
 
 ## Features
 
-- Five questions: how much can I spend, how much do I need invested, when will I reach Traditional FI, what return do I need, and check my plan. Time results combine years, date, and age. Additional engine solvers remain available internally.
+- Five questions: how much can I withdraw, how much do I need invested, when will I reach Traditional FI, what return do I need, and check my plan. Time results combine years, date, and age. Additional engine solvers remain available internally.
 - Check a fixed plan against a desired date. A missed date shows the later projected FI date and extends the chart. Unfunded or unreachable plans are explicitly reported.
 - Separate invested assets and cash, nominal/real returns and displays, three cash strategies, temporary income, and beginning/end-of-year withdrawals.
 - Interactive, keyboard-accessible portfolio, withdrawal, and scenario charts; detailed annual cash flows.
@@ -49,3 +49,7 @@ The app does not guarantee financial safety. Returns should be entered after fee
 ## Privacy
 
 Financial inputs stay in the browser. There are no analytics, account services, or API calls carrying financial data. Fonts load from Google Fonts with system fallbacks. Browser storage can be cleared by the browser/user, which removes locally saved plans.
+
+## Withdrawal inputs
+
+Annual withdrawals means the amount needed from investments and cash after existing earnings. Optional additional income offsets only income not already reflected in those withdrawals, during the selected years; any excess is invested. The engine retains its legacy `spending` key for saved-plan compatibility. Dollar inputs display thousands separators while retaining numeric values for calculations.

@@ -75,7 +75,7 @@ export function solve(p,unknown){
   const target=fiTarget(p);if(p.portfolio>=target)return {value:0,plan:{...p,years:0}};
   for(let y=1;y<=100;y++){
    const pr=project(p,{years:y});
-   if(pr.unfunded>1e-5)return {error:'This plan runs out of spending funds before reaching FI.'};
+   if(pr.unfunded>1e-5)return {error:'This plan runs out of withdrawal funds before reaching FI.'};
    if(pr.end.investment>=target){const value=root(t=>project(p,{years:t}).end.investment-target,y-1,y);return {value,plan:{...p,years:value}};}
   }
   return {error:'FI is not reached within 100 years under these assumptions.'};
@@ -96,9 +96,9 @@ export function solve(p,unknown){
  if(unknown==='income'&&residual(0)>=0)return {value:0,plan:{...p,income:0}};
  if(unknown==='portfolio'&&residual(0)>=0)return {value:0,plan:{...p,portfolio:0}};
  const value=root(residual,...bounds[unknown]);
- if(value===null)return {error:unknown==='income'?'No income solution in the chosen earning window. Check its start and end years.':'No feasible solution within the supported search range. Try a longer horizon or lower spending.'};
+ if(value===null)return {error:unknown==='income'?'No income solution in the chosen earning window. Check its start and end years.':'No feasible solution within the supported search range. Try a longer horizon or lower withdrawals.'};
  const plan=candidate(value),q=project(plan);
- if(q.unfunded>0.01)return {error:'This plan has an unfunded spending gap before the target date.'};
+ if(q.unfunded>0.01)return {error:'This plan has an unfunded withdrawal gap before the target date.'};
  return {value,plan};
 }
 export function seededRandom(seed=7301){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
