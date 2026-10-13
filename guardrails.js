@@ -1,7 +1,7 @@
 import {historicalYears,historySource} from './guardrail-history.js';
 import {seededRandom} from './finance.js';
 
-export const guardrailDefaults={portfolio:1000000,goal:'fi',years:15,fiYears:15,retirementYears:50,fiWithdrawals:100000,fiRate:.04,stockMean:.11,stockVol:.18,inflation:.025,cashReturn:.035,reserveYears:2,floor:0,count:10000,innerCount:1024,seed:7301,model:'bootstrap',compareNoCash:false,checkInvestment:900000,checkCash:100000,checkSpending:40000,checkElapsed:0};
+export const guardrailDefaults={portfolio:1000000,goal:'fi',years:15,fiYears:15,retirementYears:50,fiWithdrawals:100000,fiRate:.04,stockMean:.11,stockVol:.18,inflation:.025,cashReturn:.035,reserveYears:2,floor:0,count:10000,innerCount:1024,seed:7301,model:'bootstrap',compareNoCash:false,checkInvestment:900000,checkCash:100000,checkSpending:40000,checkElapsed:0,checkInflationTotal:null,checkDollarBasis:'current'};
 export const guardrailFiTarget=a=>a.fiWithdrawals/a.fiRate;
 export const defaultStrategies=[{name:'Aggressive',lower:.2,target:.3,upper:.4,schedule:'fixed',endTarget:.9},{name:'Conservative',lower:.7,target:.8,upper:.9,schedule:'fixed',endTarget:.9}];
 // Targets move at annual checkpoints; the deadline itself records the outcome.
@@ -28,6 +28,7 @@ export function validateGuardrails(a,strategies=defaultStrategies){
  for(const k of ['checkInvestment','checkCash','checkSpending','checkElapsed'])if(!Number.isFinite(a[k])||a[k]<0)throw Error('Enter nonnegative numbers for the current guardrail check.');
  if(!Number.isInteger(a.checkElapsed)||a.checkElapsed>=a.years)throw Error('Years elapsed must be a whole number smaller than the selected horizon.');
  if(a.checkInvestment+a.checkCash>1e12||a.checkSpending>1e12)throw Error('Current guardrail check amounts must be at most $1 trillion.');
+ if(a.checkInflationTotal!=null&&(!Number.isFinite(a.checkInflationTotal)||a.checkInflationTotal<=-1))throw Error('Total inflation must be a number greater than −100%.');
  if(!['fi','retirement'].includes(a.goal))throw Error('Choose a guardrail goal.');
  if(a.goal==='fi'&&(!Number.isFinite(a.fiWithdrawals)||a.fiWithdrawals<=0||!Number.isFinite(a.fiRate)||a.fiRate<=0||a.fiRate>1||guardrailFiTarget(a)>1e12))throw Error('Enter positive Traditional FI withdrawals and a withdrawal rate above 0% and at most 100% (target at most $1 trillion).');
  for(const s of strategies){if(!['fixed','steady','early','late'].includes(s.schedule||'fixed')||!Number.isFinite(s.endTarget??s.target)||((s.schedule||'fixed')!=='fixed'&&(s.endTarget??s.target)<s.target)||(s.endTarget??s.target)<0||(s.endTarget??s.target)>1)throw Error(s.name+': ending target must be between the starting target and 100%.');}
@@ -225,6 +226,23 @@ export function runGuardrailComparison(input,strategies=defaultStrategies,{progr
 }
 
 export function runCurrentGuardrailCheck(input,strategies=defaultStrategies,{progress=()=>{}}={}){
- const a={...guardrailDefaults,...input};validateGuardrails(a,strategies);const started=Date.now(),model=buildProbabilityModel(a,{progress});
- return {assumptions:a,currentChecks:strategies.map(s=>currentGuardrailCheck(a,s,model)),elapsedMs:Date.now()-started};
+ const entered={...guardrailDefaults,...input};validateGuardrails(entered,strategies);
+ const {factor,real:a}=currentDollarInputs(entered),started=Date.now(),model=buildProbabilityModel(a,{progress});
+ const currentChecks=strategies.map(s=>{const c=currentGuardrailCheck(a,s,model);if(c.error)return c;return {...c,investment:c.investment*factor,cash:c.cash*factor,planned:c.planned*factor,lower:{...c.lower,investment:c.lower.investment===null?null:c.lower.investment*factor},upper:{...c.upper,investment:c.upper.investment===null?null:c.upper.investment*factor},decision:{...c.decision,spending:c.decision.spending*factor},target:{...c.target,spending:c.target.spending*factor}};});
+ return {assumptions:entered,currentChecks,currentDollarFactor:factor,elapsedMs:Date.now()-started};
+}
+
+export function currentDollarInputs(input){
+ const a={...guardrailDefaults,...input};
+ const factor=a.checkInflationTotal==null?(1+a.inflation)**a.checkElapsed:1+a.checkInflationTotal;
+ if(!Number.isFinite(factor)||factor<=0)throw Error('Inflation since starting must leave a positive price level.');
+ return {factor,real:{...a,checkInvestment:a.checkInvestment/factor,checkCash:a.checkCash/factor,checkSpending:a.checkSpending/factor}};
+}
+export function runScheduleComparison(input,strategies=defaultStrategies,{progress=()=>{}}={}){
+ const a={...guardrailDefaults,...input},base=strategies[0];
+ const variants=['fixed','steady','early','late'].map((schedule,i)=>({...base,schedule,name:['Fixed','Steady increase','Increase earlier','Increase later'][i]}));
+ validateGuardrails(a,variants);
+ const started=Date.now(),paths=marketPaths(a,a.count,a.seed),model=buildProbabilityModel(a,{progress}),initial=initialSpending(a,base,model);
+ const results=variants.map(s=>aggregateStrategy(a,s,model,paths,{initialOverride:initial,progress:p=>progress({...p,label:s.name})}));
+ return {kind:'schedules',assumptions:a,base,results,calibration:calibrate(a,model),elapsedMs:Date.now()-started,pathSeed:paths.seed};
 }

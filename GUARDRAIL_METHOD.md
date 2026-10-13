@@ -160,3 +160,26 @@ unchanged, so initial allocation is still solved with each strategy's withdrawal
 Income schedules, timing and percentage withdrawal policies are not transferred.
 The original saved main plan is not mutated. This is an explicit scenario setup,
 not automatic synchronization or a claim that the two models are equivalent.
+
+## Current-dollar check-ins and direct schedule comparison
+
+Check-in inputs are now current nominal dollars. Internally, current investments,
+cash and annual withdrawals are divided by `(1 + assumed annual inflation)^elapsed`
+or `1 + entered cumulative inflation` when provided. The original FI target and
+real withdrawal floor are unchanged. Future return/inflation assumptions still
+come from the selected model. Every returned dollar threshold and withdrawal
+recommendation is multiplied by the same historical price factor; probabilities
+are unchanged by display conversion. Deflation is supported; price factors must
+be positive and finite. An explicit total inflation entry is cumulative, not an
+annual rate. Legacy saved check-in amounts are converted once using their saved
+inflation and elapsed years, with a storage marker preventing repeat conversion.
+Using a main plan resets elapsed years and the historical inflation override.
+
+The optional four-schedule run uses a single selected strategy as its base. Fixed,
+steady, earlier and later variants share the exact solved initial withdrawal and
+cash allocation, starting target, rail offsets, return model, seeds and outer
+paths. Only the increasing variants use the ending target; fixed stays at its
+starting target. This is separate from the two-strategy comparison and fixed-target
+sweep. No conclusion is hardcoded. The UI shows the independent calibration check;
+existing 10,000/25,000 and 1,024/2,048 schedule sensitivity tests remain applicable.
+New integration tests verify exact initial-state equality and target endpoints.
