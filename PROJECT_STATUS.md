@@ -15,3 +15,8 @@ Updated October 13, 2026. This is the standalone web calculator, separate from t
 - FI holdout calibration covers 192 states; default maximum discrepancy 2.90 percentage points. FI outcomes checked at 10,000/25,000 outer paths and 1,024/2,048 probability samples.
 - Practical current check accepts present investments, cash, withdrawals and elapsed years; solves dollar investment thresholds for each probability rail and the withdrawal amount/action needed now.
 - Verification: 84 automated tests pass; static build succeeds. Browser preview verified FI inputs, deadline-aware results, annual path decisions, retained mode horizons, and current dollar thresholds.
+
+- Probability schedules implemented: fixed, steady, earlier and later increases, ending at the final pre-deadline checkpoint. Live target/band preview and current dollar checks use scheduled rails; old saved rules remain fixed.
+- Each checkpoint distinguishes floor-blocked targets from zero-withdrawal infeasibility. Results include lowest withdrawal distributions, floor duration and unattainability frequency.
+- Added strategy-matched fixed-withdrawal baselines and zero-withdrawal references with identical starting allocations and shared paths; zero references preserve the original reserve target.
+- Verification for schedules: 90 automated tests pass, including convergence at 10,000/25,000 paths and 1,024/2,048 probability samples. Browser 10,000-path scheduled comparison completed in 4.17 seconds with baseline results and no console errors. Asset version 20261013-2.

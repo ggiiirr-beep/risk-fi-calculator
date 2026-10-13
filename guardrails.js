@@ -3,13 +3,24 @@ import {seededRandom} from './finance.js';
 
 export const guardrailDefaults={portfolio:1000000,goal:'fi',years:15,fiYears:15,retirementYears:50,fiWithdrawals:100000,fiRate:.04,stockMean:.11,stockVol:.18,inflation:.025,cashReturn:.035,reserveYears:2,floor:0,count:10000,innerCount:1024,seed:7301,model:'bootstrap',compareNoCash:false,checkInvestment:900000,checkCash:100000,checkSpending:40000,checkElapsed:0};
 export const guardrailFiTarget=a=>a.fiWithdrawals/a.fiRate;
-export const defaultStrategies=[{name:'Aggressive',lower:.2,target:.3,upper:.4},{name:'Conservative',lower:.7,target:.8,upper:.9}];
+export const defaultStrategies=[{name:'Aggressive',lower:.2,target:.3,upper:.4,schedule:'fixed',endTarget:.9},{name:'Conservative',lower:.7,target:.8,upper:.9,schedule:'fixed',endTarget:.9}];
+// Targets move at annual checkpoints; the deadline itself records the outcome.
+export function scheduledStrategy(strategy,elapsed,years){
+ const schedule=strategy.schedule||'fixed',t=years<=1?0:Math.max(0,Math.min(1,elapsed/(years-1)));
+ const weight={fixed:0,steady:t,early:1-(1-t)**2,late:t*t}[schedule];
+ const target=strategy.target+((strategy.endTarget??strategy.target)-strategy.target)*weight;
+ return {...strategy,target,lower:Math.max(0,target-(strategy.target-strategy.lower)),upper:Math.min(1,target+(strategy.upper-strategy.target))};
+}
+export function feasibility(model,investment,cash,planned,years,floor,target){
+ const current=model.probability(investment,cash,planned,years),atFloor=model.probability(investment,cash,floor,years),zero=model.probability(investment,cash,0,years);
+ return {current,atFloor,zero,zeroLimited:zero+1e-8<target,floorLimited:zero+1e-8>=target&&atFloor+1e-8<target};
+}
 export function validateGuardrails(a,strategies=defaultStrategies){
  for(const k of ['portfolio','years','stockMean','stockVol','inflation','cashReturn','reserveYears','floor','count','innerCount','seed'])if(!Number.isFinite(a[k]))throw Error('Enter a number for '+k+'.');
  if(a.portfolio<=0||a.portfolio>1e12)throw Error('Starting portfolio must be above $0 and at most $1 trillion.');
  if(!Number.isInteger(a.years)||a.years<1||a.years>60)throw Error('Use a retirement duration of 1–60 whole years.');
  if(a.stockMean<=-.9||a.stockMean>1||a.stockVol<0||a.stockVol>1||a.inflation<=-.5||a.inflation>.5||a.cashReturn<=-.5||a.cashReturn>.5)throw Error('Check your return, volatility, and inflation assumptions.');
- if(a.reserveYears<0||a.reserveYears>5||a.floor<0||a.floor>a.portfolio)throw Error('Use 0–5 reserve years and a spending floor between $0 and the starting portfolio.');
+ if(a.reserveYears<0||a.reserveYears>5||a.floor<0||a.floor>a.portfolio)throw Error('Use 0–5 reserve years and a withdrawal floor between $0 and the starting portfolio.');
  if(!Number.isInteger(a.count)||a.count<10000||a.count>100000)throw Error('Use 10,000–100,000 outer scenarios.');
  if(![512,1024,2048,4096].includes(a.innerCount))throw Error('Choose a supported probability sample size.');
  if(!Number.isInteger(a.seed)||a.seed<0||a.seed>4294967295)throw Error('Seed must be a whole number between 0 and 4,294,967,295.');
@@ -19,6 +30,7 @@ export function validateGuardrails(a,strategies=defaultStrategies){
  if(a.checkInvestment+a.checkCash>1e12||a.checkSpending>1e12)throw Error('Current guardrail check amounts must be at most $1 trillion.');
  if(!['fi','retirement'].includes(a.goal))throw Error('Choose a guardrail goal.');
  if(a.goal==='fi'&&(!Number.isFinite(a.fiWithdrawals)||a.fiWithdrawals<=0||!Number.isFinite(a.fiRate)||a.fiRate<=0||a.fiRate>1||guardrailFiTarget(a)>1e12))throw Error('Enter positive Traditional FI withdrawals and a withdrawal rate above 0% and at most 100% (target at most $1 trillion).');
+ for(const s of strategies){if(!['fixed','steady','early','late'].includes(s.schedule||'fixed')||!Number.isFinite(s.endTarget??s.target)||((s.schedule||'fixed')!=='fixed'&&(s.endTarget??s.target)<s.target)||(s.endTarget??s.target)<0||(s.endTarget??s.target)>1)throw Error(s.name+': ending target must be between the starting target and 100%.');}
  for(const s of strategies)if(![s.lower,s.target,s.upper].every(Number.isFinite)||s.lower<0||s.upper>1||!(s.lower<s.target&&s.target<s.upper))throw Error(s.name+': use lower < target < upper, between 0% and 100%.');
 }
 const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
@@ -38,7 +50,7 @@ export function marketPaths(a,count,seed){
  return {stock,cash,positive,years:a.years,count,seed};
 }
 // End-year cash flows. Returns occur once, then withdrawals, then cash replenishment.
-export function retirementYear(investment,cash,spending,stockGrowth,cashGrowth,positive,reserveYears){
+export function retirementYear(investment,cash,spending,stockGrowth,cashGrowth,positive,reserveYears,reserveSpending=spending){
  const grownInvestment=investment*stockGrowth,grownCash=cash*cashGrowth;
  investment=grownInvestment;cash=grownCash;
  let need=spending,cashWithdrawal=0,investmentWithdrawal=0;
@@ -46,7 +58,7 @@ export function retirementYear(investment,cash,spending,stockGrowth,cashGrowth,p
  investmentWithdrawal=Math.min(investment,need);investment-=investmentWithdrawal;need-=investmentWithdrawal;
  if(need>0){const extra=Math.min(cash,need);cash-=extra;cashWithdrawal+=extra;need-=extra;}
  let replenished=0;
- if(positive&&reserveYears>0){replenished=Math.min(investment,Math.max(0,reserveYears*spending-cash));investment-=replenished;cash+=replenished;}
+ if(positive&&reserveYears>0){replenished=Math.min(investment,Math.max(0,reserveYears*reserveSpending-cash));investment-=replenished;cash+=replenished;}
  return {investment,cash,paid:spending-need,shortfall:need,replenished,investmentWithdrawal,cashWithdrawal,grownInvestment,grownCash};
 }
 export function fixedSuccess(a,paths,investment,cash,spending,years,targetWealth=guardrailFiTarget(a)){
@@ -132,43 +144,46 @@ export function checkpoint(model,strategy,investment,cash,planned,years,floor){
  const spending=trigger==='cut'?Math.min(planned,solved.spending):Math.max(planned,solved.spending),after=model.probability(investment,cash,spending,years);
  return {spending,before,after,trigger,limited:Math.abs(after-strategy.target)>.015};
 }
-export function runRetirement(a,strategy,model,paths,index,initial=initialSpending(a,strategy,model)){
- let investment=initial.investment,cash=initial.cash,planned=initial.spending,depleted=false,shortfall=false;
- const spending=[],plannedSpending=[],balances=[investment+cash],cashBalances=[cash],investmentBalances=[investment],probabilities=[],adjustments=[];
+export function runRetirement(a,strategy,model,paths,index,initial=initialSpending(a,strategy,model),policy='guardrails'){
+ let investment=initial.investment,cash=initial.cash,planned=policy==='zero'?0:initial.spending,depleted=false,shortfall=false;
+ const spending=[],plannedSpending=[],balances=[investment+cash],cashBalances=[cash],investmentBalances=[investment],probabilities=[],adjustments=[],targets=[],feasibilities=[];
+ let floorYears=0,floorLimited=0,zeroLimited=0;
  let cuts=0,raises=0,cutDollars=0,cutPercent=0,maxCut=0,maxCutDollars=0,total=0,below=0,afterBelow=0,runBelow=0,maxRunBelow=0,belowInitialRun=0,maxBelowInitialRun=0,lowest=initial.spending,limited=initial.limited?1:0,tail=0,firstCut=null,firstShortfall=null;
  for(let y=0;y<a.years;y++){
-  const remaining=a.years-y,old=planned,decision=y===0?{spending:planned,before:initial.probability,after:initial.probability,trigger:null,limited:false}:checkpoint(model,strategy,investment,cash,planned,remaining,a.floor);
-  planned=decision.spending;probabilities.push(decision.before);
-  if(decision.before<strategy.lower){below++;runBelow++;maxRunBelow=Math.max(maxRunBelow,runBelow);}else runBelow=0;
-  if(decision.after<strategy.lower)afterBelow++;
+  const rails=scheduledStrategy(strategy,y,a.years),remaining=a.years-y,old=planned,fit=feasibility(model,investment,cash,planned,remaining,a.floor,rails.target);
+  targets.push({lower:rails.lower,target:rails.target,upper:rails.upper});feasibilities.push(fit);floorLimited+=Number(fit.floorLimited);zeroLimited+=Number(fit.zeroLimited);
+  const decision=y===0||policy!=='guardrails'?{spending:planned,before:fit.current,after:fit.current,trigger:null,limited:false}:checkpoint(model,rails,investment,cash,planned,remaining,a.floor);
+  planned=decision.spending;if(planned<=a.floor+.01)floorYears++;probabilities.push(decision.before);
+  if(decision.before<rails.lower){below++;runBelow++;maxRunBelow=Math.max(maxRunBelow,runBelow);}else runBelow=0;
+  if(decision.after<rails.lower)afterBelow++;
   if(decision.before<=1/a.innerCount||decision.before>=1-1/a.innerCount)tail++;
   if(decision.limited)limited++;
   let change=0;
   if(planned<old-1e-6){cuts++;change=(old-planned)/old;cutPercent+=change;cutDollars+=old-planned;maxCut=Math.max(maxCut,change);maxCutDollars=Math.max(maxCutDollars,old-planned);if(firstCut===null)firstCut=y+1;}
   if(planned>old+1e-6)raises++;
-  const k=index*a.years+y,r=retirementYear(investment,cash,planned,paths.stock[k],paths.cash[k],paths.positive[k],a.reserveYears);
+  const k=index*a.years+y,r=retirementYear(investment,cash,planned,paths.stock[k],paths.cash[k],paths.positive[k],a.reserveYears,policy==='zero'?initial.spending:planned);
   investment=r.investment;cash=r.cash;depleted ||= investment+cash<=.01;shortfall ||= r.shortfall>.01;if(r.shortfall>.01&&firstShortfall===null)firstShortfall=y+1;total+=r.paid;lowest=Math.min(lowest,r.paid);
   if(r.paid<initial.spending-.01){belowInitialRun++;maxBelowInitialRun=Math.max(maxBelowInitialRun,belowInitialRun);}else belowInitialRun=0;
   spending.push(r.paid);plannedSpending.push(planned);balances.push(investment+cash);cashBalances.push(cash);investmentBalances.push(investment);adjustments.push(change);
  }
  const changes=spending.slice(1).map((v,i)=>spending[i]>0?(v/spending[i]-1):0),avgChange=mean(changes)||0,volatility=changes.length?Math.sqrt(mean(changes.map(v=>(v-avgChange)**2))):0;
- return {spending,plannedSpending,balances,cashBalances,investmentBalances,probabilities,adjustments,cuts,raises,cutDollars,cutPercent,maxCut,maxCutDollars,total,below,afterBelow,maxRunBelow,maxBelowInitialRun,decline:initial.spending?1-lowest/initial.spending:0,limited,tail,firstCut,firstShortfall,volatility,depleted,shortfall,fiReached:!shortfall&&!depleted&&investment>=guardrailFiTarget(a)};
+ return {lowest,floorYears,floorLimited,zeroLimited,targets,feasibilities,spending,plannedSpending,balances,cashBalances,investmentBalances,probabilities,adjustments,cuts,raises,cutDollars,cutPercent,maxCut,maxCutDollars,total,below,afterBelow,maxRunBelow,maxBelowInitialRun,decline:initial.spending?1-lowest/initial.spending:0,limited,tail,firstCut,firstShortfall,volatility,depleted,shortfall,fiReached:!shortfall&&!depleted&&investment>=guardrailFiTarget(a)};
 }
-export function aggregateStrategy(a,strategy,model,paths,{progress=()=>{},keepPaths=12}={}){
- const initial=initialSpending(a,strategy,model),fields=['cuts','raises','maxCut','maxCutDollars','total','below','afterBelow','maxRunBelow','maxBelowInitialRun','decline','limited','tail','volatility'],samples=Object.fromEntries(fields.map(f=>[f,new Float64Array(paths.count)]));
+export function aggregateStrategy(a,strategy,model,paths,{progress=()=>{},keepPaths=12,policy='guardrails',initialOverride=null}={}){
+ const initial=initialOverride||initialSpending(a,strategy,model),fields=['lowest','floorYears','floorLimited','zeroLimited','cuts','raises','maxCut','maxCutDollars','total','below','afterBelow','maxRunBelow','maxBelowInitialRun','decline','limited','tail','volatility'],samples=Object.fromEntries(fields.map(f=>[f,new Float64Array(paths.count)]));
  const spending=Array.from({length:a.years},()=>new Float64Array(paths.count)),balances=Array.from({length:a.years+1},()=>new Float64Array(paths.count)),cash=Array.from({length:a.years+1},()=>new Float64Array(paths.count)),investment=Array.from({length:a.years+1},()=>new Float64Array(paths.count));
- let fiReached=0,depleted=0,shortfalls=0,earlyShortfalls=0,cutDollars=0,cutPercent=0,cutTotal=0;const firstCut=[0,0,0],examples=[];
+ let anyUnattainable=0,fiReached=0,depleted=0,shortfalls=0,earlyShortfalls=0,cutDollars=0,cutPercent=0,cutTotal=0;const firstCut=[0,0,0],examples=[];
  for(let n=0;n<paths.count;n++){
-  const r=runRetirement(a,strategy,model,paths,n,initial);for(const f of fields)samples[f][n]=r[f];
+  const r=runRetirement(a,strategy,model,paths,n,initial,policy);for(const f of fields)samples[f][n]=r[f];
   for(let y=0;y<a.years;y++)spending[y][n]=r.spending[y];for(let y=0;y<=a.years;y++){balances[y][n]=r.balances[y];cash[y][n]=r.cashBalances[y];investment[y][n]=r.investmentBalances[y];}
-  fiReached+=r.fiReached?1:0;depleted+=r.depleted?1:0;shortfalls+=r.shortfall?1:0;earlyShortfalls+=r.firstShortfall!==null&&r.firstShortfall<=Math.max(0,a.years-10)?1:0;cutDollars+=r.cutDollars;cutPercent+=r.cutPercent;cutTotal+=r.cuts;
+  anyUnattainable+=r.zeroLimited>0||r.floorLimited>0?1:0;fiReached+=r.fiReached?1:0;depleted+=r.depleted?1:0;shortfalls+=r.shortfall?1:0;earlyShortfalls+=r.firstShortfall!==null&&r.firstShortfall<=Math.max(0,a.years-10)?1:0;cutDollars+=r.cutDollars;cutPercent+=r.cutPercent;cutTotal+=r.cuts;
   [5,10,20].forEach((h,i)=>{if(r.firstCut!==null&&r.firstCut<=h)firstCut[i]++;});
   if(n<keepPaths)examples.push({index:n,...r});
   if(n%1000===999)progress({stage:'outer',fraction:(n+1)/paths.count});
  }
  const metrics=Object.fromEntries(fields.map(f=>[f,stats(samples[f])])),histogram=Array.from({length:10},(_,i)=>({lower:i/10,upper:(i+1)/10,count:0}));
  for(const value of samples.maxCut)histogram[Math.min(9,Math.floor(value*10))].count++;
- return {strategy,initial,metrics,fiSuccessRate:fiReached/paths.count,fiMissRate:1-fiReached/paths.count,averageAnnual:metrics.total.mean/a.years,averageCut:cutTotal?cutPercent/cutTotal:0,averageCutDollars:cutTotal?cutDollars/cutTotal:0,depletionRate:depleted/paths.count,shortfallRate:shortfalls/paths.count,earlyShortfallRate:earlyShortfalls/paths.count,actualSuccess:1-shortfalls/paths.count,firstCut:firstCut.map(n=>n/paths.count),histogram,spending:spending.map((v,i)=>({year:i+1,...stats(v)})),balances:balances.map((v,i)=>({year:i,...stats(v),cash:stats(cash[i]),investment:stats(investment[i])})),examples};
+ return {policy,unattainableRate:anyUnattainable/paths.count,strategy,initial,metrics,fiSuccessRate:fiReached/paths.count,fiMissRate:1-fiReached/paths.count,averageAnnual:metrics.total.mean/a.years,averageCut:cutTotal?cutPercent/cutTotal:0,averageCutDollars:cutTotal?cutDollars/cutTotal:0,depletionRate:depleted/paths.count,shortfallRate:shortfalls/paths.count,earlyShortfallRate:earlyShortfalls/paths.count,actualSuccess:1-shortfalls/paths.count,firstCut:firstCut.map(n=>n/paths.count),histogram,spending:spending.map((v,i)=>({year:i+1,...stats(v)})),balances:balances.map((v,i)=>({year:i,...stats(v),cash:stats(cash[i]),investment:stats(investment[i])})),examples};
 }
 export function calibrate(a,model){
  const validation=marketPaths(a,2048,(a.seed^0x85ebca6b)>>>0),checks=[];
@@ -180,8 +195,9 @@ export function calibrate(a,model){
 }
 // Dollar investment thresholds hold today's cash and real annual withdrawals fixed.
 export function currentGuardrailCheck(a,strategy,model){
+ strategy=scheduledStrategy(strategy,a.checkElapsed,a.years);
  const investment=a.checkInvestment,cash=a.checkCash,planned=a.checkSpending,remaining=a.years-a.checkElapsed;
- if(planned<a.floor)return {strategy,error:'Current withdrawals are below the minimum spending floor. Adjust either amount to calculate this check.'};
+ if(planned<a.floor)return {strategy,error:'Current withdrawals are below the minimum withdrawal floor. Adjust either amount to calculate this check.'};
  const probability=i=>model.probability(i,cash,planned,remaining);
  const balanceFor=target=>{
   if(probability(0)>=target)return {investment:0,probability:probability(0),limited:false};
@@ -192,17 +208,18 @@ export function currentGuardrailCheck(a,strategy,model){
   return {investment:u,probability:probability(u),limited:Math.abs(probability(u)-target)>.015};
  };
  const decision=checkpoint(model,strategy,investment,cash,planned,remaining,a.floor),target=model.spendingFor(investment,cash,remaining,strategy.target,a.floor);
- return {strategy,investment,cash,planned,remaining,elapsed:a.checkElapsed,probability:probability(investment),lower:balanceFor(strategy.lower),upper:balanceFor(strategy.upper),decision,target,zeroProbability:model.probability(investment,cash,0,remaining)};
+ return {strategy,investment,cash,planned,remaining,elapsed:a.checkElapsed,probability:probability(investment),lower:balanceFor(strategy.lower),upper:balanceFor(strategy.upper),decision,target,feasibility:feasibility(model,investment,cash,planned,remaining,a.floor,strategy.target),zeroProbability:model.probability(investment,cash,0,remaining)};
 }
 export function runGuardrailComparison(input,strategies=defaultStrategies,{progress=()=>{}}={}){
  const a={...guardrailDefaults,...input};validateGuardrails(a,strategies);
  const started=Date.now(),paths=marketPaths(a,a.count,a.seed),model=buildProbabilityModel(a,{progress}),calibration=calibrate(a,model),results=[];
  const sweep=Array.from({length:8},(_,i)=>{const target=(i+2)/10;return {name:Math.round(target*100)+'% target',target,lower:Math.max(0,target-.1),upper:Math.min(1,target+.1)};});
- const cache=new Map(),key=s=>[s.lower,s.target,s.upper].map(v=>v.toFixed(10)).join(':');
+ const cache=new Map(),key=s=>[s.lower,s.target,s.upper,s.endTarget??s.target,s.schedule||'fixed'].join(':');
  for(const [index,s]of [...strategies,...sweep].entries()){
   let result=cache.get(key(s));if(!result){result=aggregateStrategy(a,s,model,paths,{progress:p=>progress({...p,label:s.name,index,total:strategies.length+sweep.length})});cache.set(key(s),result);}results.push({...result,strategy:s});
  }
+ const references=strategies.map((s,i)=>({name:s.name,fixed:aggregateStrategy(a,s,model,paths,{keepPaths:0,policy:'fixed',initialOverride:results[i].initial}),zero:aggregateStrategy(a,s,model,paths,{keepPaths:0,policy:'zero',initialOverride:results[i].initial})}));
  let noCash=null,noCashCalibration=null;
  if(a.compareNoCash&&a.reserveYears>0){const b={...a,reserveYears:0,checkCash:0},other=buildProbabilityModel(b,{progress});noCashCalibration=calibrate(b,other);noCash=strategies.map(s=>aggregateStrategy(b,s,other,paths,{progress:p=>progress({...p,label:s.name+' · no cash'})}));}
- return {assumptions:a,currentChecks:strategies.map(s=>currentGuardrailCheck(a,s,model)),source:historySource,historicalMean:historicMean,historicalInflation:historicInflation,calibration,noCashCalibration,results:results.slice(0,strategies.length),sweep:results.slice(strategies.length).map(r=>({target:r.strategy.target,initial:r.initial.spending,annual:r.averageAnnual,cuts:r.metrics.cuts.mean,maxCut:r.metrics.maxCut.median,depletion:r.depletionRate,fiSuccess:r.fiSuccessRate,fiMiss:r.fiMissRate})),noCash,elapsedMs:Date.now()-started,pathSeed:paths.seed,probabilitySeed:(a.seed^0x9e3779b9)>>>0,validationSeed:(a.seed^0x85ebca6b)>>>0};
+ return {references,assumptions:a,currentChecks:strategies.map(s=>currentGuardrailCheck(a,s,model)),source:historySource,historicalMean:historicMean,historicalInflation:historicInflation,calibration,noCashCalibration,results:results.slice(0,strategies.length),sweep:results.slice(strategies.length).map(r=>({target:r.strategy.target,initial:r.initial.spending,annual:r.averageAnnual,cuts:r.metrics.cuts.mean,maxCut:r.metrics.maxCut.median,depletion:r.depletionRate,fiSuccess:r.fiSuccessRate,fiMiss:r.fiMissRate})),noCash,elapsedMs:Date.now()-started,pathSeed:paths.seed,probabilitySeed:(a.seed^0x9e3779b9)>>>0,validationSeed:(a.seed^0x85ebca6b)>>>0};
 }

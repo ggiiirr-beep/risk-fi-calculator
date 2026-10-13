@@ -99,3 +99,45 @@ Increasing outer scenarios to 25,000 changes depletion to 24.504% and 19.896%, a
 The practical check accepts current investments, cash, annual withdrawals and whole years elapsed. It uses the same independently calibrated probability model and `remaining = original horizon − elapsed`. For each strategy it solves the investment balances corresponding to its lower and upper probabilities, holding entered current cash and withdrawals fixed. Investment thresholds exclude that cash; total wealth at a threshold is the displayed investment balance plus entered cash. A bounded binary search covers $0–$1 trillion in investments and reports unavailable/imprecise thresholds instead of inventing a number.
 
 It also reports the current probability, whether to cut/maintain/raise, the resulting withdrawal amount, and the amount corresponding to the target probability. Floor/zero-withdrawal infeasibility is explicitly shown. These are estimates for the current checkpoint, not permanent thresholds; the horizon must not be restarted when entering an annual update. Comparison simulations continue to start at the original portfolio/horizon, separately from this practical check. When current cash is nonzero, the model retains cash-fraction states even with reserve replenishment disabled. Tests recover the lower/upper probabilities from the solved dollar thresholds and verify cut/maintain/raise recommendations around those balances.
+
+## Probability schedules and feasibility (October 13, 2026)
+
+Each strategy retains its initial lower/target/upper probabilities and adds a
+schedule and ending target. Existing saved strategies remain fixed. For elapsed
+checkpoint `y` of horizon `H`, `t = y/(H-1)`. Fixed uses weight 0, steady uses `t`,
+earlier uses `1-(1-t)^2`, and later uses `t^2`. Target equals starting target plus
+weight times the difference to the ending target. The ending target applies at
+`y=H-1`, with one year remaining; the deadline records the realized result. A
+one-year horizon has only its starting checkpoint and uses the starting target.
+Starting lower/upper distances remain constant, clipped to [0,1]. Strict crossing
+rules remain unchanged; moving the target alone never resets withdrawals. An
+upper rail of 1 cannot trigger a raise. Neither a capped band nor a sampled 100%
+means certainty. The fixed-target sweep remains explicitly independent of ramps.
+
+Every checkpoint evaluates current withdrawals, the real withdrawal floor, and
+zero withdrawals using the same cash/investment position, remaining years and
+probability surface. Floor-blocked means zero can reach the target but the floor
+cannot; zero-unreachable means even zero cannot. These are counted independently
+of rail crossing or whether a reset was attempted. A 1e-8 comparison tolerance
+only handles floating-point equality, not simulation uncertainty. New summaries
+include probability of any unattainable checkpoint, checkpoint counts for each
+reason, planned years at the floor, lowest actual funded withdrawals, and the
+10th/median/90th cumulative withdrawal distribution. A funding shortfall below
+the floor is separately recorded as before.
+
+For each strategy, fixed withdrawals start at that strategy's solved initial
+withdrawals and keep that real amount. Zero withdrawals retain the same starting
+investment/cash allocation and original cash-reserve dollar target, replenish
+only after positive nominal stock years, and ignore the withdrawal floor. This
+avoids silently moving cash into stocks for the zero reference. Both references
+use exactly the same outer paths as every strategy. They receive no guardrail
+adjustments. With an initial withdrawal amount of zero they coincide. References
+are comparisons under these cash rules, not mathematical upper bounds on success.
+
+Probability candidates use the same prebuilt independent simulation sample,
+never a new random sample for each withdrawal amount. The current check flags
+proximity to a rail within the worst-case sampling margin; the detailed model
+section retains interpolation/holdout error disclosure. No deadband or statistical
+trigger is added: these would change the specified guardrail mechanics. Automated
+schedule tests compare 10,000/25,000 paths and 1,024/2,048 probability samples,
+plus trigger behavior, same-allocation reference accounting and dollar checks.
