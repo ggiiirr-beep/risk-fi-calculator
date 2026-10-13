@@ -6,7 +6,7 @@ An entirely browser-based planning tool for the transition from flexible investm
 
 ## Features
 
-- **Risk-Based Guardrails**: separate retirement comparison with paired historical bootstrap data, shared market paths, independent probability estimates, editable thresholds, cash/floor options and four interactive charts. See [model and verification notes](GUARDRAIL_METHOD.md).
+- **Risk-Based Guardrails**: defaults to reaching a Traditional FI investment target by a fixed deadline (15 years). The alternative goal funds retirement without depletion. Includes current dollar guardrail thresholds and withdrawal recommendations, plus a policy comparison with paired historical bootstrap data, shared market paths, independent probability estimates, editable thresholds, cash/floor options and four interactive charts. See [model and verification notes](GUARDRAIL_METHOD.md).
 
 - Five questions: how much can I withdraw, how much do I need invested, when will I reach Traditional FI, what return do I need, and check my plan. Time results combine years, date, and age. Additional engine solvers remain available internally.
 - Check a fixed plan against a desired date. A missed date shows the later projected FI date and extends the chart. Unfunded or unreachable plans are explicitly reported.

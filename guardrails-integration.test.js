@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {guardrailDefaults as defaults,defaultStrategies,marketPaths,buildProbabilityModel,aggregateStrategy,calibrate} from './guardrails.js';
 test('10,000 and 25,000 shared scenarios give stable estimates; finer probability model remains calibrated',()=>{
- const a={...defaults},model=buildProbabilityModel(a),small=marketPaths(a,10000,a.seed),large=marketPaths(a,25000,a.seed);
+ const a={...defaults,goal:'retirement',years:50},model=buildProbabilityModel(a),small=marketPaths(a,10000,a.seed),large=marketPaths(a,25000,a.seed);
  const refined=buildProbabilityModel({...a,innerCount:2048});
  for(const s of defaultStrategies){const x=aggregateStrategy(a,s,model,small),y=aggregateStrategy(a,s,model,large),z=aggregateStrategy({...a,innerCount:2048},s,refined,large);
   assert.equal(x.initial.spending,y.initial.spending);

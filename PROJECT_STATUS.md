@@ -1,6 +1,6 @@
 # Risk FI Calculator — current status
 
-Updated October 8, 2026. This is the standalone web calculator, separate from the Excerpt Tracker iOS project.
+Updated October 13, 2026. This is the standalone web calculator, separate from the Excerpt Tracker iOS project.
 
 - Repository: `ggiiirr-beep/risk-fi-calculator`; active publication branch: `main`.
 - GitHub Pages serves the repository root at https://ggiiirr-beep.github.io/risk-fi-calculator/.
@@ -10,3 +10,8 @@ Updated October 8, 2026. This is the standalone web calculator, separate from th
 - Methods, data provenance, result definitions and numerical verification are in `GUARDRAIL_METHOD.md`.
 - Tests include 10,000/25,000-path convergence and 1,024/2,048 probability-sample sensitivity. Desktop Safari preview and narrow effective viewport checked; no physical device testing was performed.
 - Known modeling limits: independent annual samples, no separate tax/fee model, finite probability lookup, annual decisions/end-year withdrawals, and potentially large late-retirement spending increases. These are disclosed in the interface.
+
+- Guardrails now default to reaching a fixed Traditional FI investment target at the original deadline. Separate retained horizons: FI 15 years, retirement funding 50 years. Shows infeasible probability targets, observed FI success/misses/depletion, target-aware charts and annual path decisions.
+- FI holdout calibration covers 192 states; default maximum discrepancy 2.90 percentage points. FI outcomes checked at 10,000/25,000 outer paths and 1,024/2,048 probability samples.
+- Practical current check accepts present investments, cash, withdrawals and elapsed years; solves dollar investment thresholds for each probability rail and the withdrawal amount/action needed now.
+- Verification: 84 automated tests pass; static build succeeds. Browser preview verified FI inputs, deadline-aware results, annual path decisions, retained mode horizons, and current dollar thresholds.

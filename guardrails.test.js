@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {guardrailDefaults as defaults,defaultStrategies,marketPaths,retirementYear,buildProbabilityModel,initialSpending,checkpoint,runRetirement,aggregateStrategy,fixedSuccess,validateGuardrails,calibrate} from './guardrails.js';
 import {historicalYears} from './guardrail-history.js';
 const close=(a,b,tol=1e-8)=>assert.ok(Math.abs(a-b)<=tol,`${a} != ${b}`);
-const a={...defaults,years:10,innerCount:512};
+const a={...defaults,goal:'retirement',years:10,innerCount:512};
 const model=buildProbabilityModel(a);
 test('documented history has contiguous paired observations and valid gross returns',()=>{assert.equal(historicalYears.length,98);historicalYears.forEach((r,i)=>{assert.equal(r[0],1928+i);assert.ok(r[1]>-1&&r[2]>-1);});});
 test('shared market paths are reproducible and preserve prefixes at higher counts',()=>{const x=marketPaths(a,4,42),y=marketPaths(a,8,42);for(const field of ['stock','cash','positive'])assert.deepEqual(x[field],y[field].slice(0,x[field].length));assert.notDeepEqual(x.stock,marketPaths(a,4,43).stock);assert.notEqual(model.paths.seed,a.seed);});
