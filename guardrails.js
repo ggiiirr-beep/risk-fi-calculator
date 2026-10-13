@@ -223,3 +223,8 @@ export function runGuardrailComparison(input,strategies=defaultStrategies,{progr
  if(a.compareNoCash&&a.reserveYears>0){const b={...a,reserveYears:0,checkCash:0},other=buildProbabilityModel(b,{progress});noCashCalibration=calibrate(b,other);noCash=strategies.map(s=>aggregateStrategy(b,s,other,paths,{progress:p=>progress({...p,label:s.name+' · no cash'})}));}
  return {references,assumptions:a,currentChecks:strategies.map(s=>currentGuardrailCheck(a,s,model)),source:historySource,historicalMean:historicMean,historicalInflation:historicInflation,calibration,noCashCalibration,results:results.slice(0,strategies.length),sweep:results.slice(strategies.length).map(r=>({target:r.strategy.target,initial:r.initial.spending,annual:r.averageAnnual,cuts:r.metrics.cuts.mean,maxCut:r.metrics.maxCut.median,depletion:r.depletionRate,fiSuccess:r.fiSuccessRate,fiMiss:r.fiMissRate})),noCash,elapsedMs:Date.now()-started,pathSeed:paths.seed,probabilitySeed:(a.seed^0x9e3779b9)>>>0,validationSeed:(a.seed^0x85ebca6b)>>>0};
 }
+
+export function runCurrentGuardrailCheck(input,strategies=defaultStrategies,{progress=()=>{}}={}){
+ const a={...guardrailDefaults,...input};validateGuardrails(a,strategies);const started=Date.now(),model=buildProbabilityModel(a,{progress});
+ return {assumptions:a,currentChecks:strategies.map(s=>currentGuardrailCheck(a,s,model)),elapsedMs:Date.now()-started};
+}

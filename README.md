@@ -65,3 +65,12 @@ Risk FI withdrawals can be entered in dollars or as a percentage. Percentage def
 ## Guardrail simulator files
 
 `guardrails.js` is the pure simulation engine; `guardrails-worker.js` runs it off the main thread; `guardrails-ui.js` renders controls, metrics and charts. `guardrail-history.js` bundles documented numeric source facts. `scripts/extract-guardrail-history.py` reproduces the data extract from the source workbook. Guardrail assumptions are saved separately from the existing calculator. The cash, timing and probability conventions for this tab are documented in [GUARDRAIL_METHOD.md](GUARDRAIL_METHOD.md).
+
+## Finding the tools
+
+- **Your plan:** solve a planning question; compare return scenarios or open the advanced variable-return simulator.
+- **Withdrawal rules:** compare probability-based withdrawal strategies. Use **Use my plan** to copy solved amounts explicitly; cash is included in the comparison's starting balance. The transfer explains unsupported plan features.
+- **Check my position:** update balances and elapsed years for current withdrawal thresholds, or compare against a saved baseline.
+- **Help:** brief explanations first; full methodology remains available in expandable sections.
+
+Existing browser storage keys and entered numbers are retained. The current guardrail check runs independently of the full outer simulation comparison.

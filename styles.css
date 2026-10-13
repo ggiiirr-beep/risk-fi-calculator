@@ -54,3 +54,6 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 @media(max-width:480px){.gr-grid{grid-template-columns:1fr}.gr-strategy{padding:15px}.gr-headline .metric{padding:10px}.guardrails .content-panel{padding:18px}.gr-headline .value{font-size:1.15rem}}
 
 .gr-schedule-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}@media(max-width:480px){.gr-schedule-fields{grid-template-columns:1fr}}
+
+.section-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-10px 0 22px}.section-tools button{font-size:.8rem}.section-tools button.active{color:var(--purple);border-color:var(--purple)}.section-tools details{margin:0}.section-tools summary{font-size:.8rem;cursor:pointer}.tabs .help-link{margin-left:auto;font-size:.8rem}.guardrails details>summary{padding:8px 0}.guardrails .gr-grid .hint{line-height:1.5}.guardrails #gr-results{scroll-margin-top:20px}
+@media(max-width:480px){.tabs{gap:14px;flex-wrap:wrap}.tabs button{font-size:.82rem}.tabs .help-link{margin-left:0}.gr-strategy .gr-grid{grid-template-columns:1fr}.solved-tag{white-space:normal}}

@@ -141,3 +141,22 @@ section retains interpolation/holdout error disclosure. No deadband or statistic
 trigger is added: these would change the specified guardrail mechanics. Automated
 schedule tests compare 10,000/25,000 paths and 1,024/2,048 probability samples,
 plus trigger behavior, same-allocation reference accounting and dollar checks.
+
+## Simplified interface and explicit plan transfer
+
+The comparison and current-check screens share stored assumptions and strategy
+settings. Comparison validation does not depend on hidden current-check entries;
+its model uses the starting simulation allocation. The standalone current check
+uses its actual cash position when constructing the probability surface and does
+not run outer retirement scenarios. Neither path changes the financial engine.
+
+“Use my plan” copies a solved main-calculator plan explicitly. Total comparison
+wealth equals investments plus cash; cash is not added twice. The fixed FI target
+is preserved even for custom targets, through an equivalent target withdrawal
+amount at the selected FI rate. Fractional horizons round upward to whole years.
+Unsupported horizons fail visibly. Current checks receive the solved annual
+withdrawal amount and elapsed time zero. Simulation reserve-years settings remain
+unchanged, so initial allocation is still solved with each strategy's withdrawals.
+Income schedules, timing and percentage withdrawal policies are not transferred.
+The original saved main plan is not mutated. This is an explicit scenario setup,
+not automatic synchronization or a claim that the two models are equivalent.
