@@ -103,3 +103,6 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Goal selector leads the page in a prominent box; retirement duration/ending balance are grouped with it. Removed repeated setup instructions and duplicate summaries; shared-plan behavior sits in a disclosure. Kept input meaning, probability interpretation and feasibility/result caveats.
 
 - 20261014-21: explanation precedes the goal selector; reduced both text scale and goal-box padding for a quieter hierarchy.
+
+## No minimum withdrawals (20261014-22)
+- Removed minimum input for both goals; saved floors reset to zero and all UI simulation runs enforce zero. Result labels now describe years at zero withdrawals and targets unattainable even with zero. Engine retains generic floor support for existing tests.
