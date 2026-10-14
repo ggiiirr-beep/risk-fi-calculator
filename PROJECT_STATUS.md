@@ -86,3 +86,6 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 
 ## Cash chart scale (20261014-14)
 - Verified the orange cash path changes, but its growth occupied only ~2.4 SVG pixels against multi-million asset values in the inspected plan. Added a Cash reserve only view with its own scale and explained the combined scale. Calculations unchanged.
+
+## Age-based chart axes (20261014-15)
+- Plan, cash-only, withdrawal-rate, return-comparison and withdrawal-comparison graphs use attained ages in ticks and hover/keyboard details when Target age is selected. Years mode retains elapsed-year labels; calculations unchanged.

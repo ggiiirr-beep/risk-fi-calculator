@@ -1,9 +1,9 @@
-import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-14';
-import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-14';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261014-14';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-14';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-14';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-14';
+import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-15';
+import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-15';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261014-15';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-15';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-15';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-15';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -92,7 +92,8 @@ function timingNotice(p,q){const eventual=outcome(p);const funded=q.unfunded<.01
 }
 let charts=[],assetChartView='all';
 function chart(id,rows,series,{percentAxis=false,marker=null,point=null,start=today}={}){
- charts.push({id,rows,series,percentAxis,marker,point,start});
+ const age=state.timeEntry==='age'&&Number.isFinite(state.age)&&['plan','scenarios','withdrawals'].includes(tab)?state.age:null;
+ charts.push({id,rows,series,percentAxis,marker,point,start,age});
  return `<div class="chart" id="${id}" aria-label="${id.replaceAll('-',' ')}"><svg role="img" aria-label="Interactive ${id.replaceAll('-',' ')}" viewBox="0 0 820 280"></svg><div class="chart-tip" hidden></div></div><div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.label}</span>`).join('')}</div><p class="chart-caption">Hover, tap, or focus the chart and use the arrow keys to inspect a year.</p>`;
 }
 function drawCharts(){for(const c of charts){const wrap=$('#'+c.id);if(!wrap)continue;const svg=wrap.querySelector('svg'),W=820,H=280,L=65,R=15,T=20,B=36,maxX=Math.max(1,...c.rows.map(r=>r.year));
@@ -100,12 +101,12 @@ function drawCharts(){for(const c of charts){const wrap=$('#'+c.id);if(!wrap)con
  const maxY=Math.max(c.percentAxis?.01:1,...c.rows.flatMap(r=>c.series.map(s=>val(r,s.key))),c.point?.value||0)*1.12;
  const x=t=>L+t/maxX*(W-L-R),y=v=>H-B-v/maxY*(H-T-B);
  let html='';for(let i=0;i<=4;i++){const n=maxY*i/4;html+=`<line class="grid" x1="${L}" y1="${y(n)}" x2="${W-R}" y2="${y(n)}"/><text x="${L-12}" y="${y(n)+4}" text-anchor="end">${c.percentAxis?(n*100).toFixed(1)+'%':short(n)}</text>`;}
- for(let i=0;i<=5;i++){const t=maxX*i/5;html+=`<text x="${x(t)}" y="${H-9}" text-anchor="middle">${t===0?(c.start===today?'Today':'Start'):num(t)+'y'}</text>`;}
+ for(let i=0;i<=5;i++){const t=maxX*i/5;html+=`<text x="${x(t)}" y="${H-9}" text-anchor="middle">${c.age!==null?'Age '+num(c.age+t):t===0?(c.start===today?'Today':'Start'):num(t)+'y'}</text>`;}
  c.series.forEach((s,i)=>{const d=c.rows.map((r,k)=>(k?'L':'M')+x(r.year)+','+y(val(r,s.key))).join(' ');if(i===0&&!c.percentAxis)html+=`<path d="${d} L${x(c.rows.at(-1).year)},${H-B} L${L},${H-B} Z" fill="${s.color}" opacity=".06"/>`;html+=`<path class="line" d="${d}" stroke="${s.color}" ${s.dash?'stroke-dasharray="7 6"':''}/>`;});
  if(c.marker!==null&&c.marker<=maxX){html+=`<line x1="${x(c.marker)}" x2="${x(c.marker)}" y1="${T}" y2="${H-B}" stroke="var(--purple)" stroke-dasharray="3 5"/><text x="${Math.max(L+45,Math.min(W-55,x(c.marker)))}" y="13" text-anchor="middle">FI reached</text>`;}
  if(c.point)html+=`<circle cx="${x(c.point.year)}" cy="${y(c.point.value)}" r="6" fill="var(--red)" stroke="var(--surface)" stroke-width="3"/>`;
  html+='<line class="crosshair" y1="20" y2="244" stroke="var(--muted)" stroke-dasharray="2 4" visibility="hidden"/>';svg.innerHTML=html;svg.setAttribute('tabindex','0');
- let index=0;const show=i=>{index=Math.max(0,Math.min(c.rows.length-1,i));const r=c.rows[index],tip=wrap.querySelector('.chart-tip');tip.hidden=false;tip.innerHTML=`<strong>Year ${num(r.year,2)} · ${dateLabel(r.year,c.start)}</strong>`+c.series.map(s=>`<p>${s.label}: <strong>${c.percentAxis?percent(r[s.key]):money(r[s.key])}</strong></p>`).join('');const cross=svg.querySelector('.crosshair');cross.setAttribute('x1',x(r.year));cross.setAttribute('x2',x(r.year));cross.setAttribute('visibility','visible');};
+ let index=0;const show=i=>{index=Math.max(0,Math.min(c.rows.length-1,i));const r=c.rows[index],tip=wrap.querySelector('.chart-tip');tip.hidden=false;tip.innerHTML=`<strong>${c.age!==null?'Age '+num(c.age+r.year,2):'Year '+num(r.year,2)} · ${dateLabel(r.year,c.start)}</strong>`+c.series.map(s=>`<p>${s.label}: <strong>${c.percentAxis?percent(r[s.key]):money(r[s.key])}</strong></p>`).join('');const cross=svg.querySelector('.crosshair');cross.setAttribute('x1',x(r.year));cross.setAttribute('x2',x(r.year));cross.setAttribute('visibility','visible');};
  svg.onpointermove=e=>{const rect=svg.getBoundingClientRect(),t=Math.max(0,((e.clientX-rect.left)/rect.width*W-L)/(W-L-R)*maxX);show(c.rows.reduce((best,r,i)=>Math.abs(r.year-t)<Math.abs(c.rows[best].year-t)?i:best,0));};svg.onpointerleave=()=>{wrap.querySelector('.chart-tip').hidden=true;svg.querySelector('.crosshair').setAttribute('visibility','hidden');};svg.onfocus=()=>show(index);svg.onblur=svg.onpointerleave;svg.onkeydown=e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();show(index+(e.key==='ArrowRight'?1:-1));}};
 }}
 function displayRows(rows,p){return rows.map(r=>{const f=nominal?Math.pow(1+p.inflation,r.year):1;const out={...r};for(const k of ['investment','cash','total','target','spending','income','beginning','investmentReturn','cashInterest','investmentWithdrawal','cashWithdrawal','unfunded'])out[k]*=f;return out;});}
