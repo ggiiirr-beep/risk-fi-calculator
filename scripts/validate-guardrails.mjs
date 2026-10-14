@@ -38,7 +38,7 @@ for(const start of [1929,1966,2000,2007])for(const floor of [0,20000,40000])for(
   ledger.push({year,yearsRemaining:a.years-y,target:run.targets[y].target,probability:run.probabilities[y],plannedReal:run.plannedSpending[y],paidReal:run.spending[y],investmentsReal:investments/prices,cashReal:cash/prices});
  }
  assert.ok(Math.abs(total-run.total)<.00001);
- const floorFlags=run.plannedSpending.map(w=>w<=floor+.01),streaks=floorFlags.map((_,i)=>{let n=0;while(i+n<floorFlags.length&&floorFlags[i+n])n++;return n;});assert.equal(run.maxFloorRun,Math.max(...streaks));
+ const floorFlags=run.spending.map(w=>w<=floor+.01),streaks=floorFlags.map((_,i)=>{let n=0;while(i+n<floorFlags.length&&floorFlags[i+n])n++;return n;});assert.equal(run.maxFloorRun,Math.max(...streaks));
  traces.push({start,floor,schedule:strategy.schedule,success:run.fiReached,largestCut:run.maxCut,maxFloorRun:run.maxFloorRun,ledger});
 }
 const report={assumptions:a,base,stockScale,priceScale,note:'Sensitivity study, not a new forecast. Probability model remains IID while outer ordering changes. Historical traces use centered gross returns/inflation, not literal historical replay. Floors are illustrative.',summary,traces};

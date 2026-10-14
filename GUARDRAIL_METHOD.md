@@ -1,6 +1,6 @@
 # Risk-Based Guardrails — connected model
 
-Updated October 14, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261014-25; earlier validation files describe explicitly older model versions.
+Updated October 14, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261014-26; earlier validation files describe explicitly older model versions.
 
 ## One plan, two tabs
 
@@ -10,7 +10,7 @@ Step 1 builds the probability model and solves starting withdrawals at 20–90% 
 
 Step 2 runs each strategy from its own solved withdrawals on shared market paths, with fixed and zero-withdrawal references. Unattainable strategies start from zero and remain explicitly flagged. A schedule comparison uses a common starting confidence and solved withdrawal amount. The minimum withdrawal is always zero in both modes; engine floor support remains only for legacy tests.
 
-The main cash policy is not identical to the guardrail policy: guardrails replenish cash after positive stock-return years, toward the entered reserve-years target. Starting cash is preserved, not recalculated from spending. Cash is included exactly once in starting wealth. The optional no-cash comparison instead invests all starting wealth, with the same starting withdrawals and market paths.
+The main cash policy is not identical to the guardrail policy: guardrails replenish cash after positive stock-return years, toward the entered reserve-years target. Starting cash is preserved, not recalculated from spending. Cash is included exactly once in starting wealth. The optional no-cash comparison instead invests all starting wealth, with starting withdrawals recalculated for that cash policy and the same market paths.
 
 Annual guardrail models support 1–60 whole years. Fractional FI horizons round up and the interface reports that difference. A zero-year main horizon uses one annual guardrail checkpoint. Retirement mode has its own duration. This is not a chained simulation of the Risk FI phase followed by retirement.
 
@@ -79,9 +79,21 @@ Two-strategy and four-schedule comparisons use identical starting amounts and ma
 
 `node scripts/validate-connected-guardrails.mjs` compares 10,000 and 25,000 paths for both goals and independent/five-year sampling. Outputs: `validation/connected-guardrails.json`. This run's largest change in observed goal success was below 0.5 percentage points. Holdout maximum probability discrepancies range from 3.1 to 5.8 percentage points; the latter remains visibly flagged in the UI. These are scenario-specific numerical checks, not recommended withdrawal policies.
 
-## Custom historical volatility (20261014-25)
+## Custom historical volatility (20261014-26)
 Historical volatility is the default. Custom annual volatility uses positive historical gross stock returns raised to a calibrated exponent, then normalized to the selected arithmetic gross-return mean. Bisection chooses the exponent so the population standard deviation across all 98 transformed annual observations matches the requested nominal annual volatility. Zero volatility produces a constant gross stock return. The gross-return transform avoids negative prices and impossible losses beyond 100%.
 
 Centered mode preserves the entered expected nominal stock-return mean; historical-mean mode preserves the source mean. Historical inflation pairing and sampled block indices are unchanged. Custom volatility transforms historical outcomes and is explicitly labeled; it is not a literal replay. Finite/non-wrapping block samples need not match the full-dataset mean or volatility exactly. Parametric mode continues to use its entered annual volatility directly.
 
 Results include the chance of any cut, chance of planned zero withdrawals, mean zero-withdrawal years among affected paths, and median/10th/90th withdrawal bands. Conditional durations are shown separately from averages across all paths. Median bands are cross-sectional summaries, not single retirement experiences. Finite probability resolution and the existing calibration warnings remain visible.
+
+## Numerical audit (20261014-26)
+
+Final-year total-assets goal and retirement probabilities now use the independent samples directly, without smoothing terminal success thresholds. The withdrawal solver chooses the largest supported amount meeting the requested confidence (bounded by current assets). Discrete sample outcomes can exceed the requested probability; deviations over 1.5 points are reported rather than presented as exact restoration. Zero-volatility parametric runs use deterministic outcomes for every horizon. Earlier stochastic checkpoints still use the approximate probability surface.
+
+Starting cash is included in the cash-fraction grid even when replenishment is disabled. Years at zero count actual paid withdrawals, including unfunded years after exhaustion.
+
+Regression example: $1 million, one year, certain 10% return, no inflation or cash, $1 million terminal goal. The old lookup solved $102,676.86 at a supposed 30% probability, but every path missed. The corrected model permits $100,000 and reports 100% under those deterministic assumptions, with the requested 30% not exactly attainable. This is a numerical test, not a forecast.
+
+An independent nominal ledger reconciles 200 path-years of cash, investments, withdrawals and terminal outcomes. A separate 100,000-path sample for the documented $1.1m / 10-year / $1.5m-target scenario achieved 28.187% at the lookup's 30% starting solution; zero-withdrawal success was 59.580% against a 64.119% lookup estimate. Finite sampling and earlier-checkpoint interpolation remain limitations. See validation/guardrails-audit-20261014.json for assumptions and before/after strategy outcomes.
+
+The outer ledger now uses the same exhaustion threshold as the forward model (remaining assets at or below 1e-12), rather than classifying positive sub-cent balances as exhausted. This matters at terminal withdrawal quantiles. The cashflow shortfall reporting tolerance remains one cent in outer dollar ledgers.

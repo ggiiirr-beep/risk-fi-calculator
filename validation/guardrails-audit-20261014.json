@@ -1,0 +1,105 @@
+{
+  "assumptions": {
+    "portfolio": 1100000,
+    "goal": "fi",
+    "fiBasis": "total",
+    "endingBalance": 0,
+    "blockYears": 5,
+    "adjustWithdrawals": true,
+    "initialMode": "target",
+    "initialCash": 100000,
+    "initialWithdrawal": null,
+    "years": 10,
+    "fiYears": 15,
+    "retirementYears": 50,
+    "fiWithdrawals": 60000,
+    "fiRate": 0.04,
+    "stockMean": 0.09,
+    "stockVol": 0.18,
+    "inflation": 0.025,
+    "cashReturn": 0.035,
+    "reserveYears": 2,
+    "floor": 0,
+    "count": 10000,
+    "innerCount": 1024,
+    "seed": 7301,
+    "model": "bootstrap",
+    "compareNoCash": false,
+    "checkInvestment": 900000,
+    "checkCash": 100000,
+    "checkSpending": 40000,
+    "checkElapsed": 0,
+    "checkInflationTotal": null,
+    "checkDollarBasis": "current"
+  },
+  "results": [
+    {
+      "version": "before",
+      "target": 0.3,
+      "initial": {
+        "cash": 100000,
+        "investment": 1000000,
+        "spending": 56312.39873198777,
+        "probability": 0.3,
+        "zeroProbability": 0.6411928486932928,
+        "unreachable": false,
+        "limited": false
+      },
+      "independentFixed": 0.28187,
+      "observedGuardrailSuccess": 0.1048,
+      "meanZeroYears": 2.9838,
+      "calibration": 0.049511718750000044
+    },
+    {
+      "version": "before",
+      "target": 0.8,
+      "initial": {
+        "cash": 100000,
+        "investment": 1000000,
+        "spending": 0,
+        "probability": 0.6411928486932928,
+        "zeroProbability": 0.6411928486932928,
+        "unreachable": true,
+        "limited": true
+      },
+      "independentFixed": 0.5958,
+      "observedGuardrailSuccess": 0.493,
+      "meanZeroYears": 8.4443,
+      "calibration": 0.049511718750000044
+    },
+    {
+      "version": "corrected",
+      "target": 0.3,
+      "initial": {
+        "cash": 100000,
+        "investment": 1000000,
+        "spending": 56312.39873198777,
+        "probability": 0.3,
+        "zeroProbability": 0.6411928486932928,
+        "unreachable": false,
+        "limited": false
+      },
+      "independentFixed": 0.28187,
+      "observedGuardrailSuccess": 0.1073,
+      "meanZeroYears": 2.9873,
+      "calibration": 0.049511718750000044
+    },
+    {
+      "version": "corrected",
+      "target": 0.8,
+      "initial": {
+        "cash": 100000,
+        "investment": 1000000,
+        "spending": 0,
+        "probability": 0.6411928486932928,
+        "zeroProbability": 0.6411928486932928,
+        "unreachable": true,
+        "limited": true
+      },
+      "independentFixed": 0.5958,
+      "observedGuardrailSuccess": 0.4988,
+      "meanZeroYears": 8.4408,
+      "calibration": 0.049511718750000044
+    }
+  ]
+}
