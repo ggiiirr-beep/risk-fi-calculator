@@ -77,3 +77,6 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Main calculator inputs are six distinct cards, two columns on desktop and one on mobile. Cash and Risk FI withdrawals are separate sections; results remain below inputs.
 - Your plan at a glance adds starting total assets/investments, annual and monthly withdrawal dollars, timeline or starting/desired/projected ages, return/inflation assumptions, and withdrawal policy. Existing FI goal/result cards stay prominent.
 - Verified syntax/build, section contents, age-mode summary and mobile single-column layout without horizontal overflow. Financial calculations unchanged.
+
+## FI goal preview (20261014-12)
+- Your FI goal now shows its calculated total-assets target in today’s dollars directly under annual FI withdrawals. Updates with withdrawals and FI rate; incomplete entries show a dash.

@@ -1,9 +1,9 @@
-import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-11';
-import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-11';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261014-11';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-11';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-11';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-11';
+import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-12';
+import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-12';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261014-12';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-12';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-12';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-12';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -43,6 +43,7 @@ function renderInputs(){
  <div class="wide"><div class="field"><label>Set your FI timeline by</label><div class="segmented" role="group" aria-label="FI timeline format"><button type="button" data-time-entry="years" aria-pressed="${p.timeEntry!=='age'}" class="${p.timeEntry!=='age'?'active':''}">Years from now</button><button type="button" data-time-entry="age" aria-pressed="${p.timeEntry==='age'}" class="${p.timeEntry==='age'?'active':''}">Target age</button></div></div>${p.timeEntry==='age'?`<div class="two-fields">${field('age','Current age',p.age,{min:0,max:120})}${field('targetAge','Target age',enteredAge(),{min:0,disabled:unknown==='time'})}</div>`:field('years','Years to FI',entry(p.years,1,3),{suffix:'years',min:0,max:100,disabled:unknown==='time'})}</div>
  ${field('fiRate','Traditional FI withdrawal rate',entry(p.fiRate,100),{suffix:'%',min:.01,max:100})}
  ${field('fiWithdrawals','Annual withdrawals once you reach FI',entry(p.fiWithdrawals),{prefix:'$',min:1,hint:'In today’s dollars. Your FI target rises with inflation.'})}
+ <div class="metric"><div class="label">Traditional FI target</div><div class="value" id="fi-target-preview" aria-live="polite"></div><div class="detail">In today’s dollars · investments + cash</div></div>
  ${field('afterFIYears','Years to show after FI',p.afterFIYears,{min:0,max:100})}</section><section class="input-group"><h3>Return assumptions</h3>
  <div class="wide"><div class="two-fields">${field('returnInput','Return before inflation',entry(p.nominal,100),{suffix:'%',disabled:unknown==='return'})}${field('inflation','Inflation',entry(state.inflation,100),{suffix:'%',min:-99.9})}</div><small class="hint" id="real-summary"></small></div></section>
 
@@ -74,6 +75,7 @@ function syncTime(active=''){
  for(const [key,value] of Object.entries(values))if(key!==active&&$('#'+key))$('#'+key).value=$('#'+key).disabled&&key!=='horizonSlider'?'':value;
 }
 function syncSolved(){const p=resolveWithdrawals(state);
+ if($('#fi-target-preview'))$('#fi-target-preview').textContent=Number.isFinite(p.fiWithdrawals)&&p.fiWithdrawals>0&&Number.isFinite(p.fiRate)&&p.fiRate>0?money(fiTarget(p)):'—';
  if($('#withdrawal-summary'))$('#withdrawal-summary').textContent=(state.withdrawalMode==='dollars'?money(p.spending)+' per year · '+money(p.spending/12)+' per month':percent(state.withdrawalRate)+' = '+money(p.spending)+' in the first year · '+money(p.spending/12)+' per month')+(state.withdrawalMode==='annual'?'. Recalculated from each year’s opening investment balance.':state.withdrawalMode==='starting'?'. Based on starting investments; the dollar amount follows your inflation choice.':'. Amount needed after income you already earn.');
  if(unknown==='spending'&&$('#withdrawal-summary'))$('#withdrawal-summary').textContent='';
  if($('#monthly'))$('#monthly').textContent=Number.isFinite(p.spending)?money(p.spending/12):'—';
