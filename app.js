@@ -1,9 +1,9 @@
-import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-8';
-import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-8';
-import {guardrailPlanInputs} from './plan-transfer.js?v=20261014-8';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-8';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-8';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-8';
+import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-9';
+import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-9';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261014-9';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-9';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-9';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-9';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -168,7 +168,7 @@ function bindView(){
  for(const id of ['originalStart','originalTarget','originalPortfolio','originalSpending','originalCash','originalReturn']){const el=$('#'+id);if(el)el.oninput=()=>{if(id==='originalStart'){const end=$('#originalTarget').value;baseline.start=el.value;baseline.plan.years=Math.max(0,yearsBetween(el.value,end));}else if(id==='originalTarget')baseline.plan.years=Math.max(0,yearsBetween(baseline.start,el.value));else if(id==='originalReturn'){baseline.plan.returnMode='real';baseline.plan.real=readNumber(el.value)/100;}else if(id==='originalCash'){baseline.plan.cashMode='dollars';baseline.plan.cash=readNumber(el.value);}else{baseline.plan[id==='originalPortfolio'?'portfolio':'spending']=readNumber(el.value);if(id==='originalSpending')baseline.plan.withdrawalMode='dollars';}calculateCheck();persist();};}
 }
 function update(){renderSectionTools();if(!['guardrails','position'].includes(tab))leaveGuardrails();$('.workspace').dataset.view=tab;charts=[];worker?.terminate();clearTimeout(riskTimer);try{
- if(['guardrails','position'].includes(tab)){const shared=unknown==='projection'?{plan:{...state}}:solve(state,unknown);if(shared.error)throw Error(shared.error);connectGuardrailPlan(guardrailPlanInputs(resolveWithdrawals(shared.plan)),()=>navigate('plan'),nominal,value=>{nominal=value;persist();});$('#error').hidden=true;mountGuardrails($('#view'),{mode:tab==='position'?'check':'compare',usePlan:()=>{const solved=unknown==='projection'?{plan:{...state}}:solve(state,unknown);if(solved.error)throw Error(solved.error);return guardrailPlanInputs(resolveWithdrawals(solved.plan));}});return;}
+ if(['guardrails','position'].includes(tab)){const shared=unknown==='projection'?{plan:{...state}}:solve(state,unknown);if(shared.error)throw Error(shared.error);connectGuardrailPlan(guardrailPlanInputs(resolveWithdrawals(shared.plan)),()=>navigate('plan'),nominal,value=>{nominal=value;persist();},(key,value)=>{const current=unknown==='projection'?{plan:{...state}}:solve(state,unknown);if(current.error)throw Error(current.error);state=editConnectedPlan(resolveWithdrawals(current.plan),key,value);unknown='projection';persist();rebuildInputs();update();});$('#error').hidden=true;mountGuardrails($('#view'),{mode:tab==='position'?'check':'compare',usePlan:()=>{const solved=unknown==='projection'?{plan:{...state}}:solve(state,unknown);if(solved.error)throw Error(solved.error);return guardrailPlanInputs(resolveWithdrawals(solved.plan));}});return;}
  if(state.timeEntry==='age'&&(!Number.isFinite(state.age)||state.age<0||state.age>120)&&tab==='plan')throw Error('Enter a current age between 0 and 120.');
  if(tab==='method'){ $('#error').hidden=true;$('#view').innerHTML=methodView();return;}
  if(tab==='checkin'){ $('#error').hidden=true;$('#view').innerHTML=checkView();bindView();calculateCheck();return;}

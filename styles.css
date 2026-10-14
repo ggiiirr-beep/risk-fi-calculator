@@ -72,3 +72,5 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 .section-framing{margin:6px 0 18px}.section-framing h3{font-size:1rem;margin:0 0 6px}.section-framing p{font-size:.9rem;line-height:1.6;color:var(--muted);margin:0;max-width:760px}
 
 .shared-value{display:block;padding:12px 14px;font-weight:600;min-height:46px}.has-prefix .shared-value{padding-left:30px}
+
+.connected-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0}.connected-cards .field{margin:0;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px}.connected-cards .field input{font-size:1.25rem;font-weight:650}.connected-cards .field label{color:var(--muted);min-height:2.4em}.connected-cards input[aria-invalid=true]{border-color:#b33838}

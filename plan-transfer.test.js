@@ -15,3 +15,18 @@ test('transfer converts real returns, custom targets, linked cash and fractional
 test('standalone current check returns decisions without running outer retirement comparisons',()=>{
  const x=runCurrentGuardrailCheck({...guardrailDefaults,years:2,innerCount:512,reserveYears:0,checkCash:0});assert.equal(x.currentChecks.length,2);assert.equal(x.results,undefined);assert.equal(x.currentChecks[0].remaining,2);assert.ok(Number.isFinite(x.currentChecks[0].probability));
 });
+
+test('connected edits reconcile assets and update the shared FI goal',async()=>{
+ const {editConnectedPlan}=await import('./plan-transfer.js');
+ const p={...defaults,portfolio:1000000,cashMode:'dollars',cash:100000,withdrawalMode:'dollars',spending:40000,fiRate:.04,separateFiWithdrawals:true,fiWithdrawals:60000};
+ const wealth=editConnectedPlan(p,'portfolio',1200000);
+ assert.equal(wealth.portfolio,1100000);
+ const cash=editConnectedPlan(wealth,'initialCash',200000);
+ assert.equal(cash.portfolio+cash.cash,1200000);
+ assert.equal(cash.portfolio,1000000);
+ assert.equal(editConnectedPlan(p,'target',2500000).fiWithdrawals,100000);
+ assert.equal(editConnectedPlan({...p,withdrawalMode:'starting'},'initialWithdrawal',50000).withdrawalMode,'dollars');
+ assert.throws(()=>editConnectedPlan(p,'initialCash',2000000));
+ assert.throws(()=>editConnectedPlan(p,'years',NaN));
+ assert.equal(p.cash,100000);
+});

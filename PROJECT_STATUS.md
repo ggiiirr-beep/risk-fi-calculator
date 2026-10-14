@@ -64,3 +64,8 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 ## Remove current-position check (20261014-8)
 - Removed Check withdrawals now, its mode selector, and the current-position action/threshold cards previously prepended to comparison results. Guardrails now opens directly into comparison setup and results.
 - Removed Help instructions directing users to the check. Numerical check helpers and tests are retained for a possible separate feature later; comparison simulation mechanics are unchanged.
+
+## Editable connected-plan cards (20261014-9)
+- Shared assumptions now appear in editable cards: total assets, included cash, Risk FI withdrawals, FI target/withdrawals/rate, horizon, returns and inflation. Changes persist to Your plan and invalidate simulation results.
+- Edits preserve a solved snapshot and select Check my plan; direct withdrawal edits use dollars. Cash edits reallocate total assets. FI-target edits update FI withdrawals at the chosen rate. Original cash-years input becomes its explicit dollar amount.
+- Verified 115 automated tests, build and syntax; browser-tested shared edits. Simulation mechanics unchanged.
