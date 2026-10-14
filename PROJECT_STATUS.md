@@ -12,7 +12,7 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Existing features: fixed/steady/earlier/later schedules, fixed original FI deadline, retirement-funding alternative, independent probability estimation, shared outer market paths, fixed/zero-withdrawal references, floors, no-cash comparison, and fixed-target sweep.
 - Methods/data provenance are in `GUARDRAIL_METHOD.md`. Limits include independent annual samples, finite probability lookup, no separate taxes/fees, annual decisions/end-year withdrawals, and potentially large late-retirement increases. Targets are not guarantees.
 - Verification: 100 tests pass, including simulation convergence and new transfer/current-check tests; static build and syntax checks pass. Browser checks cover saved entries, plan transfer, comparison results, expandable charts, standalone check, scenarios, legacy simulator, saved-plan access and Help. Mobile 390px preview has no page overflow; no physical device testing.
-- Asset version: 20261014-6. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
+- Asset version: 20261014-7. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
 
 - Incorporated follow-up review: current checks lead with infeasibility before any suggested cut; fixed-withdrawal success comparison is visible with a plain explanation of the withdrawal-increase tradeoff. New stress-test models and cuts-only policies remain separate possible extensions, not part of this clarity update.
 
@@ -54,3 +54,9 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Inflation policy is connected. Future-dollar projection distributions use sampled inflation on each path. Practical actions remain current dollars; detailed cut/reference measures remain explicitly real dollars.
 - 112 automated tests plus connected validation across both goals, 1-/5-year samples and 10k/25k paths. Largest observed-success difference below 0.5 percentage points. Holdout max error reaches 5.8 points in one fixture and remains flagged rather than hidden.
 - Current methodology: GUARDRAIL_METHOD.md. Earlier validation reports and status entries above describe historical versions.
+
+## Withdrawal scenarios (20261014-7)
+- Added Compare withdrawal scenarios beside return scenarios. Three editable values default to 80%, 100% and 120% of the solved plan’s withdrawal amount/rate; percentage rates cap at 100%.
+- Uses the main withdrawal basis and inflation policy, while freezing actual starting cash, investments, returns and Traditional FI target. Scenarios do not edit shared plan inputs. Overrides persist in browser storage, with Use plan defaults to reset.
+- Results show FI dates, total assets at the desired date and a common-horizon chart; today/future-dollar preference is shared. Risk FI rules continue through the comparison, as disclosed.
+- Two new engine tests cover cash/goal isolation, source immutability, direction of FI dates, percentage behavior, invalid inputs and infeasible plans.
