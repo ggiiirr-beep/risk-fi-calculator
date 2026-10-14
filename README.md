@@ -78,3 +78,7 @@ Existing browser storage keys and entered numbers are retained. The current guar
 ## Validation review
 
 Run `npm run validate:guardrails` for the independent cash/inflation ledger and paired five-year sequence sensitivity study. See [results and limitations](validation/guardrails-review.md). The normal regression suite remains `npm test`.
+
+## Simplified main form
+
+Choose years from now or target age (with current age). Enter return before inflation and inflation separately. Cash reserve settings are visible in the form. FI withdrawals divided by the FI rate define the target; there is no custom target, additional-income schedule or withdrawal-timing control. Withdrawals occur at year-end. `plan-settings.js` converts saved real returns and custom goals without changing their equivalent values, and disables retired income/timing settings. Saved historical baselines retain their original assumptions.
