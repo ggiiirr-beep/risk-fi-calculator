@@ -69,3 +69,6 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Shared assumptions now appear in editable cards: total assets, included cash, Risk FI withdrawals, FI target/withdrawals/rate, horizon, returns and inflation. Changes persist to Your plan and invalidate simulation results.
 - Edits preserve a solved snapshot and select Check my plan; direct withdrawal edits use dollars. Cash edits reallocate total assets. FI-target edits update FI withdrawals at the chosen rate. Original cash-years input becomes its explicit dollar amount.
 - Verified 115 automated tests, build and syntax; browser-tested shared edits. Simulation mechanics unchanged.
+
+## Input section headings (20261014-10)
+- Risk FI withdrawals now has its own heading after Cash reserve. Starting-point framing describes investments only. Cash entry still supports dollars or years of withdrawals; calculations unchanged.

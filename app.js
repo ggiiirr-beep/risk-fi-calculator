@@ -1,9 +1,9 @@
-import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-9';
-import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-9';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261014-9';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-9';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-9';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-9';
+import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-10';
+import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-10';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261014-10';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-10';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-10';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-10';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -33,10 +33,10 @@ function field(key,label,value,{type='number',prefix='',suffix='',step='any',min
 function select(key,label,options,value){return `<div class="field"><label for="${key}">${label}</label><select id="${key}">${Object.entries(options).map(([v,l])=>`<option value="${v}" ${v===value?'selected':''}>${l}</option>`).join('')}</select></div>`;}
 function renderInputs(){
  const p=state;$('#inputs').innerHTML=`<div class="wide section-framing"><p>Choose what you want to calculate, then enter the numbers you already know. We’ll work out the missing piece and show the results below.</p><p>All amounts are in today’s dollars.</p></div><div class="solve-select">${select('unknown','What would you like to find?',labels,unknown)}</div>
- <div class="wide section-framing"><h3>Your starting point</h3><p>Enter what you have invested and what you plan to withdraw while working toward FI.</p></div>
+ <div class="wide section-framing"><h3>Your starting point</h3><p>Enter what you currently have invested.</p></div>
  ${field('portfolio','Current investments',entry(p.portfolio),{prefix:'$',min:0,disabled:unknown==='portfolio',hint:'Investments only. Cash is separate.'})}
  <div class="wide"><h3>Cash reserve</h3><p class="hint">Separate from investments. Enter zero if you do not keep a cash reserve.</p>${select('cashMode','Enter cash as',{dollars:'Dollar amount',years:'Years of withdrawals'},state.cashMode)}${state.cashMode==='dollars'?field('cash','Cash reserve',state.cash,{prefix:'$',min:0}):field('cashYears','Years of withdrawals',state.cashYears,{suffix:'years',min:0})}<small id="cash-equivalent" class="hint"></small>${select('cashStrategy','Cash strategy',{reserve:'Reserve only',first:'Spend cash first',downturn:'Market downturn buffer'},state.cashStrategy)}<div class="two-fields">${field('cashNominal','Cash yield (nominal)',entry(state.cashNominal,100),{suffix:'%'})}${field('cashMinimum','Minimum reserve',state.cashMinimum,{prefix:'$',min:0})}</div></div>
- <div class="wide">${select('withdrawalEntry','Enter Risk FI withdrawals as',{dollars:'Dollars',percentage:'Percentage'},p.withdrawalMode==='dollars'?'dollars':'percentage')}
+ <div class="wide"><h3>Risk FI withdrawals</h3>${select('withdrawalEntry','Enter Risk FI withdrawals as',{dollars:'Dollars',percentage:'Percentage'},p.withdrawalMode==='dollars'?'dollars':'percentage')}
  ${p.withdrawalMode==='dollars'?field('spending','Risk FI annual withdrawals',entry(p.spending),{prefix:'$',min:0,disabled:unknown==='spending'}):`${select('withdrawalBasis','Percentage of',{starting:'Starting portfolio (default)',annual:'Portfolio at the start of each year'},p.withdrawalMode)}${field('withdrawalRate','Risk FI withdrawal percentage',entry(p.withdrawalRate,100),{suffix:'%',min:0,max:100,disabled:unknown==='spending'})}`}
  <small class="hint" id="withdrawal-summary"></small>${select('adjustWithdrawals','Dollar withdrawals over time',{'yes':'Increase with inflation','no':'Keep the dollar amount fixed'},p.adjustWithdrawals?'yes':'no')}<small class="hint">${p.withdrawalMode==='annual'?'During Risk FI, your percentage follows the opening investment balance; no extra inflation increase is applied. This choice applies after FI.':'Applies to Risk FI withdrawals and withdrawals after FI.'}</small></div>
  <div class="wide section-framing"><h3>Your FI goal</h3><p>Define the total-assets target you want to reach and when you want to reach it.</p></div>
