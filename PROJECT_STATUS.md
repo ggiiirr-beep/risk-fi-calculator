@@ -96,3 +96,5 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - 20261014-17: removed the redundant guardrails question heading; introduction now leads directly.
 
 - 20261014-18: styled the guardrails explanation as a prominent responsive introduction with larger title typography and purple bold emphasis.
+
+- 20261014-19: shortened the connected-plan section heading to Your plan.
