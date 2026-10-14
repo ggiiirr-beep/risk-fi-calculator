@@ -1,195 +1,80 @@
-# Risk-Based Guardrails: model and verification
+# Risk-Based Guardrails — connected model
 
-This tab compares retirement spending policies; it does not reuse the main calculator's deterministic FI equations or Advanced risk intervention rules. Run it with `npm start`, choose Risk-Based Guardrails, and select Run comparison. All computation and financial inputs stay in the browser.
+Updated October 14, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261014-6; earlier validation files describe explicitly older model versions.
 
-## Goal selection (October 13 update)
+## One plan, two tabs
 
-The default goal is **Reach Traditional FI**, with 15 years to the deadline and $100,000 annual Traditional FI withdrawals at 4%, giving a $2.5 million investment target in today's dollars. The prior **Fund retirement without depletion** goal remains available, with a separately retained 50-year horizon. Switching goals preserves the entered assumptions and each horizon. Older saved retirement settings retain their horizon in retirement mode and initialize FI mode to 15 years.
+Your plan owns investments, cash, Risk FI withdrawals, Traditional FI withdrawals/rate, FI horizon, expected returns, inflation and the withdrawal inflation choice. Risk-Based Guardrails automatically reads the solved plan whenever opened. No import action or separate editable copy of shared inputs is presented. Changes invalidate prior results. Rule thresholds, floors, historical sampling settings, retirement duration and ending balance remain guardrail-specific.
 
-FI success means ending **investments** at or above the fixed FI target on the original deadline, after that year's withdrawals and cash replenishment, with no earlier unfunded withdrawal or depletion. Cash does not count toward the target. An earlier touch does not end the simulation or guarantee success at the deadline. No post-FI retirement period is simulated. After one year of a 15-year scenario, each checkpoint uses 14 remaining years. The deadline and real-dollar investment target do not roll forward or shrink when Risk FI withdrawals are cut.
+Both strategies begin with exactly the main plan's investments and cash. In Risk FI mode they begin with its Risk FI withdrawal amount; retirement mode starts today with its Traditional FI withdrawal amount. Guardrails replace percentage-based withdrawal rules with probability-based adjustments. Initial percentages are converted to their starting dollar amount. Both strategies check their rules immediately and annually thereafter, so their first actual withdrawals can differ despite identical starting inputs.
 
-FI probabilities estimate that outcome **without subsequent guardrail changes**. The independent sample now also builds terminal-investment survival distributions across 322 target-to-current-wealth ratios: zero plus 321 log-spaced ratios from 0.0001 to 10,000. At each withdrawal/cash/horizon cell, empirical counts give the chance of ending above each target. Interpolation spans target ratio, cash fraction and withdrawal rate. Rates remain monotonic in withdrawals. Ratios beyond the supported range conservatively receive 0%; this is a disclosed modeling boundary, not mathematical impossibility. Finite sample probabilities near 0/1 are not guarantees.
+The main cash policy is not identical to the guardrail policy: guardrails replenish cash after positive stock-return years, toward the entered reserve-years target. Starting cash is preserved, not recalculated from spending. Cash is included exactly once in starting wealth. The optional no-cash comparison instead invests all starting wealth, with the same starting withdrawals and market paths.
 
-The withdrawal solver checks the zero-withdrawal probability. When the requested probability is unattainable, it returns zero (or the entered minimum floor), reports the achieved probability, and marks the target restoration infeasible. Annual checks likewise use the lowest allowed withdrawals when cuts cannot restore the target. The tool does not invent contributions, alter the target, or extend the deadline.
+Annual guardrail models support 1–60 whole years. Fractional FI horizons round up and the interface reports that difference. A zero-year main horizon uses one annual guardrail checkpoint. Retirement mode has its own duration. This is not a chained simulation of the Risk FI phase followed by retirement.
 
-Results report actual FI achievement, deadline misses (including depleted paths), withdrawal shortfalls, and depletion separately. The sweep includes FI achievement and deadline-miss outcomes. The balance chart shows the fixed target; individual paths include a table of each year's remaining horizon, probability before adjustment, planned withdrawals and cut/raise/maintain decisions.
+## Two goals
 
-FI calibration uses 2,048 held-out paths at horizons 1, 5, 10, 15 for the default horizon; cash fractions 0%, 15%, 40%; requested probabilities 10%, 30%, 80%, 95%; and target/wealth ratios 0.5, 1, the entered starting ratio, and 5 (deduplicated). Default maximum absolute discrepancy is 2.90 percentage points over 192 states. These checks validate consistency within the model, not predictive accuracy in real markets.
+- **Reach Traditional FI:** all withdrawals funded, no depletion, and ending investments plus cash at least Traditional FI annual withdrawals divided by the FI rate, by the fixed deadline.
+- **Fund Traditional FI retirement:** all withdrawals funded, no depletion, and ending investments plus cash at least the chosen ending balance. Zero means no required leftover balance. Duration and ending balance are editable.
 
-With the default FI inputs and seed 7301, initial aggressive withdrawals are $35,927. Zero withdrawals have approximately 54.4% modeled FI success, so the conservative 80% target is explicitly infeasible at the start. Actual dynamic-policy FI success is 10.99% and 45.97% across 10,000 outer paths, versus 11.192% and 45.4% across 25,000. Neither policy depletes in the 10,000-path run, illustrating why missing the FI deadline is a different risk. Annual guardrails do not guarantee their chosen success rate when future cuts hit zero or a floor.
+Both targets are in today's purchasing power and therefore increase with realized inflation in nominal dollars. An earlier target touch does not stop the simulation. Depletion, withdrawal shortfalls and missing the ending target are separate outcomes. The legacy engine default still supports investment-only FI targets for historical regression fixtures; connected site plans explicitly use total assets.
 
-New tests cover the FI equation, target validation, cash exclusion, funded deadline attainment, early touches followed by misses, decreasing remaining horizon, scaling, withdrawal monotonicity, infeasible solutions, outer-count stability, finer probability samples, and no-cash accounting. Existing retirement tests explicitly retain their original goal and horizon.
+## Probability schedules and decisions
 
-## Markets and reproducibility
+Each strategy specifies lower/start-target/upper probabilities, a schedule and ending target. With elapsed checkpoint y and horizon H, t = y/(H−1), clamped to [0,1]. Fixed uses weight 0, steady t, earlier 1−(1−t)², later t². Target = start + weight × (end−start). A one-year plan uses the starting target. The ending target applies at the final decision checkpoint, one year before the deadline; at the deadline the outcome is recorded directly.
 
-The bundled observations are 98 paired calendar years, 1928–2025, from [Aswath Damodaran's NYU Stern historical-return workbook](https://pages.stern.nyu.edu/~adamodar/pc/datasets/histretSP.xlsx), retrieved October 8, 2026. The `Returns by year` worksheet supplies A: year, B: S&P 500 including dividends, U: CPI-U inflation. Pre-1957 observations use the source's predecessor series. The data module records the downloaded workbook's SHA-256. `python3 scripts/extract-guardrail-history.py source.xlsx` reproduces the numeric extract; the workbook itself is not distributed.
+Rail spacing stays the same until clamped at 0% or 100%. A 100% upper rail cannot trigger a withdrawal increase. Estimated 100% is a finite-model estimate, never certainty.
 
-Three models are available:
+At each checkpoint:
 
-- **Centered paired bootstrap (default):** sample a year with replacement, preserving its stock/inflation pairing. Multiply gross stock returns by `(1 + entered stock mean)/(1 + source arithmetic stock mean)`, and gross inflation by the corresponding inflation ratio. Thus the sampling distribution has the entered arithmetic means (11% and 2.5% by default), but retains adjusted historical variation. Individual finite samples need not have exactly those means. This is not an unmodified historical replay.
-- **Unchanged paired bootstrap:** use the source observations directly; entered mean stock return and inflation are ignored.
-- **Parametric:** independent lognormal gross stock returns calibrated to the entered arithmetic nominal mean and standard deviation, with fixed entered inflation. For arithmetic mean `m` and standard deviation `s`, `sigma² = log(1+s²/(1+m)²)` and `mu = log(1+m)-sigma²/2`.
+1. Estimate goal success if the current withdrawal policy continues without later guardrail changes.
+2. Below the lower rail, cut toward the current target. Above the upper rail, increase toward it. Otherwise maintain the policy. A schedule change alone does not force a reset.
+3. Separately estimate success at the withdrawal floor and at zero. Distinguish a binding floor from a target unattainable even with zero withdrawals. Report achieved probability when restoration fails.
 
-Cash has a constant configurable nominal yield (default 3.5%). Every annual stock/cash gross return is divided by that year's gross inflation. All internal amounts are in initial purchasing power, so maintaining real spending means adjusting nominal withdrawals for inflation.
+Risk FI can reduce withdrawals to zero. No work income or contributions are invented. The goal and deadline never extend automatically. The observed strategy success rate includes future adjustments and need not equal any checkpoint target probability.
 
-One outer path array is shared by both strategies, all eight target-sweep policies, and the optional no-cash comparison. Changing a policy cannot change those markets. The seeded generator preserves the first 10,000 paths when the outer count increases. Default seed is 7301; the probability construction seed is `seed XOR 0x9e3779b9`, and holdout validation seed is `seed XOR 0x85ebca6b` (unsigned 32-bit). Outer paths never supply probability-model futures.
+## Historical data and sampling
 
-Bootstrap years are independent. This preserves within-year pairing, not serial correlation, long regimes, valuation effects, or future structural changes. Taxes and fees are not separately modeled.
+The bundled 98 paired years, 1928–2025, come from [Aswath Damodaran, NYU Stern](https://pages.stern.nyu.edu/~adamodar/pc/datasets/histretSP.xlsx), retrieved October 8, 2026. Worksheet `Returns by year`: A = year, B = S&P 500 including dividends, U = CPI-U inflation. Pre-1957 observations use the source's predecessor series. `guardrail-history.js` records the workbook SHA-256; `scripts/extract-guardrail-history.py` reproduces the extract.
 
-## Cash and annual timing
+- Centered historical sampling rescales gross returns and inflation around the plan's entered arithmetic means. This is adjusted historical sampling, not a literal replay.
+- Unchanged historical sampling uses the source observations and ignores entered expected stock return/inflation.
+- Optional parametric sampling uses independent lognormal gross stock returns and fixed inflation. Its volatility input applies only to that model.
 
-Starting cash is `min(starting wealth, reserve years × initial spending)`. Stocks receive the remainder. Cash is inside the portfolio; 85/15 is illustrative, not a second constraint. Initial spending and its resulting allocation are solved together. No-cash comparison solves its own initial spending with a zero-reserve probability model.
+Historical sampling offers independent years or consecutive 3-, 5- or 10-year blocks. The new UI defaults to five-year blocks. Each block starts uniformly among eligible positions, never wraps the end of the dataset, and retains paired returns/inflation and consecutive order. Blocks and scenarios are independent; the final block is truncated to the horizon. Non-wrapping blocks give interior years somewhat more weight than endpoints, so centered block means need not exactly match the entered means. This preserves some sustained periods, not every regime, valuation relationship or possible future crisis.
 
-At each subsequent year's beginning, estimate fixed-spending success for the remaining horizon, including the current year. Below the lower rail, cut toward the target; above the upper rail, raise toward the target; otherwise maintain real planned spending. Each rule uses only current assets and assumptions.
+All strategies, schedules, fixed/zero references and no-cash policies use the same outer paths. Probability estimation uses independent streams, never actual future outer-path returns. At a checkpoint it starts a new independent historical sample; it does not infer the current regime from preceding returns. Seeded streams preserve prefixes when the outer count increases.
 
-Then, once per year:
+Outer count: 10,000–100,000. Probability paths: 512–4,096, default 1,024. Seed default 7301; probability seed XOR 0x9e3779b9; independent validation seed XOR 0x85ebca6b.
 
-1. Apply stock and cash returns, including inflation conversion.
-2. Pay the planned withdrawal at year-end. After a negative or zero nominal stock return, draw cash first. After a positive stock return, draw stocks first; cash covers any shortage.
-3. Only after a positive stock year, transfer stocks into cash toward `reserve years × planned spending`.
+## Inflation, cash and timing
 
-Funding-source selection uses the just-completed year's observed return, not a forecast made at the beginning checkpoint. There is no within-year emergency budget revision. For every year, ending stocks + ending cash + paid withdrawal equals grown stocks + grown cash. Transfers create no money. If available money cannot meet spending, record a shortfall and retain subsequent zero-spending years in lifetime averages.
+Internal values are real dollars. Stocks and cash each receive one annual return and inflation adjustment. Withdrawals occur at year-end. Cash is used first after nonpositive nominal stock returns; stocks first after positive returns, with the other asset covering shortages. Positive years then transfer stocks into cash toward reserve years × planned withdrawals. Balances never become negative, transfers create no money, and unmet withdrawals are recorded.
 
-## Independent probability model
+With inflation adjustment enabled, planned real withdrawals stay constant between decisions. Otherwise planned withdrawals keep their nominal amount and are deflated using each sampled year's inflation. Forward estimates use the same convention. The real withdrawal floor constrains guardrail decisions; in fixed-nominal guardrail paths its purchasing power is restored at subsequent checkpoints if necessary. The fixed-withdrawal reference does not perform that restoration. Thus floor maintenance itself is a future adjustment, excluded from a checkpoint's no-further-adjustment estimate.
 
-A worker builds a simulation lookup using 1,024 independent paths by default (512–4,096 selectable). Each cell simulates **constant real spending, no future guardrail adjustments**, and the same cash policy. The grid includes every remaining year, cash fractions 0%, 10%, …, 100%, and zero plus 160 logarithmically spaced spending/asset rates from 0.01% through 100%. Zero-reserve models use only zero cash. A monotone envelope removes numerical reversals; maximum correction is reported. Linear interpolation in spending rate and cash fraction yields probabilities; inverse interpolation solves spending.
+Future-dollar projection distributions are computed from each path's actual sampled cumulative inflation, not by applying one factor to a real median. Charts, headline withdrawal totals and the four-schedule table switch views. Current-check actions always use current account dollars; detailed stability/cut metrics and reference tables explicitly use real dollars. A total of future withdrawals sums dollars from different years and is not a purchasing-power measure. Neither view changes probabilities.
 
-Initial spending uses bisection with its spending-dependent initial cash balance. Checkpoints solve spending for the current split without instantaneously reallocating that split. Restoration tolerances are 1.5 percentage points; misses are counted and shown. Initial spending cannot exceed wealth divided by max(1, reserve years), except when the explicitly entered floor requires it. Subsequent target solutions are capped at 100% of current wealth, except for a binding floor. Spending **above current wealth is outside the permitted model domain and explicitly treated as infeasible (0%)**, not assigned the more optimistic probability of a capped withdrawal. This is a conservative boundary rule, not a simulated probability for spending above wealth.
+## Probability approximation and limitations
 
-The floor is constant in real dollars and can prevent restoration. The outer simulation still measures the resulting depletion and unmet spending. Empty portfolios and nonnegative balances are handled explicitly. Near-0% and near-100% estimates are sample bounds, not certainty; the maximum binomial sampling margin and the number of near-tail checkpoints are displayed. There is no assumption of a linear relationship between probability and spending.
+The lookup spans every remaining year, 11 cash fractions and 161 withdrawal-rate points (zero plus 160 log-spaced 0.01–100% rates). When cash is absent and reserve replenishment disabled it uses a zero-cash slice. For positive terminal targets it also stores 322 target/wealth ratios: zero and 321 log-spaced values from 0.0001 to 10,000. Linear interpolation estimates probabilities; a monotone envelope prevents numerical reversals as withdrawals rise. Inverse interpolation finds withdrawal resets.
 
-Every run checks the lookup against 2,048 additional independent fixed-spending simulations at 60 states: remaining horizons 1, 5, 10, 25, 50 (clipped/deduplicated for shorter horizons), cash fractions 0%, 15%, 40%, and requested probabilities 10%, 30%, 80%, 95%. Comparison is to the achieved lookup estimate, including bounded solutions. The interface reports all checks, mean/max absolute error, and a warning above 5 percentage points. This measures finite-sample/interpolation consistency under the same assumptions; it does not establish real-world predictive accuracy or validate every state. No-cash comparison reports its own holdout errors.
+Rates above 100% of available wealth and target ratios above 10,000 receive a conservative 0% estimate outside the model domain. These are disclosed bounds, not proofs of impossibility. Restoration tolerance is 1.5 percentage points. Finite samples, interpolation and the assumed market distribution all limit accuracy, especially near 0% and 100%.
 
-## Results and charts
+Every comparison checks the lookup against 2,048 held-out forward paths across selected horizons, cash fractions, confidence targets and terminal-goal ratios. The UI reports average/max discrepancy and warns above five percentage points. This is an internal model check, not evidence of predictive accuracy. Candidate withdrawal amounts share simulation samples, reducing adjustment noise. Changes very close to thresholds can still depend on model resolution.
 
-- Initial spending is the solved first-year planned amount.
-- Lifetime spending sums actual funded real withdrawals. Average annual spending divides by the full horizon, then averages across retirements, including failed paths.
-- Cut count records actual decreases in planned spending; lower-rail occupancy separately records every lower trigger, including floor-bound triggers that cannot produce another cut. Average cut size weights all actual cuts equally. Largest-cut distributions include zero-cut retirements. Dollar and percentage maxima can occur on different paths.
-- Worst sustained decline is described by the deepest actual spending drop below initial spending and the longest consecutive period below that level, calculated separately. The table shows median and 90th-percentile outcomes for both.
-- Spending volatility is the within-path standard deviation of annual proportional changes in funded spending, then averaged across paths. A positive-to-zero change is −100%; zero-to-zero contributes zero.
-- Depletion means ending stocks plus cash at or below one cent in any year. Observed fully funded success means no spending shortfall above one cent. A final fully paid withdrawal can exhaust assets without an unmet withdrawal.
-- Lower-rail metrics count pre-adjustment and post-adjustment annual checks, and consecutive pre-adjustment runs. They are annual observations, not continuous measurements.
-- First-cut probabilities cover retirement years 1–5, 1–10, and 1–20; the UI shows N/A when the chosen horizon is shorter.
-- Spending/balance quantiles are computed across paths separately at each year; they are not one coherent retirement path. Individual paths use the same path index for both policies. Cash and stock medians need not add to the total median.
-- The target sweep uses 20%, 30%, …, 90%, with ±10 percentage-point guardrails clamped to valid bounds. All plotted values come from outer results.
+No separate taxes, fees, asset correlations, employment, monthly emergency decisions or changing asset allocations are modeled. Enter returns after fees/tax drag and withdrawals including taxes. Cash earns a fixed nominal yield. The sample uses US stock history and is not a diversified global-portfolio forecast.
 
-A low fixed-spending probability target does **not** imply the corresponding ultimate failure rate under changing spending. Failures and target probabilities are reported separately. As retirement approaches its final year, these rules can materially raise withdrawals because less time remains. Since spending is set before that year's market result and is not adjusted again within the year, losses can still cause a shortfall. Results should be interpreted alongside spending cuts and their timing.
+## Practical check and comparisons
 
-## Verification and observed defaults
+Check withdrawals now lives inside Risk-Based Guardrails. It begins with the connected plan, and allows current account balances, withdrawals, elapsed years and optional cumulative inflation. It keeps the original deadline and schedule. Shared-plan changes start a new baseline; when updating an existing plan's checkpoint, use this check instead of resetting the original horizon.
 
-`npm test` includes existing calculator regression tests and guardrail tests for documented contiguous data, shared path prefixes, independent randomness, accounting conservation, cash-policy order, deterministic annuity survival, initial target solution, trigger direction, spending floors, wealth-limit handling, no lookahead, chart aggregates, depletion, calibration and higher-count stability.
+Thresholds are solved by holding current cash and withdrawals fixed and searching investments from $0 to $1 trillion. The UI shows total-asset cut/increase thresholds with the cash assumption and investment breakdown. Infeasible or imprecise thresholds are identified. Thresholds change with time, balances, withdrawals and model assumptions.
 
-With retirement-funding defaults (seed 7301, 10,000 outer scenarios, 1,024 probability samples, 50 years, centered bootstrap, 2-year cash reserve, no floor):
+Two-strategy and four-schedule comparisons use identical starting amounts and markets. Fixed-withdrawal and zero-withdrawal references isolate what adjustments change. The probability sweep retains the same starting plan; initial withdrawals are therefore constant across targets, while immediate and subsequent adjustments differ.
 
-| Measure | Aggressive 20/30/40 | Conservative 70/80/90 |
-|---|---:|---:|
-| Initial annual real spending | $76,111 | $36,831 |
-| Mean lifetime annual real spending | $73,395 | $189,286 |
-| Mean number of cuts | 15.49 | 6.76 |
-| Mean reduction per cut | 18.7% | 23.6% |
-| Observed depletion | 24.76% | 20.10% |
-| Spending shortfall before final 10 years | 0% | 0% |
+## Verification
 
-All observed default failures occur in the last ten years. The larger conservative lifetime mean reflects later increases and favorable-path upside, not its initial spending level. These are model-specific empirical results, not hardcoded conclusions. They do not establish which strategy is appropriate for a person.
+`npm test` covers connected input mapping, historical block pairing/order, shared paths, both terminal-goal definitions, cash reconciliation, forward/outer inflation agreement, nominal distributions, immediate adjustments, schedule endpoints, infeasibility, calibration and legacy regressions.
 
-Increasing outer scenarios to 25,000 changes depletion to 24.504% and 19.896%, average cuts to 15.447 and 6.727, and mean annual spending to $73,947 and $191,769. With 25,000 outer paths and 2,048 probability samples, initial spending becomes $76,293 and $37,730; depletion is 24.464% and 19.560%, and mean cuts 15.505 and 7.210. Probability-model resolution therefore matters as well as outer count. Default holdout mean/max absolute errors are 1.31/3.79 percentage points across 60 states; maximum monotonic correction is zero.
-
-## Current dollar guardrail check
-
-The practical check accepts current investments, cash, annual withdrawals and whole years elapsed. It uses the same independently calibrated probability model and `remaining = original horizon − elapsed`. For each strategy it solves the investment balances corresponding to its lower and upper probabilities, holding entered current cash and withdrawals fixed. Investment thresholds exclude that cash; total wealth at a threshold is the displayed investment balance plus entered cash. A bounded binary search covers $0–$1 trillion in investments and reports unavailable/imprecise thresholds instead of inventing a number.
-
-It also reports the current probability, whether to cut/maintain/raise, the resulting withdrawal amount, and the amount corresponding to the target probability. Floor/zero-withdrawal infeasibility is explicitly shown. These are estimates for the current checkpoint, not permanent thresholds; the horizon must not be restarted when entering an annual update. Comparison simulations continue to start at the original portfolio/horizon, separately from this practical check. When current cash is nonzero, the model retains cash-fraction states even with reserve replenishment disabled. Tests recover the lower/upper probabilities from the solved dollar thresholds and verify cut/maintain/raise recommendations around those balances.
-
-## Probability schedules and feasibility (October 13, 2026)
-
-Each strategy retains its initial lower/target/upper probabilities and adds a
-schedule and ending target. Existing saved strategies remain fixed. For elapsed
-checkpoint `y` of horizon `H`, `t = y/(H-1)`. Fixed uses weight 0, steady uses `t`,
-earlier uses `1-(1-t)^2`, and later uses `t^2`. Target equals starting target plus
-weight times the difference to the ending target. The ending target applies at
-`y=H-1`, with one year remaining; the deadline records the realized result. A
-one-year horizon has only its starting checkpoint and uses the starting target.
-Starting lower/upper distances remain constant, clipped to [0,1]. Strict crossing
-rules remain unchanged; moving the target alone never resets withdrawals. An
-upper rail of 1 cannot trigger a raise. Neither a capped band nor a sampled 100%
-means certainty. The fixed-target sweep remains explicitly independent of ramps.
-
-Every checkpoint evaluates current withdrawals, the real withdrawal floor, and
-zero withdrawals using the same cash/investment position, remaining years and
-probability surface. Floor-blocked means zero can reach the target but the floor
-cannot; zero-unreachable means even zero cannot. These are counted independently
-of rail crossing or whether a reset was attempted. A 1e-8 comparison tolerance
-only handles floating-point equality, not simulation uncertainty. New summaries
-include probability of any unattainable checkpoint, checkpoint counts for each
-reason, planned years at the floor, lowest actual funded withdrawals, and the
-10th/median/90th cumulative withdrawal distribution. A funding shortfall below
-the floor is separately recorded as before.
-
-For each strategy, fixed withdrawals start at that strategy's solved initial
-withdrawals and keep that real amount. Zero withdrawals retain the same starting
-investment/cash allocation and original cash-reserve dollar target, replenish
-only after positive nominal stock years, and ignore the withdrawal floor. This
-avoids silently moving cash into stocks for the zero reference. Both references
-use exactly the same outer paths as every strategy. They receive no guardrail
-adjustments. With an initial withdrawal amount of zero they coincide. References
-are comparisons under these cash rules, not mathematical upper bounds on success.
-
-Probability candidates use the same prebuilt independent simulation sample,
-never a new random sample for each withdrawal amount. The current check flags
-proximity to a rail within the worst-case sampling margin; the detailed model
-section retains interpolation/holdout error disclosure. No deadband or statistical
-trigger is added: these would change the specified guardrail mechanics. Automated
-schedule tests compare 10,000/25,000 paths and 1,024/2,048 probability samples,
-plus trigger behavior, same-allocation reference accounting and dollar checks.
-
-## Simplified interface and explicit plan transfer
-
-The comparison and current-check screens share stored assumptions and strategy
-settings. Comparison validation does not depend on hidden current-check entries;
-its model uses the starting simulation allocation. The standalone current check
-uses its actual cash position when constructing the probability surface and does
-not run outer retirement scenarios. Neither path changes the financial engine.
-
-“Use my plan” copies a solved main-calculator plan explicitly. Total comparison
-wealth equals investments plus cash; cash is not added twice. The fixed FI target
-is preserved even for custom targets, through an equivalent target withdrawal
-amount at the selected FI rate. Fractional horizons round upward to whole years.
-Unsupported horizons fail visibly. Current checks receive the solved annual
-withdrawal amount and elapsed time zero. Simulation reserve-years settings remain
-unchanged, so initial allocation is still solved with each strategy's withdrawals.
-Income schedules, timing and percentage withdrawal policies are not transferred.
-The original saved main plan is not mutated. This is an explicit scenario setup,
-not automatic synchronization or a claim that the two models are equivalent.
-
-## Current-dollar check-ins and direct schedule comparison
-
-Check-in inputs are now current nominal dollars. Internally, current investments,
-cash and annual withdrawals are divided by `(1 + assumed annual inflation)^elapsed`
-or `1 + entered cumulative inflation` when provided. The original FI target and
-real withdrawal floor are unchanged. Future return/inflation assumptions still
-come from the selected model. Every returned dollar threshold and withdrawal
-recommendation is multiplied by the same historical price factor; probabilities
-are unchanged by display conversion. Deflation is supported; price factors must
-be positive and finite. An explicit total inflation entry is cumulative, not an
-annual rate. Legacy saved check-in amounts are converted once using their saved
-inflation and elapsed years, with a storage marker preventing repeat conversion.
-Using a main plan resets elapsed years and the historical inflation override.
-
-The optional four-schedule run uses a single selected strategy as its base. Fixed,
-steady, earlier and later variants share the exact solved initial withdrawal and
-cash allocation, starting target, rail offsets, return model, seeds and outer
-paths. Only the increasing variants use the ending target; fixed stays at its
-starting target. This is separate from the two-strategy comparison and fixed-target
-sweep. No conclusion is hardcoded. The UI shows the independent calibration check;
-existing 10,000/25,000 and 1,024/2,048 schedule sensitivity tests remain applicable.
-New integration tests verify exact initial-state equality and target endpoints.
-
-The four-schedule comparison has its own saved ending target; it does not read a
-disabled fixed-strategy ending field. The main schedule table includes median
-largest planned withdrawal cut. Detailed metrics include the median and 90th
-percentile longest consecutive stretch of planned withdrawals at the floor.
-Actual payments may fall below the floor after a funding shortfall.
-
-A reproducible [validation review](validation/guardrails-review.md) checks nominal
-and real accounting, floor sensitivity and paired five-year historical sequences.
-This is a sensitivity study; the live estimator remains independent-year sampling.
+`node scripts/validate-connected-guardrails.mjs` compares 10,000 and 25,000 paths for both goals and independent/five-year sampling. Outputs: `validation/connected-guardrails.json`. This run's largest change in observed goal success was below 0.5 percentage points. Holdout maximum probability discrepancies range from 3.1 to 5.8 percentage points; the latter remains visibly flagged in the UI. These are scenario-specific numerical checks, not recommended withdrawal policies.

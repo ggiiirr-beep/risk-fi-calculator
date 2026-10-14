@@ -85,3 +85,6 @@ Choose years from now or target age (with current age). Enter return before infl
 
 ### Main calculator, October 14 update
 Inputs and FI targets are in today’s dollars. Display projections in today’s or future dollars without changing calculations. FI uses investments plus cash. Dollar withdrawals can rise with inflation or remain fixed in nominal dollars; annual-portfolio percentages follow opening investments. The lifetime projection switches to Traditional FI withdrawals at FI and continues for the chosen extension (100-year cap). Return scenarios retain Risk FI withdrawals throughout for comparison. The separate guardrail model is unchanged and still uses its documented investment-based target; its next update is deferred.
+
+### Connected guardrails (20261014-6)
+Your plan and Risk-Based Guardrails now share solved inputs automatically. Guardrails supports reaching FI by a deadline or funding retirement with a minimum ending balance, confidence ramps, practical withdrawal checks, historical block sampling and real/nominal projections. See [methodology](GUARDRAIL_METHOD.md) for precise goal definitions, cash-policy differences and model limitations. Run `node scripts/validate-connected-guardrails.mjs` for the connected-model validation fixtures.

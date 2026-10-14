@@ -70,3 +70,5 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 @media(max-width:540px){.input-panel #inputs{grid-template-columns:minmax(0,1fr)}.result-divider{margin-top:24px}}
 
 .section-framing{margin:6px 0 18px}.section-framing h3{font-size:1rem;margin:0 0 6px}.section-framing p{font-size:.9rem;line-height:1.6;color:var(--muted);margin:0;max-width:760px}
+
+.shared-value{display:block;padding:12px 14px;font-weight:600;min-height:46px}.has-prefix .shared-value{padding-left:30px}
