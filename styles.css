@@ -5,7 +5,7 @@
 @media(min-width:1500px){.workspace{grid-template-columns:350px minmax(0,1fr)}}@media(max-width:1000px){.workspace{grid-template-columns:285px minmax(0,1fr);gap:18px}.file-actions{flex-wrap:wrap;justify-content:flex-end}.answer{padding:24px}.answer h2{font-size:2.45rem}.metrics{gap:8px}.metric{padding:15px 12px}.metric .value{font-size:1.2rem}.chart-panel{padding:20px}.local-badge{display:none}}@media(max-width:740px){header{height:70px;padding:0 20px}main{padding:25px 18px}.page-heading{display:block}.page-heading h1{font-size:2rem}.file-actions{justify-content:flex-start;margin-top:18px}.tabs{gap:22px;margin-bottom:20px}.workspace{display:block}.input-panel{margin-bottom:20px;padding:20px}.input-panel #inputs{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.solve-select,.input-panel details,.input-panel hr,.input-panel .wide{grid-column:1/-1}.input-panel hr{width:100%;margin:4px 0 18px}.input-panel details{margin-top:0}.answer h2{font-size:2.6rem}.answer{padding:24px 20px}.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.metric{padding:14px 10px}.metric .label{font-size:.7rem}.metric .value{font-size:1.12rem}.metric .detail{font-size:.67rem}.section-head{flex-wrap:wrap}.chart{min-height:180px}.chart-panel{padding:20px 16px}.scenario-controls{grid-template-columns:1fr}.check-grid{grid-template-columns:1fr}.content-panel{padding:20px}.answer-bottom{gap:12px}.risk-results .metrics{grid-template-columns:1fr 1fr}footer{display:block}footer p{margin-top:8px}}@media(prefers-reduced-motion:no-preference){button{transition:background .15s}.answer{animation:arrive .25s ease-out}@keyframes arrive{from{opacity:.6;transform:translateY(3px)}to{opacity:1;transform:none}}}
 [hidden]{display:none!important}
 .field label{font-size:.875rem}
-@media(max-width:740px){.workspace{display:flex;flex-direction:column;gap:18px}.results,#view{display:contents}.input-panel{order:1;width:100%;margin-bottom:0}#view>*{order:2;width:100%;margin-top:0;margin-bottom:0}#view>.answer{order:0}.results>#error{order:0;width:100%}.metrics{margin:0}.field label{font-size:.875rem}}
+@media(max-width:740px){.field label{font-size:.875rem}}
 
 .page-heading>div:first-child{max-width:800px}.page-heading h1{font-size:2rem;letter-spacing:-.7px}.page-heading p:not(.eyebrow){max-width:760px;line-height:1.6}
 /* Red accents remain visible above the charts and detailed results. */
@@ -57,3 +57,14 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 
 .section-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-10px 0 22px}.section-tools button{font-size:.8rem}.section-tools button.active{color:var(--purple);border-color:var(--purple)}.section-tools details{margin:0}.section-tools summary{font-size:.8rem;cursor:pointer}.tabs .help-link{margin-left:auto;font-size:.8rem}.guardrails details>summary{padding:8px 0}.guardrails .gr-grid .hint{line-height:1.5}.guardrails #gr-results{scroll-margin-top:20px}
 @media(max-width:480px){.tabs{gap:14px;flex-wrap:wrap}.tabs button{font-size:.82rem}.tabs .help-link{margin-left:0}.gr-strategy .gr-grid{grid-template-columns:1fr}.solved-tag{white-space:normal}}
+
+/* Inputs precede a separately labelled result section at every screen size. */
+.workspace[data-view="plan"]{grid-template-columns:minmax(0,1fr);gap:32px}
+.workspace[data-view="plan"] .input-panel{width:100%;margin-bottom:0}
+.input-panel #inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}
+.input-panel .solve-select,.input-panel details,.input-panel hr,.input-panel .wide{grid-column:1/-1}
+.result-divider{border-top:2px solid var(--purple);padding-top:20px;margin:28px 0 18px;font-size:1.3rem;color:var(--ink)}
+.plan-result-divider{margin-top:0}
+.workspace:not([data-view="plan"]) .plan-result-divider{display:none}
+.result-divider:has(+ #gr-results:empty){display:none}
+@media(max-width:540px){.input-panel #inputs{grid-template-columns:minmax(0,1fr)}.result-divider{margin-top:24px}}
