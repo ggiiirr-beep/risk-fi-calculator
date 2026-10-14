@@ -89,3 +89,6 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 
 ## Age-based chart axes (20261014-15)
 - Plan, cash-only, withdrawal-rate, return-comparison and withdrawal-comparison graphs use attained ages in ticks and hover/keyboard details when Target age is selected. Years mode retains elapsed-year labels; calculations unchanged.
+
+## Guardrails introduction (20261014-16)
+- Replaced introductory copy with lower/upper probability guardrails and their reset target, emphasizing key terms in bold. Uses estimated probability and toward the target to avoid implying a guaranteed achievable reset.
