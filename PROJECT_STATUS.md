@@ -80,3 +80,6 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 
 ## FI goal preview (20261014-12)
 - Your FI goal now shows its calculated total-assets target in today’s dollars directly under annual FI withdrawals. Updates with withdrawals and FI rate; incomplete entries show a dash.
+
+## Projection horizon controls (20261014-13)
+- Moved years after FI out of the goal form into synchronized dropdowns on both projection graphs. Both graphs and the annual table share the selection; existing saved values remain available.
