@@ -101,3 +101,5 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 
 ## Guardrails hierarchy and copy (20261014-20)
 - Goal selector leads the page in a prominent box; retirement duration/ending balance are grouped with it. Removed repeated setup instructions and duplicate summaries; shared-plan behavior sits in a disclosure. Kept input meaning, probability interpretation and feasibility/result caveats.
+
+- 20261014-21: explanation precedes the goal selector; reduced both text scale and goal-box padding for a quieter hierarchy.

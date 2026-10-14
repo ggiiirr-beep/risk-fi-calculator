@@ -1,9 +1,9 @@
-import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-20';
-import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-20';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261014-20';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-20';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-20';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-20';
+import {compareWithdrawals} from './withdrawal-scenarios.js?v=20261014-21';
+import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261014-21';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261014-21';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261014-21';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261014-21';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261014-21';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
