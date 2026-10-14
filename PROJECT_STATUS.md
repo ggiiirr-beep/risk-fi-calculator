@@ -12,7 +12,7 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Existing features: fixed/steady/earlier/later schedules, fixed original FI deadline, retirement-funding alternative, independent probability estimation, shared outer market paths, fixed/zero-withdrawal references, floors, no-cash comparison, and fixed-target sweep.
 - Methods/data provenance are in `GUARDRAIL_METHOD.md`. Limits include independent annual samples, finite probability lookup, no separate taxes/fees, annual decisions/end-year withdrawals, and potentially large late-retirement increases. Targets are not guarantees.
 - Verification: 98 tests pass, including simulation convergence and new transfer/current-check tests; static build and syntax checks pass. Browser checks cover saved entries, plan transfer, comparison results, expandable charts, standalone check, scenarios, legacy simulator, saved-plan access and Help. Mobile 390px preview has no page overflow; no physical device testing.
-- Asset version: 20261014-2. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
+- Asset version: 20261014-3. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
 
 - Incorporated follow-up review: current checks lead with infeasibility before any suggested cut; fixed-withdrawal success comparison is visible with a plain explanation of the withdrawal-increase tradeoff. New stress-test models and cuts-only policies remain separate possible extensions, not part of this clarity update.
 
@@ -31,3 +31,5 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Added brief framing before the main solver question, starting amounts, FI goal, returns, withdrawal rules, floor, probability schedule, four-schedule comparison and current-position check. Inputs/results ordering and financial calculations are unchanged.
 
 - Plan input heading now directly frames the purpose: “Plan your path from Risk FI to Traditional FI.” Removed its duplicate subheading and renamed the plan output section “Your results,” preserving the divider and inputs-first order.
+
+- Calculated plan fields now display blank while disabled; original entries remain in state and return when enabled. Disabled horizon slider is hidden. Removed redundant saved-entry/ignored-return explanations; today’s-dollar convention appears above inputs. Cash allocation explanation lives with cash settings.
