@@ -13,7 +13,6 @@ An entirely browser-based planning tool for the transition from flexible investm
 - Separate invested assets and cash, nominal/real returns and displays, three cash strategies, temporary income, and beginning/end-of-year withdrawals.
 - Interactive, keyboard-accessible portfolio, withdrawal, and scenario charts; detailed annual cash flows.
 - Seeded Monte Carlo in a worker, with spending cuts, withdrawal stops, income interventions, and separate depletion/unfunded-spending outcomes.
-- Annual check-in with an original baseline, inflation-adjusted comparison, and updated spending, return, and arrival estimates.
 - Local browser saving, responsive layouts, light/dark themes.
 
 ## Run and test
@@ -70,7 +69,6 @@ Risk FI withdrawals can be entered in dollars or as a percentage. Percentage def
 
 - **Your plan:** solve a planning question; compare return scenarios or open the advanced variable-return simulator.
 - **Withdrawal rules:** compare probability-based withdrawal strategies. Use **Use my plan** to copy solved amounts explicitly; cash is included in the comparison's starting balance. The transfer explains unsupported plan features.
-- **Check my position:** update balances and elapsed years for current withdrawal thresholds, or compare against a saved baseline.
 - **Help:** brief explanations first; full methodology remains available in expandable sections.
 
 Existing browser storage keys and entered numbers are retained. The current guardrail check runs independently of the full outer simulation comparison.
@@ -87,4 +85,6 @@ Choose years from now or target age (with current age). Enter return before infl
 Inputs and FI targets are in today’s dollars. Display projections in today’s or future dollars without changing calculations. FI uses investments plus cash. Dollar withdrawals can rise with inflation or remain fixed in nominal dollars; annual-portfolio percentages follow opening investments. The lifetime projection switches to Traditional FI withdrawals at FI and continues for the chosen extension (100-year cap). Return scenarios retain Risk FI withdrawals throughout for comparison. The separate guardrail model is unchanged and still uses its documented investment-based target; its next update is deferred.
 
 ### Connected guardrails (20261014-6)
-Your plan and Risk-Based Guardrails now share solved inputs automatically. Guardrails supports reaching FI by a deadline or funding retirement with a minimum ending balance, confidence ramps, practical withdrawal checks, historical block sampling and real/nominal projections. See [methodology](GUARDRAIL_METHOD.md) for precise goal definitions, cash-policy differences and model limitations. Run `node scripts/validate-connected-guardrails.mjs` for the connected-model validation fixtures.
+Your plan and Risk-Based Guardrails now share solved inputs automatically. Guardrails supports reaching FI by a deadline or funding retirement with a minimum ending balance, confidence ramps, historical block sampling and real/nominal projections. See [methodology](GUARDRAIL_METHOD.md) for precise goal definitions, cash-policy differences and model limitations. Run `node scripts/validate-connected-guardrails.mjs` for the connected-model validation fixtures.
+
+The current-position withdrawal check is removed from the interface (20261014-8), including its cards in comparison results. Internal numerical helpers remain for regression testing.

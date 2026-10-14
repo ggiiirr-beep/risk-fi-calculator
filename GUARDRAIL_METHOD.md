@@ -65,11 +65,9 @@ Every comparison checks the lookup against 2,048 held-out forward paths across s
 
 No separate taxes, fees, asset correlations, employment, monthly emergency decisions or changing asset allocations are modeled. Enter returns after fees/tax drag and withdrawals including taxes. Cash earns a fixed nominal yield. The sample uses US stock history and is not a diversified global-portfolio forecast.
 
-## Practical check and comparisons
+## Comparisons
 
-Check withdrawals now lives inside Risk-Based Guardrails. It begins with the connected plan, and allows current account balances, withdrawals, elapsed years and optional cumulative inflation. It keeps the original deadline and schedule. Shared-plan changes start a new baseline; when updating an existing plan's checkpoint, use this check instead of resetting the original horizon.
-
-Thresholds are solved by holding current cash and withdrawals fixed and searching investments from $0 to $1 trillion. The UI shows total-asset cut/increase thresholds with the cash assumption and investment breakdown. Infeasible or imprecise thresholds are identified. Thresholds change with time, balances, withdrawals and model assumptions.
+The current-position withdrawal check is not exposed in the site. Its numerical helpers remain available for regression testing and potential future use in a separate section.
 
 Two-strategy and four-schedule comparisons use identical starting amounts and markets. Fixed-withdrawal and zero-withdrawal references isolate what adjustments change. The probability sweep retains the same starting plan; initial withdrawals are therefore constant across targets, while immediate and subsequent adjustments differ.
 

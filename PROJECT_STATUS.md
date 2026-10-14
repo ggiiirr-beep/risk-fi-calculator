@@ -12,7 +12,7 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Existing features: fixed/steady/earlier/later schedules, fixed original FI deadline, retirement-funding alternative, independent probability estimation, shared outer market paths, fixed/zero-withdrawal references, floors, no-cash comparison, and fixed-target sweep.
 - Methods/data provenance are in `GUARDRAIL_METHOD.md`. Limits include independent annual samples, finite probability lookup, no separate taxes/fees, annual decisions/end-year withdrawals, and potentially large late-retirement increases. Targets are not guarantees.
 - Verification: 100 tests pass, including simulation convergence and new transfer/current-check tests; static build and syntax checks pass. Browser checks cover saved entries, plan transfer, comparison results, expandable charts, standalone check, scenarios, legacy simulator, saved-plan access and Help. Mobile 390px preview has no page overflow; no physical device testing.
-- Asset version: 20261014-7. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
+- Asset version: 20261014-8. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
 
 - Incorporated follow-up review: current checks lead with infeasibility before any suggested cut; fixed-withdrawal success comparison is visible with a plain explanation of the withdrawal-increase tradeoff. New stress-test models and cuts-only policies remain separate possible extensions, not part of this clarity update.
 
@@ -60,3 +60,7 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Uses the main withdrawal basis and inflation policy, while freezing actual starting cash, investments, returns and Traditional FI target. Scenarios do not edit shared plan inputs. Overrides persist in browser storage, with Use plan defaults to reset.
 - Results show FI dates, total assets at the desired date and a common-horizon chart; today/future-dollar preference is shared. Risk FI rules continue through the comparison, as disclosed.
 - Two new engine tests cover cash/goal isolation, source immutability, direction of FI dates, percentage behavior, invalid inputs and infeasible plans.
+
+## Remove current-position check (20261014-8)
+- Removed Check withdrawals now, its mode selector, and the current-position action/threshold cards previously prepended to comparison results. Guardrails now opens directly into comparison setup and results.
+- Removed Help instructions directing users to the check. Numerical check helpers and tests are retained for a possible separate feature later; comparison simulation mechanics are unchanged.
