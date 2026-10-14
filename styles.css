@@ -82,3 +82,5 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 .guardrails .content-panel .guardrails-intro{font-family:Manrope,system-ui,sans-serif;font-size:clamp(1.05rem,1.4vw,1.2rem);line-height:1.45;font-weight:450;letter-spacing:-.025em;color:var(--ink);margin:0 0 18px;max-width:1050px}.guardrails-intro strong{font-weight:750;color:var(--purple)}
 
 .guardrail-goal{border:1px solid var(--border);border-left:4px solid var(--purple);border-radius:12px;background:var(--surface2);padding:14px 16px;margin:0 0 20px}.guardrail-goal>.field:first-child label{font-family:Manrope,system-ui;font-size:1rem;font-weight:600;color:var(--ink)}.guardrail-goal>.field:first-child select{font-size:1rem;font-weight:500;padding:10px 12px}.guardrails .guardrail-goal p{margin:0;font-size:.85rem}.guardrail-goal>.field:not(:first-child){margin-top:16px}
+
+.gr-input-box{padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);margin:20px 0}.guardrails .gr-input-box h3{margin-top:0}.gr-input-box .metric{background:var(--surface)}#gr-start-results:empty{display:none}#gr-start-results{margin-top:22px}

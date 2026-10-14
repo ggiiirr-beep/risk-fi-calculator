@@ -6,7 +6,7 @@ An entirely browser-based planning tool for the transition from flexible investm
 
 ## Features
 
-- **Risk-Based Guardrails**: defaults to reaching a Traditional FI investment target by a fixed deadline (15 years). The alternative goal funds retirement without depletion. Includes current dollar guardrail thresholds and withdrawal recommendations, plus a policy comparison with paired historical bootstrap data, shared market paths, independent probability estimates, editable thresholds, cash/floor options and four interactive charts. See [model and verification notes](GUARDRAIL_METHOD.md).
+- **Risk-Based Guardrails**: calculate starting withdrawals at different modeled confidence targets, then simulate withdrawal rules on identical historical market paths. Shared assets/cash and FI goals, optional confidence ramps, custom volatility, and explicit U.S.-stock-history limitations. See [methodology](GUARDRAIL_METHOD.md).
 
 - Five questions: how much can I withdraw, how much do I need invested, when will I reach Traditional FI, what return do I need, and check my plan. Time results combine years, date, and age. Additional engine solvers remain available internally.
 - Check a fixed plan against a desired date. A missed date shows the later projected FI date and extends the chart. Unfunded or unreachable plans are explicitly reported.
@@ -88,3 +88,6 @@ Inputs and FI targets are in today’s dollars. Display projections in today’s
 Your plan and Risk-Based Guardrails now share solved inputs automatically. Guardrails supports reaching FI by a deadline or funding retirement with a minimum ending balance, confidence ramps, historical block sampling and real/nominal projections. See [methodology](GUARDRAIL_METHOD.md) for precise goal definitions, cash-policy differences and model limitations. Run `node scripts/validate-connected-guardrails.mjs` for the connected-model validation fixtures.
 
 The current-position withdrawal check is removed from the interface (20261014-8), including its cards in comparison results. Internal numerical helpers remain for regression testing.
+
+### Two-step guardrails (20261014-25)
+Starting withdrawals are solved from confidence targets, preserving entered assets and cash. Unattainable targets remain explicit. Simulations start at those calculated amounts and summarize observed success, withdrawals, cut likelihood/severity and zero-withdrawal periods, with fixed/zero references on the same paths. Custom historical volatility is a calibrated positive-gross-return transformation, not unchanged historical data. All data is U.S. stock/inflation history; model probabilities are not guarantees.

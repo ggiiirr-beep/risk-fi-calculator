@@ -22,6 +22,8 @@ export function validateGuardrails(a,strategies=defaultStrategies){
  if(!Number.isFinite(a.endingBalance??0)||(a.endingBalance??0)<0||(a.endingBalance??0)>1e12)throw Error('Ending balance must be between $0 and $1 trillion, in today’s dollars.');
  if(![1,3,5,10].includes(a.blockYears??1))throw Error('Choose 1, 3, 5 or 10 years per historical block.');
  if(a.initialMode==='plan'&&(!Number.isFinite(a.initialWithdrawal)||a.initialWithdrawal<0||a.initialWithdrawal<a.floor||!Number.isFinite(a.initialCash)||a.initialCash<0||a.initialCash>a.portfolio))throw Error('Starting withdrawals must meet the floor and starting cash must fit within total assets.');
+ if(a.initialCash!=null&&(!Number.isFinite(a.initialCash)||a.initialCash<0||a.initialCash>a.portfolio))throw Error('Starting cash must fit within total assets.');
+ if(a.volatilityMode!=null&&!['historical','custom'].includes(a.volatilityMode))throw Error('Choose historical or custom volatility.');
  if(a.portfolio<=0||a.portfolio>1e12)throw Error('Starting portfolio must be above $0 and at most $1 trillion.');
  if(!Number.isInteger(a.years)||a.years<1||a.years>60)throw Error('Use a retirement duration of 1–60 whole years.');
  if(a.stockMean<=-.9||a.stockMean>1||a.stockVol<0||a.stockVol>1||a.inflation<=-.5||a.inflation>.5||a.cashReturn<=-.5||a.cashReturn>.5)throw Error('Check your return, volatility, and inflation assumptions.');
@@ -43,15 +45,26 @@ const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
 export function quantileSorted(a,p){const x=(a.length-1)*p,i=Math.floor(x);return a[i]+(a[Math.ceil(x)]-a[i])*(x-i);}
 export function stats(values){const a=Array.from(values).sort((a,b)=>a-b);return {mean:mean(a),p10:quantileSorted(a,.1),median:quantileSorted(a,.5),p90:quantileSorted(a,.9),max:a.at(-1)};}
 const historicMean=mean(historicalYears.map(r=>r[1])),historicInflation=mean(historicalYears.map(r=>r[2]));
+// Positive gross-return power transform: calibrate full-dataset arithmetic mean and volatility.
+export function adjustedHistoricalGross(a){
+ const gross=historicalYears.map(r=>1+r[1]),m=a.model==='bootstrap'?1+a.stockMean:1+historicMean;
+ if(a.volatilityMode!=='custom')return gross.map(g=>g*(a.model==='bootstrap'?m/(1+historicMean):1));
+ const at=b=>{const v=gross.map(g=>g**b),avg=mean(v);return v.map(g=>g*m/avg);};
+ let lo=0,hi=1;const sd=v=>Math.sqrt(mean(v.map(g=>(g-m)**2)));
+ while(sd(at(hi))<a.stockVol&&hi<64)hi*=2;
+ if(sd(at(hi))+1e-10<a.stockVol)throw Error('Custom volatility cannot be matched with this return assumption. Lower volatility or raise the expected return.');
+ for(let i=0;i<60;i++){const mid=(lo+hi)/2;if(sd(at(mid))<a.stockVol)lo=mid;else hi=mid;}
+ return at((lo+hi)/2);
+}
 // Separate streams are used for outer paths, probability construction, and validation.
 export function marketPaths(a,count,seed){
  const random=seededRandom(seed),stock=new Float64Array(count*a.years),cash=new Float64Array(stock.length),positive=new Uint8Array(stock.length),pricesPath=new Float64Array(stock.length),historyIndex=new Int16Array(stock.length).fill(-1);
- let blockStart=0;const block=a.blockYears??1;
+ let blockStart=0;const block=a.blockYears??1,adjusted=a.model==='parametric'?null:adjustedHistoricalGross(a);
  const sigma=Math.sqrt(Math.log1p(a.stockVol**2/(1+a.stockMean)**2)),mu=Math.log1p(a.stockMean)-sigma*sigma/2;
  for(let i=0;i<stock.length;i++){
   let gross,prices;
   if(a.model==='parametric'){gross=Math.exp(mu+sigma*Math.sqrt(-2*Math.log(Math.max(1e-12,random())))*Math.cos(2*Math.PI*random()));prices=1+a.inflation;}
-  else{const year=i%a.years;if(year%block===0)blockStart=Math.floor(random()*(historicalYears.length-block+1));const index=blockStart+year%block;historyIndex[i]=index;const r=historicalYears[index];gross=1+r[1];prices=1+r[2];if(a.model==='bootstrap'){gross*=(1+a.stockMean)/(1+historicMean);prices*=(1+a.inflation)/(1+historicInflation);}}
+  else{const year=i%a.years;if(year%block===0)blockStart=Math.floor(random()*(historicalYears.length-block+1));const index=blockStart+year%block;historyIndex[i]=index;const r=historicalYears[index];gross=adjusted[index];prices=1+r[2];if(a.model==='bootstrap'){prices*=(1+a.inflation)/(1+historicInflation);}}
   pricesPath[i]=prices;stock[i]=gross/prices;cash[i]=(1+a.cashReturn)/prices;positive[i]=gross>1?1:0;
  }
  return {stock,cash,positive,prices:pricesPath,historyIndex,years:a.years,count,seed};
@@ -135,6 +148,12 @@ export function buildProbabilityModel(a,{progress=()=>{},rateSteps=160,cashSteps
  return {probability,spendingFor,paths,rates,fractions,maxCorrection,targetRatioMax:targets.at(-1)};
 }
 export function initialSpending(a,strategy,model){
+ if(a.initialMode==='target'&&a.initialCash!=null){
+  const cash=a.initialCash,investment=a.portfolio-cash,zeroProbability=model.probability(investment,cash,0,a.years),fit=model.spendingFor(investment,cash,a.years,strategy.target,a.floor);
+  const unreachable=zeroProbability<strategy.target,spending=unreachable?0:fit.spending,probability=model.probability(investment,cash,spending,a.years);
+  return {cash,investment,spending,probability,zeroProbability,unreachable,limited:unreachable||Math.abs(probability-strategy.target)>.015};
+ }
+
  if(a.initialMode==='plan'){
   const cash=a.initialCash,investment=a.portfolio-cash,spending=a.initialWithdrawal,probability=model.probability(investment,cash,spending,a.years),zeroProbability=model.probability(investment,cash,0,a.years);
   return {cash,investment,spending,probability,zeroProbability,unreachable:zeroProbability<strategy.target,limited:false,fromPlan:true};
@@ -196,9 +215,10 @@ export function aggregateStrategy(a,strategy,model,paths,{progress=()=>{},keepPa
   if(n<keepPaths)examples.push({index:n,...r});
   if(n%1000===999)progress({stage:'outer',fraction:(n+1)/paths.count});
  }
+ const zeroDurations=Array.from(samples.floorYears).filter(v=>v>0),anyCut=Array.from(samples.cuts).filter(v=>v>0).length;
  const metrics=Object.fromEntries(fields.map(f=>[f,stats(samples[f])])),histogram=Array.from({length:10},(_,i)=>({lower:i/10,upper:(i+1)/10,count:0}));
  for(const value of samples.maxCut)histogram[Math.min(9,Math.floor(value*10))].count++;
- return {nominal:{total:stats(nominalTotals),spending:nominalWithdrawals.map((v,i)=>({year:i+1,...stats(v)})),balances:nominalAssets.map((v,i)=>({year:i,...stats(v),cash:stats(nominalCash[i]),investment:stats(nominalInvestment[i]),target:stats(nominalTargets[i])}))},policy,unattainableRate:anyUnattainable/paths.count,strategy,initial,metrics,fiSuccessRate:fiReached/paths.count,fiMissRate:1-fiReached/paths.count,averageAnnual:metrics.total.mean/a.years,averageCut:cutTotal?cutPercent/cutTotal:0,averageCutDollars:cutTotal?cutDollars/cutTotal:0,depletionRate:depleted/paths.count,shortfallRate:shortfalls/paths.count,earlyShortfallRate:earlyShortfalls/paths.count,actualSuccess:fiReached/paths.count,fundedRate:1-shortfalls/paths.count,firstCut:firstCut.map(n=>n/paths.count),histogram,spending:spending.map((v,i)=>({year:i+1,...stats(v)})),balances:balances.map((v,i)=>({year:i,...stats(v),cash:stats(cash[i]),investment:stats(investment[i])})),examples};
+ return {nominal:{total:stats(nominalTotals),spending:nominalWithdrawals.map((v,i)=>({year:i+1,...stats(v)})),balances:nominalAssets.map((v,i)=>({year:i,...stats(v),cash:stats(nominalCash[i]),investment:stats(nominalInvestment[i]),target:stats(nominalTargets[i])}))},anyCutRate:anyCut/paths.count,anyZeroRate:zeroDurations.length/paths.count,zeroYearsWhenAffected:zeroDurations.length?stats(zeroDurations):null,policy,unattainableRate:anyUnattainable/paths.count,strategy,initial,metrics,fiSuccessRate:fiReached/paths.count,fiMissRate:1-fiReached/paths.count,averageAnnual:metrics.total.mean/a.years,averageCut:cutTotal?cutPercent/cutTotal:0,averageCutDollars:cutTotal?cutDollars/cutTotal:0,depletionRate:depleted/paths.count,shortfallRate:shortfalls/paths.count,earlyShortfallRate:earlyShortfalls/paths.count,actualSuccess:fiReached/paths.count,fundedRate:1-shortfalls/paths.count,firstCut:firstCut.map(n=>n/paths.count),histogram,spending:spending.map((v,i)=>({year:i+1,...stats(v)})),balances:balances.map((v,i)=>({year:i,...stats(v),cash:stats(cash[i]),investment:stats(investment[i])})),examples};
 }
 export function calibrate(a,model){
  const validation=marketPaths(a,2048,(a.seed^0x85ebca6b)>>>0),checks=[];
@@ -235,8 +255,8 @@ export function runGuardrailComparison(input,strategies=defaultStrategies,{progr
  }
  const references=strategies.map((s,i)=>({name:s.name,fixed:aggregateStrategy(a,s,model,paths,{keepPaths:0,policy:'fixed',initialOverride:results[i].initial}),zero:aggregateStrategy(a,s,model,paths,{keepPaths:0,policy:'zero',initialOverride:results[i].initial})}));
  let noCash=null,noCashCalibration=null;
- if(a.compareNoCash&&(a.reserveYears>0||(a.initialCash??0)>0)){const b={...a,reserveYears:0,checkCash:0,initialCash:a.initialMode==='plan'?0:a.initialCash},other=buildProbabilityModel(b,{progress});noCashCalibration=calibrate(b,other);noCash=strategies.map(s=>aggregateStrategy(b,s,other,paths,{progress:p=>progress({...p,label:s.name+' · no cash'})}));}
- return {references,currentDollarFactor:1,assumptions:a,currentChecks:strategies.map(s=>currentGuardrailCheck(a,s,model)),source:historySource,historicalMean:historicMean,historicalInflation:historicInflation,calibration,noCashCalibration,results:results.slice(0,strategies.length),sweep:results.slice(strategies.length).map(r=>({target:r.strategy.target,initial:r.initial.spending,annual:r.averageAnnual,cuts:r.metrics.cuts.mean,maxCut:r.metrics.maxCut.median,depletion:r.depletionRate,fiSuccess:r.fiSuccessRate,fiMiss:r.fiMissRate})),noCash,elapsedMs:Date.now()-started,pathSeed:paths.seed,probabilitySeed:(a.seed^0x9e3779b9)>>>0,validationSeed:(a.seed^0x85ebca6b)>>>0};
+ if(a.compareNoCash&&(a.reserveYears>0||(a.initialCash??0)>0)){const b={...a,reserveYears:0,checkCash:0,initialCash:0},other=buildProbabilityModel(b,{progress});noCashCalibration=calibrate(b,other);noCash=strategies.map(s=>aggregateStrategy(b,s,other,paths,{progress:p=>progress({...p,label:s.name+' · no cash'})}));}
+ return {starting:startingTable(a,strategies,model),references,currentDollarFactor:1,assumptions:a,currentChecks:strategies.map(s=>currentGuardrailCheck(a,s,model)),source:historySource,historicalMean:historicMean,historicalInflation:historicInflation,calibration,noCashCalibration,results:results.slice(0,strategies.length),sweep:results.slice(strategies.length).map(r=>({target:r.strategy.target,initial:r.initial.spending,annual:r.averageAnnual,cuts:r.metrics.cuts.mean,maxCut:r.metrics.maxCut.median,depletion:r.depletionRate,fiSuccess:r.fiSuccessRate,fiMiss:r.fiMissRate})),noCash,elapsedMs:Date.now()-started,pathSeed:paths.seed,probabilitySeed:(a.seed^0x9e3779b9)>>>0,validationSeed:(a.seed^0x85ebca6b)>>>0};
 }
 
 export function runCurrentGuardrailCheck(input,strategies=defaultStrategies,{progress=()=>{}}={}){
@@ -259,4 +279,14 @@ export function runScheduleComparison(input,strategies=defaultStrategies,{progre
  const started=Date.now(),paths=marketPaths(a,a.count,a.seed),model=buildProbabilityModel(a,{progress}),initial=initialSpending(a,base,model);
  const results=variants.map(s=>aggregateStrategy(a,s,model,paths,{initialOverride:initial,progress:p=>progress({...p,label:s.name})}));
  return {kind:'schedules',assumptions:a,base,results,calibration:calibrate(a,model),elapsedMs:Date.now()-started,pathSeed:paths.seed};
+}
+
+function startingTable(a,strategies,model){
+ const targets=[...new Set([.2,.3,.4,.5,.6,.7,.8,.9,...strategies.map(s=>s.target)])].sort((a,b)=>a-b);
+ return targets.map(target=>({target,...initialSpending({...a,initialMode:'target'}, {target},model)}));
+}
+export function runStartingWithdrawals(input,strategies=defaultStrategies,{progress=()=>{}}={}){
+ const a={...guardrailDefaults,...input,initialMode:'target',floor:0};validateGuardrails(a,strategies);
+ const started=Date.now(),model=buildProbabilityModel(a,{progress});
+ return {kind:'starting',assumptions:a,starting:startingTable(a,strategies,model),calibration:calibrate(a,model),elapsedMs:Date.now()-started};
 }

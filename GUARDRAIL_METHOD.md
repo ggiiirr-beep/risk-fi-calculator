@@ -1,12 +1,14 @@
 # Risk-Based Guardrails — connected model
 
-Updated October 14, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261014-6; earlier validation files describe explicitly older model versions.
+Updated October 14, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261014-25; earlier validation files describe explicitly older model versions.
 
 ## One plan, two tabs
 
-Your plan owns investments, cash, Risk FI withdrawals, Traditional FI withdrawals/rate, FI horizon, expected returns, inflation and the withdrawal inflation choice. Risk-Based Guardrails automatically reads the solved plan whenever opened. No import action or separate editable copy of shared inputs is presented. Changes invalidate prior results. Rule thresholds, floors, historical sampling settings, retirement duration and ending balance remain guardrail-specific.
+Shared cards show total wealth, actual cash/investments, FI target and horizon, returns and inflation. They remain linked and editable in both tabs. Calculated source timelines/investments/returns have visible provenance notes. Editing creates an explicit Check my plan snapshot. Retirement duration and ending balance are independent of the FI deadline.
 
-Both strategies begin with exactly the main plan's investments and cash. In Risk FI mode they begin with its Risk FI withdrawal amount; retirement mode starts today with its Traditional FI withdrawal amount. Guardrails replace percentage-based withdrawal rules with probability-based adjustments. Initial percentages are converted to their starting dollar amount. Both strategies check their rules immediately and annually thereafter, so their first actual withdrawals can differ despite identical starting inputs.
+Step 1 builds the probability model and solves starting withdrawals at 20–90% confidence plus each strategy's selected target. It preserves actual entered cash and investments; it does not use the main plan's withdrawal amount or reallocate initial cash. Annual/monthly dollars, percent of wealth and achieved confidence are shown. Targets above zero-withdrawal confidence are marked unattainable; they are never presented as successful $0 solutions.
+
+Step 2 runs each strategy from its own solved withdrawals on shared market paths, with fixed and zero-withdrawal references. Unattainable strategies start from zero and remain explicitly flagged. A schedule comparison uses a common starting confidence and solved withdrawal amount. The minimum withdrawal is always zero in both modes; engine floor support remains only for legacy tests.
 
 The main cash policy is not identical to the guardrail policy: guardrails replenish cash after positive stock-return years, toward the entered reserve-years target. Starting cash is preserved, not recalculated from spending. Cash is included exactly once in starting wealth. The optional no-cash comparison instead invests all starting wealth, with the same starting withdrawals and market paths.
 
@@ -29,7 +31,7 @@ At each checkpoint:
 
 1. Estimate goal success if the current withdrawal policy continues without later guardrail changes.
 2. Below the lower rail, cut toward the current target. Above the upper rail, increase toward it. Otherwise maintain the policy. A schedule change alone does not force a reset.
-3. Separately estimate success at the withdrawal floor and at zero. Distinguish a binding floor from a target unattainable even with zero withdrawals. Report achieved probability when restoration fails.
+3. Separately estimate success at zero. Identify targets unattainable even with zero withdrawals. Report achieved probability when restoration fails.
 
 Risk FI can reduce withdrawals to zero. No work income or contributions are invented. The goal and deadline never extend automatically. The observed strategy success rate includes future adjustments and need not equal any checkpoint target probability.
 
@@ -51,7 +53,7 @@ Outer count: 10,000–100,000. Probability paths: 512–4,096, default 1,024. Se
 
 Internal values are real dollars. Stocks and cash each receive one annual return and inflation adjustment. Withdrawals occur at year-end. Cash is used first after nonpositive nominal stock returns; stocks first after positive returns, with the other asset covering shortages. Positive years then transfer stocks into cash toward reserve years × planned withdrawals. Balances never become negative, transfers create no money, and unmet withdrawals are recorded.
 
-With inflation adjustment enabled, planned real withdrawals stay constant between decisions. Otherwise planned withdrawals keep their nominal amount and are deflated using each sampled year's inflation. Forward estimates use the same convention. The real withdrawal floor constrains guardrail decisions; in fixed-nominal guardrail paths its purchasing power is restored at subsequent checkpoints if necessary. The fixed-withdrawal reference does not perform that restoration. Thus floor maintenance itself is a future adjustment, excluded from a checkpoint's no-further-adjustment estimate.
+With inflation adjustment enabled, planned real withdrawals stay constant between decisions. Otherwise planned withdrawals keep their nominal amount and are deflated using each sampled year's inflation. Forward estimates use the same convention.
 
 Future-dollar projection distributions are computed from each path's actual sampled cumulative inflation, not by applying one factor to a real median. Charts, headline withdrawal totals and the four-schedule table switch views. Current-check actions always use current account dollars; detailed stability/cut metrics and reference tables explicitly use real dollars. A total of future withdrawals sums dollars from different years and is not a purchasing-power measure. Neither view changes probabilities.
 
@@ -69,10 +71,17 @@ No separate taxes, fees, asset correlations, employment, monthly emergency decis
 
 The current-position withdrawal check is not exposed in the site. Its numerical helpers remain available for regression testing and potential future use in a separate section.
 
-Two-strategy and four-schedule comparisons use identical starting amounts and markets. Fixed-withdrawal and zero-withdrawal references isolate what adjustments change. The probability sweep retains the same starting plan; initial withdrawals are therefore constant across targets, while immediate and subsequent adjustments differ.
+Two-strategy and four-schedule comparisons use identical starting amounts and markets. Fixed-withdrawal and zero-withdrawal references isolate what adjustments change. The probability sweep holds initial assets/cash and the goal fixed, solving a different initial withdrawal amount for each confidence target.
 
 ## Verification
 
 `npm test` covers connected input mapping, historical block pairing/order, shared paths, both terminal-goal definitions, cash reconciliation, forward/outer inflation agreement, nominal distributions, immediate adjustments, schedule endpoints, infeasibility, calibration and legacy regressions.
 
 `node scripts/validate-connected-guardrails.mjs` compares 10,000 and 25,000 paths for both goals and independent/five-year sampling. Outputs: `validation/connected-guardrails.json`. This run's largest change in observed goal success was below 0.5 percentage points. Holdout maximum probability discrepancies range from 3.1 to 5.8 percentage points; the latter remains visibly flagged in the UI. These are scenario-specific numerical checks, not recommended withdrawal policies.
+
+## Custom historical volatility (20261014-25)
+Historical volatility is the default. Custom annual volatility uses positive historical gross stock returns raised to a calibrated exponent, then normalized to the selected arithmetic gross-return mean. Bisection chooses the exponent so the population standard deviation across all 98 transformed annual observations matches the requested nominal annual volatility. Zero volatility produces a constant gross stock return. The gross-return transform avoids negative prices and impossible losses beyond 100%.
+
+Centered mode preserves the entered expected nominal stock-return mean; historical-mean mode preserves the source mean. Historical inflation pairing and sampled block indices are unchanged. Custom volatility transforms historical outcomes and is explicitly labeled; it is not a literal replay. Finite/non-wrapping block samples need not match the full-dataset mean or volatility exactly. Parametric mode continues to use its entered annual volatility directly.
+
+Results include the chance of any cut, chance of planned zero withdrawals, mean zero-withdrawal years among affected paths, and median/10th/90th withdrawal bands. Conditional durations are shown separately from averages across all paths. Median bands are cross-sectional summaries, not single retirement experiences. Finite probability resolution and the existing calibration warnings remain visible.

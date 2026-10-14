@@ -118,3 +118,10 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Added Compare target dates, using calendar dates or target ages according to the plan's timeline mode. Defaults are five years earlier, current target and five years later, bounded to future/100-year horizons. Users can solve withdrawals, investments or return for each date.
 - Actual cash and real FI goal remain fixed across dates. Results show the future-dollar FI target for every date. Infeasible dates are reported independently. Comparison horizon overrides persist separately from the plan.
 - FI-date comparison cards indicate whether the desired date is met. Verified 118 tests, syntax/build and browser checks of calendar/age mode, independent selector options and date results.
+
+## Two-step guardrails (20261014-25)
+- Step 1 solves confidence-specific starting withdrawals with actual entered investments/cash fixed; shows annual/monthly dollars, percentage of assets and achieved probability. Targets unreachable at zero are explicitly flagged.
+- Step 2 starts each strategy at its solved amount, with the same outer markets and fixed/zero references. Both modes have zero minimum. Deadline success means holding the target at the deadline, not an earlier touch.
+- Starting assumptions label calculated source timelines, investments and returns; editable deadline remains connected. Main-plan withdrawals are explicitly excluded from initial solutions. Age metadata now labels guardrail time charts.
+- Custom historical annual volatility uses a positive gross-return power transform calibrated to the full-source arithmetic mean/stddev, preserving sampled indices and paired inflation. Historical variability is default; custom transformations and U.S.-only limitations are visibly disclosed.
+- Added chance of any cut/zero withdrawals, conditional zero durations and median bands. 121 tests passed. Synthetic 15-year custom-volatility run: 10k vs 25k success differences 0.078 and 0.184 percentage points; max independent probability discrepancy 2.95 points. This checks numerical stability, not forecasting validity.
