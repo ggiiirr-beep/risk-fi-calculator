@@ -94,3 +94,5 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Replaced introductory copy with lower/upper probability guardrails and their reset target, emphasizing key terms in bold. Uses estimated probability and toward the target to avoid implying a guaranteed achievable reset.
 
 - 20261014-17: removed the redundant guardrails question heading; introduction now leads directly.
+
+- 20261014-18: styled the guardrails explanation as a prominent responsive introduction with larger title typography and purple bold emphasis.
