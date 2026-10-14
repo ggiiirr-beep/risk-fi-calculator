@@ -183,3 +183,13 @@ starting target. This is separate from the two-strategy comparison and fixed-tar
 sweep. No conclusion is hardcoded. The UI shows the independent calibration check;
 existing 10,000/25,000 and 1,024/2,048 schedule sensitivity tests remain applicable.
 New integration tests verify exact initial-state equality and target endpoints.
+
+The four-schedule comparison has its own saved ending target; it does not read a
+disabled fixed-strategy ending field. The main schedule table includes median
+largest planned withdrawal cut. Detailed metrics include the median and 90th
+percentile longest consecutive stretch of planned withdrawals at the floor.
+Actual payments may fall below the floor after a funding shortfall.
+
+A reproducible [validation review](validation/guardrails-review.md) checks nominal
+and real accounting, floor sensitivity and paired five-year historical sequences.
+This is a sensitivity study; the live estimator remains independent-year sampling.

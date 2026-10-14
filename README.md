@@ -74,3 +74,7 @@ Risk FI withdrawals can be entered in dollars or as a percentage. Percentage def
 - **Help:** brief explanations first; full methodology remains available in expandable sections.
 
 Existing browser storage keys and entered numbers are retained. The current guardrail check runs independently of the full outer simulation comparison.
+
+## Validation review
+
+Run `npm run validate:guardrails` for the independent cash/inflation ledger and paired five-year sequence sensitivity study. See [results and limitations](validation/guardrails-review.md). The normal regression suite remains `npm test`.

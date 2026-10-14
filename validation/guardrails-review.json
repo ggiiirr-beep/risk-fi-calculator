@@ -1,0 +1,5790 @@
+{
+  "assumptions": {
+    "portfolio": 1100000,
+    "goal": "fi",
+    "years": 10,
+    "fiYears": 15,
+    "retirementYears": 50,
+    "fiWithdrawals": 60000,
+    "fiRate": 0.04,
+    "stockMean": 0.09,
+    "stockVol": 0.18,
+    "inflation": 0.025,
+    "cashReturn": 0.035,
+    "reserveYears": 2,
+    "floor": 0,
+    "count": 10000,
+    "innerCount": 1024,
+    "seed": 7301,
+    "model": "bootstrap",
+    "compareNoCash": false,
+    "checkInvestment": 900000,
+    "checkCash": 100000,
+    "checkSpending": 40000,
+    "checkElapsed": 0,
+    "checkInflationTotal": null,
+    "checkDollarBasis": "current"
+  },
+  "base": {
+    "name": "Validation",
+    "lower": 0.2,
+    "target": 0.3,
+    "upper": 0.4,
+    "endTarget": 0.9
+  },
+  "stockScale": 0.9744789239179356,
+  "priceScale": 0.9941000464087861,
+  "note": "Sensitivity study, not a new forecast. Probability model remains IID while outer ordering changes. Historical traces use centered gross returns/inflation, not literal historical replay. Floors are illustrative.",
+  "summary": [
+    {
+      "floor": 0,
+      "sampling": "iid",
+      "schedule": "fixed",
+      "success": 0.147,
+      "initial": 50658.20748720853,
+      "totalMedian": 412512.9747262951,
+      "cutsMean": 2.0045,
+      "largestCutMedian": 1,
+      "floorYearsMean": 3.0835,
+      "floorStreakP90": 7,
+      "unattainable": 0.7722
+    },
+    {
+      "floor": 0,
+      "sampling": "iid",
+      "schedule": "steady",
+      "success": 0.4632,
+      "initial": 50658.20748720853,
+      "totalMedian": 157701.07179709023,
+      "cutsMean": 1.7005,
+      "largestCutMedian": 1,
+      "floorYearsMean": 5.246,
+      "floorStreakP90": 8,
+      "unattainable": 0.9038
+    },
+    {
+      "floor": 0,
+      "sampling": "iid",
+      "schedule": "early",
+      "success": 0.5009,
+      "initial": 50658.20748720853,
+      "totalMedian": 101316.41497441706,
+      "cutsMean": 1.4781,
+      "largestCutMedian": 1,
+      "floorYearsMean": 6.4017,
+      "floorStreakP90": 9,
+      "unattainable": 0.9421
+    },
+    {
+      "floor": 0,
+      "sampling": "iid",
+      "schedule": "late",
+      "success": 0.4063,
+      "initial": 50658.20748720853,
+      "totalMedian": 243395.2746068373,
+      "cutsMean": 1.8815,
+      "largestCutMedian": 1,
+      "floorYearsMean": 4.4123,
+      "floorStreakP90": 8,
+      "unattainable": 0.9072
+    },
+    {
+      "floor": 0,
+      "sampling": "fiveYearBlocks",
+      "schedule": "fixed",
+      "success": 0.1237,
+      "initial": 50658.20748720853,
+      "totalMedian": 418983.777851208,
+      "cutsMean": 2.093,
+      "largestCutMedian": 1,
+      "floorYearsMean": 3.0315,
+      "floorStreakP90": 7,
+      "unattainable": 0.7683
+    },
+    {
+      "floor": 0,
+      "sampling": "fiveYearBlocks",
+      "schedule": "steady",
+      "success": 0.4749,
+      "initial": 50658.20748720853,
+      "totalMedian": 157254.22022993764,
+      "cutsMean": 1.7448,
+      "largestCutMedian": 1,
+      "floorYearsMean": 5.3654,
+      "floorStreakP90": 8,
+      "unattainable": 0.9219
+    },
+    {
+      "floor": 0,
+      "sampling": "fiveYearBlocks",
+      "schedule": "early",
+      "success": 0.5008,
+      "initial": 50658.20748720853,
+      "totalMedian": 101316.41497441706,
+      "cutsMean": 1.4737,
+      "largestCutMedian": 1,
+      "floorYearsMean": 6.846,
+      "floorStreakP90": 9,
+      "unattainable": 0.9757
+    },
+    {
+      "floor": 0,
+      "sampling": "fiveYearBlocks",
+      "schedule": "late",
+      "success": 0.4095,
+      "initial": 50658.20748720853,
+      "totalMedian": 235949.8037942274,
+      "cutsMean": 1.9289,
+      "largestCutMedian": 1,
+      "floorYearsMean": 4.4264,
+      "floorStreakP90": 8,
+      "unattainable": 0.9316
+    },
+    {
+      "floor": 0,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "fixed",
+      "success": 0.1436,
+      "initial": 50658.20748720853,
+      "totalMedian": 402216.34512695286,
+      "cutsMean": 2.0277,
+      "largestCutMedian": 1,
+      "floorYearsMean": 3.0836,
+      "floorStreakP90": 7,
+      "unattainable": 0.7809
+    },
+    {
+      "floor": 0,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "steady",
+      "success": 0.4574,
+      "initial": 50658.20748720853,
+      "totalMedian": 153951.43230815913,
+      "cutsMean": 1.7327,
+      "largestCutMedian": 1,
+      "floorYearsMean": 5.3247,
+      "floorStreakP90": 8,
+      "unattainable": 0.9238
+    },
+    {
+      "floor": 0,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "early",
+      "success": 0.4913,
+      "initial": 50658.20748720853,
+      "totalMedian": 101316.41497441706,
+      "cutsMean": 1.4945,
+      "largestCutMedian": 1,
+      "floorYearsMean": 6.54,
+      "floorStreakP90": 9,
+      "unattainable": 0.9577
+    },
+    {
+      "floor": 0,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "late",
+      "success": 0.4009,
+      "initial": 50658.20748720853,
+      "totalMedian": 240805.12230221112,
+      "cutsMean": 1.9171,
+      "largestCutMedian": 1,
+      "floorYearsMean": 4.483,
+      "floorStreakP90": 8,
+      "unattainable": 0.9262
+    },
+    {
+      "floor": 20000,
+      "sampling": "iid",
+      "schedule": "fixed",
+      "success": 0.13,
+      "initial": 50658.20748720853,
+      "totalMedian": 452702.3827824415,
+      "cutsMean": 1.7573,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 3.9813,
+      "floorStreakP90": 8,
+      "unattainable": 0.8391
+    },
+    {
+      "floor": 20000,
+      "sampling": "iid",
+      "schedule": "steady",
+      "success": 0.4001,
+      "initial": 50658.20748720853,
+      "totalMedian": 282925.77359760035,
+      "cutsMean": 1.4178,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 6.0552,
+      "floorStreakP90": 9,
+      "unattainable": 0.9373
+    },
+    {
+      "floor": 20000,
+      "sampling": "iid",
+      "schedule": "early",
+      "success": 0.4304,
+      "initial": 50658.20748720853,
+      "totalMedian": 261316.41497441707,
+      "cutsMean": 1.1586,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 7.3317,
+      "floorStreakP90": 9,
+      "unattainable": 0.9678
+    },
+    {
+      "floor": 20000,
+      "sampling": "iid",
+      "schedule": "late",
+      "success": 0.3544,
+      "initial": 50658.20748720853,
+      "totalMedian": 331426.10201404954,
+      "cutsMean": 1.5952,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 5.2354,
+      "floorStreakP90": 8,
+      "unattainable": 0.9341
+    },
+    {
+      "floor": 20000,
+      "sampling": "fiveYearBlocks",
+      "schedule": "fixed",
+      "success": 0.1079,
+      "initial": 50658.20748720853,
+      "totalMedian": 458993.135299645,
+      "cutsMean": 1.8169,
+      "largestCutMedian": 0.6104591474914992,
+      "floorYearsMean": 3.921,
+      "floorStreakP90": 8,
+      "unattainable": 0.8275
+    },
+    {
+      "floor": 20000,
+      "sampling": "fiveYearBlocks",
+      "schedule": "steady",
+      "success": 0.4068,
+      "initial": 50658.20748720853,
+      "totalMedian": 271298.49472196866,
+      "cutsMean": 1.4161,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 6.3117,
+      "floorStreakP90": 9,
+      "unattainable": 0.9574
+    },
+    {
+      "floor": 20000,
+      "sampling": "fiveYearBlocks",
+      "schedule": "early",
+      "success": 0.4312,
+      "initial": 50658.20748720853,
+      "totalMedian": 261316.41497441707,
+      "cutsMean": 1.2338,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 7.6115,
+      "floorStreakP90": 9,
+      "unattainable": 0.9929
+    },
+    {
+      "floor": 20000,
+      "sampling": "fiveYearBlocks",
+      "schedule": "late",
+      "success": 0.3579,
+      "initial": 50658.20748720853,
+      "totalMedian": 333259.71104835917,
+      "cutsMean": 1.6451,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 5.2779,
+      "floorStreakP90": 8,
+      "unattainable": 0.9565
+    },
+    {
+      "floor": 20000,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "fixed",
+      "success": 0.1234,
+      "initial": 50658.20748720853,
+      "totalMedian": 445196.2251265042,
+      "cutsMean": 1.7791,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 4.0186,
+      "floorStreakP90": 8,
+      "unattainable": 0.8548
+    },
+    {
+      "floor": 20000,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "steady",
+      "success": 0.3974,
+      "initial": 50658.20748720853,
+      "totalMedian": 278980.6976300817,
+      "cutsMean": 1.4368,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 6.1873,
+      "floorStreakP90": 9,
+      "unattainable": 0.9557
+    },
+    {
+      "floor": 20000,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "early",
+      "success": 0.4278,
+      "initial": 50658.20748720853,
+      "totalMedian": 261316.41497441707,
+      "cutsMean": 1.1786,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 7.4752,
+      "floorStreakP90": 9,
+      "unattainable": 0.9808
+    },
+    {
+      "floor": 20000,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "late",
+      "success": 0.3479,
+      "initial": 50658.20748720853,
+      "totalMedian": 330991.6924973695,
+      "cutsMean": 1.6283,
+      "largestCutMedian": 0.6051972426175934,
+      "floorYearsMean": 5.3208,
+      "floorStreakP90": 8,
+      "unattainable": 0.9534
+    },
+    {
+      "floor": 40000,
+      "sampling": "iid",
+      "schedule": "fixed",
+      "success": 0.104,
+      "initial": 50658.20748720853,
+      "totalMedian": 511983.88251542114,
+      "cutsMean": 1.4452,
+      "largestCutMedian": 0.40919657777567087,
+      "floorYearsMean": 5.0516,
+      "floorStreakP90": 9,
+      "unattainable": 0.8997
+    },
+    {
+      "floor": 40000,
+      "sampling": "iid",
+      "schedule": "steady",
+      "success": 0.3157,
+      "initial": 50658.20748720853,
+      "totalMedian": 421316.4149744171,
+      "cutsMean": 1.1243,
+      "largestCutMedian": 0.2103944852351869,
+      "floorYearsMean": 6.9189,
+      "floorStreakP90": 9,
+      "unattainable": 0.9629
+    },
+    {
+      "floor": 40000,
+      "sampling": "iid",
+      "schedule": "early",
+      "success": 0.3377,
+      "initial": 50658.20748720853,
+      "totalMedian": 410658.20748720854,
+      "cutsMean": 1.0005,
+      "largestCutMedian": 0.2103944852351869,
+      "floorYearsMean": 7.8051,
+      "floorStreakP90": 9,
+      "unattainable": 0.9848
+    },
+    {
+      "floor": 40000,
+      "sampling": "iid",
+      "schedule": "late",
+      "success": 0.2833,
+      "initial": 50658.20748720853,
+      "totalMedian": 445446.27789952885,
+      "cutsMean": 1.2886,
+      "largestCutMedian": 0.2103944852351869,
+      "floorYearsMean": 6.0876,
+      "floorStreakP90": 9,
+      "unattainable": 0.9563
+    },
+    {
+      "floor": 40000,
+      "sampling": "fiveYearBlocks",
+      "schedule": "fixed",
+      "success": 0.0874,
+      "initial": 50658.20748720853,
+      "totalMedian": 512524.83047762816,
+      "cutsMean": 1.4734,
+      "largestCutMedian": 0.3894065982228639,
+      "floorYearsMean": 5.1367,
+      "floorStreakP90": 9,
+      "unattainable": 0.9153
+    },
+    {
+      "floor": 40000,
+      "sampling": "fiveYearBlocks",
+      "schedule": "steady",
+      "success": 0.3123,
+      "initial": 50658.20748720853,
+      "totalMedian": 421316.4149744171,
+      "cutsMean": 1.158,
+      "largestCutMedian": 0.2103944852351869,
+      "floorYearsMean": 7.2687,
+      "floorStreakP90": 9,
+      "unattainable": 0.993
+    },
+    {
+      "floor": 40000,
+      "sampling": "fiveYearBlocks",
+      "schedule": "early",
+      "success": 0.3303,
+      "initial": 50658.20748720853,
+      "totalMedian": 421316.4149744171,
+      "cutsMean": 1.03,
+      "largestCutMedian": 0.2103944852351869,
+      "floorYearsMean": 8.0156,
+      "floorStreakP90": 9,
+      "unattainable": 0.9932
+    },
+    {
+      "floor": 40000,
+      "sampling": "fiveYearBlocks",
+      "schedule": "late",
+      "success": 0.2766,
+      "initial": 50658.20748720853,
+      "totalMedian": 443013.4402376367,
+      "cutsMean": 1.2607,
+      "largestCutMedian": 0.2103944852351869,
+      "floorYearsMean": 6.314,
+      "floorStreakP90": 9,
+      "unattainable": 0.9724
+    },
+    {
+      "floor": 40000,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "fixed",
+      "success": 0.095,
+      "initial": 50658.20748720853,
+      "totalMedian": 506470.4395175749,
+      "cutsMean": 1.4604,
+      "largestCutMedian": 0.41598244510765814,
+      "floorYearsMean": 5.1522,
+      "floorStreakP90": 9,
+      "unattainable": 0.9191
+    },
+    {
+      "floor": 40000,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "steady",
+      "success": 0.3014,
+      "initial": 50658.20748720853,
+      "totalMedian": 421316.4149744171,
+      "cutsMean": 1.1463,
+      "largestCutMedian": 0.2103944852351869,
+      "floorYearsMean": 7.0566,
+      "floorStreakP90": 9,
+      "unattainable": 0.9784
+    },
+    {
+      "floor": 40000,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "early",
+      "success": 0.3224,
+      "initial": 50658.20748720853,
+      "totalMedian": 410658.20748720854,
+      "cutsMean": 1.0151,
+      "largestCutMedian": 0.2103944852351869,
+      "floorYearsMean": 7.9015,
+      "floorStreakP90": 9,
+      "unattainable": 0.9927
+    },
+    {
+      "floor": 40000,
+      "sampling": "sameObservationsShuffled",
+      "schedule": "late",
+      "success": 0.2632,
+      "initial": 50658.20748720853,
+      "totalMedian": 443497.65069156233,
+      "cutsMean": 1.3087,
+      "largestCutMedian": 0.2103944852351869,
+      "floorYearsMean": 6.2274,
+      "floorStreakP90": 9,
+      "unattainable": 0.9749
+    }
+  ],
+  "traces": [
+    {
+      "start": 1929,
+      "floor": 0,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.17159160915990745,
+          "plannedReal": 29454.115709924965,
+          "paidReal": 29454.115709924965,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 30846.12796395895
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.09910369020388875,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 424881.7516922013,
+          "cashReal": 35414.72966360148
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.024613087524787934,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 424069.3001932664,
+          "cashReal": 41093.74618954405
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.012518379240570714,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 618751.6109437712,
+          "cashReal": 42460.328433693365
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.04882593041458952,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 590384.6290213369,
+          "cashReal": 43547.45150402547
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0.015197559523978811,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 824618.1524812707,
+          "cashReal": 44024.93580591889
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.069319108902229,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1051317.7164791466,
+          "cashReal": 45181.43475182199
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0.1697513767111864,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 647887.4486863555,
+          "cashReal": 45733.64637306282
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 844533.047322928,
+          "cashReal": 48975.68865616074
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 0,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.17159160915990745,
+          "plannedReal": 16873.125032362066,
+          "paidReal": 16873.125032362066,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 43427.11864152185
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.15582899561073288,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 424881.7516922013,
+          "cashReal": 49859.0834011847
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.02388573741607375,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 424069.3001932664,
+          "cashReal": 57854.35997941291
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.013044071020886727,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 618751.6109437712,
+          "cashReal": 59778.32039737562
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.04839200248030179,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 590384.6290213369,
+          "cashReal": 61308.84061723625
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.013368241794905622,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 824618.1524812707,
+          "cashReal": 61981.073043037555
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.06955159996321308,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1051317.7164791466,
+          "cashReal": 63609.264983083034
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0.1660829681621888,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 647887.4486863555,
+          "cashReal": 64386.70322813189
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 844533.047322928,
+          "cashReal": 68951.05422328525
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 0,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.17159160915990745,
+          "plannedReal": 1661.47569500948,
+          "paidReal": 1661.47569500948,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 58638.767978874435
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.22947168124370157,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 424881.7516922013,
+          "cashReal": 67323.72109085805
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.025423002913139765,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 424069.3001932664,
+          "cashReal": 78119.58282112236
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.010616381857087272,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 618751.6109437712,
+          "cashReal": 80717.46801541162
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.050159912532703396,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 590384.6290213369,
+          "cashReal": 82784.09879513766
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.013726204949558042,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 824618.1524812707,
+          "cashReal": 83691.80076748885
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.06732937585412536,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1051317.7164791466,
+          "cashReal": 85890.31571354179
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0.16539167981482353,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 647887.4486863555,
+          "cashReal": 86940.07499519338
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 844533.047322928,
+          "cashReal": 93103.22666980245
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 0,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.17159160915990745,
+          "plannedReal": 27491.388419203187,
+          "paidReal": 27491.388419203187,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 32808.85525468072
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.10560969877639968,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 424881.7516922013,
+          "cashReal": 37668.15532809656
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.024451658617480353,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 424069.3001932664,
+          "cashReal": 43708.52549728898
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.012997068130277843,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 618751.6109437712,
+          "cashReal": 45162.06284545464
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.04852417358508816,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 590384.6290213369,
+          "cashReal": 46318.35913976503
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0.014970130130533572,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 824618.1524812707,
+          "cashReal": 46826.225584639644
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.06954111123995806,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1051317.7164791466,
+          "cashReal": 48056.31211487318
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0.1692889392222744,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 647887.4486863555,
+          "cashReal": 48643.66074976219
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 844533.047322928,
+          "cashReal": 52091.992939786025
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 20000,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 0.41857169507305825,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.17159160915990745,
+          "plannedReal": 29454.115709924965,
+          "paidReal": 29454.115709924965,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 30846.12796395895
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.09910369020388875,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 424881.7516922013,
+          "cashReal": 15414.72966360148
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.0051379067701525834,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 421955.89693969087,
+          "cashReal": 0
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 555667.9836518929,
+          "cashReal": 40000
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.014180919392863388,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 530193.1026684133,
+          "cashReal": 21024.13062775034
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 701800.4526410089,
+          "cashReal": 40000
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.00800226425853583,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 874735.6386401337,
+          "cashReal": 41050.76718430796
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0.016303950620910678,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 539066.5755082683,
+          "cashReal": 21552.49340935026
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 665763.4064076624,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 20000,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 0.6051972426175934,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.17159160915990745,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 40300.24367388391
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.13922330640002106,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 424881.7516922013,
+          "cashReal": 26269.088838490556
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.005592656732748343,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 424069.3001932664,
+          "cashReal": 10481.533520471798
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.0004737864170635071,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 569581.7103393147,
+          "cashReal": 40000
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.01756538685139037,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 543468.9474878369,
+          "cashReal": 21024.13062775034
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.000023871051440742557,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 720343.4534060668,
+          "cashReal": 40000
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.009772530542101232,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 898376.3809186447,
+          "cashReal": 41050.76718430796
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0.02164612399539448,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 553635.4731495742,
+          "cashReal": 21552.49340935026
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 684754.2288816818,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 20000,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 0.6051972426175934,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.17159160915990745,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 40300.24367388391
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.13922330640002106,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 424881.7516922013,
+          "cashReal": 26269.088838490556
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.005592656732748343,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 424069.3001932664,
+          "cashReal": 10481.533520471798
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.0004737864170635071,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 569581.7103393147,
+          "cashReal": 40000
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.01756538685139037,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 543468.9474878369,
+          "cashReal": 21024.13062775034
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.000023871051440742557,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 720343.4534060668,
+          "cashReal": 40000
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.009772530542101232,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 898376.3809186447,
+          "cashReal": 41050.76718430796
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0.02164612399539448,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 553635.4731495742,
+          "cashReal": 21552.49340935026
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 684754.2288816818,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 20000,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 0.45731620239139115,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.17159160915990745,
+          "plannedReal": 27491.388419203187,
+          "paidReal": 27491.388419203187,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 32808.85525468072
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.10560969877639968,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 424881.7516922013,
+          "cashReal": 17668.155328096564
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.005195534335343463,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 424069.3001932664,
+          "cashReal": 501.3760541693583
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.00007433744243329421,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 559269.6603771478,
+          "cashReal": 40000
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.01492629533828038,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 533629.6586945887,
+          "cashReal": 21024.13062775034
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 706600.453084619,
+          "cashReal": 40000
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.008451966619809743,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 880855.2292534263,
+          "cashReal": 41050.76718430796
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0.01768410608382392,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 542837.8483473955,
+          "cashReal": 21552.49340935026
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 670679.3289950998,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 40000,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.17159160915990745,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 20300.243673883906
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.06680328404533771,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 408188.6524045319,
+          "cashReal": 0
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 367408.1211598421,
+          "cashReal": 0
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 416078.34082276316,
+          "cashReal": 80000
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 397003.01792472164,
+          "cashReal": 42048.26125550068
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 477022.21149435075,
+          "cashReal": 80000
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 568162.5787512164,
+          "cashReal": 82101.53436861592
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 350137.1638813125,
+          "cashReal": 43104.98681870052
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 382570.83180231915,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 40000,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.17159160915990745,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 20300.243673883906
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.06680328404533771,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 408188.6524045319,
+          "cashReal": 0
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 367408.1211598421,
+          "cashReal": 0
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 416078.34082276316,
+          "cashReal": 80000
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 397003.01792472164,
+          "cashReal": 42048.26125550068
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 477022.21149435075,
+          "cashReal": 80000
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 568162.5787512164,
+          "cashReal": 82101.53436861592
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 350137.1638813125,
+          "cashReal": 43104.98681870052
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 382570.83180231915,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 40000,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.17159160915990745,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 20300.243673883906
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.06680328404533771,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 408188.6524045319,
+          "cashReal": 0
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 367408.1211598421,
+          "cashReal": 0
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 416078.34082276316,
+          "cashReal": 80000
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 397003.01792472164,
+          "cashReal": 42048.26125550068
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 477022.21149435075,
+          "cashReal": 80000
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 568162.5787512164,
+          "cashReal": 82101.53436861592
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 350137.1638813125,
+          "cashReal": 43104.98681870052
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 382570.83180231915,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 1929,
+      "floor": 40000,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1929,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 892517.9760238073,
+          "cashReal": 54213.34884110087
+        },
+        {
+          "year": 1930,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.17159160915990745,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 699852.7113768648,
+          "cashReal": 20300.243673883906
+        },
+        {
+          "year": 1931,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.06680328404533771,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 408188.6524045319,
+          "cashReal": 0
+        },
+        {
+          "year": 1932,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 367408.1211598421,
+          "cashReal": 0
+        },
+        {
+          "year": 1933,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 416078.34082276316,
+          "cashReal": 80000
+        },
+        {
+          "year": 1934,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 397003.01792472164,
+          "cashReal": 42048.26125550068
+        },
+        {
+          "year": 1935,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 477022.21149435075,
+          "cashReal": 80000
+        },
+        {
+          "year": 1936,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 568162.5787512164,
+          "cashReal": 82101.53436861592
+        },
+        {
+          "year": 1937,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 350137.1638813125,
+          "cashReal": 43104.98681870052
+        },
+        {
+          "year": 1938,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 382570.83180231915,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 0,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 6,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.14061943060200904,
+          "plannedReal": 22732.38009617318,
+          "paidReal": 22732.38009617318,
+          "investmentsReal": 980620.6302887267,
+          "cashReal": 51834.87358289339
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.36300468572312233,
+          "plannedReal": 22732.38009617318,
+          "paidReal": 22732.38009617318,
+          "investmentsReal": 994482.6217890119,
+          "cashReal": 51535.16385365772
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.3457704998582179,
+          "plannedReal": 22732.38009617318,
+          "paidReal": 22732.38009617318,
+          "investmentsReal": 842312.9661869865,
+          "cashReal": 27791.992875284617
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.16545850627422287,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 809973.8000513582,
+          "cashReal": 27408.686972405725
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.17541067192869622,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 878215.5333635968,
+          "cashReal": 27633.744882552553
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0.17965027345116852,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 988665.9502911478,
+          "cashReal": 27822.930743751593
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.20959126788427573,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 763974.6293366587,
+          "cashReal": 26647.722328976215
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0.0032896473853718973,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 493973.5117014632,
+          "cashReal": 24697.044075157093
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 620333.919141116,
+          "cashReal": 24045.266329023183
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 0,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 6,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.14061943060200904,
+          "plannedReal": 9364.790071751366,
+          "paidReal": 9364.790071751366,
+          "investmentsReal": 993988.2203131485,
+          "cashReal": 51834.87358289339
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.43992099445493027,
+          "plannedReal": 9364.790071751366,
+          "paidReal": 9364.790071751366,
+          "investmentsReal": 1021716.6477132059,
+          "cashReal": 51535.16385365772
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.4290889821018249,
+          "plannedReal": 9364.790071751366,
+          "paidReal": 9364.790071751366,
+          "investmentsReal": 865379.8078339067,
+          "cashReal": 41159.58289970642
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.24127071501658565,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 832155.0297533254,
+          "cashReal": 40591.91180262865
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.1927717696081423,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 902265.5711205443,
+          "cashReal": 40925.21966405089
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.20571087164220409,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1015740.685968439,
+          "cashReal": 41205.401483772024
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.23328363481105335,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 784896.1662292313,
+          "cashReal": 39464.9329830264
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0.007629556878353755,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 507501.03559056035,
+          "cashReal": 36576.0036551075
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 637321.8379497469,
+          "cashReal": 35610.7292217638
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 0,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.14061943060200904,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1003353.0103848998,
+          "cashReal": 51834.87358289339
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.49019977810443294,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1040795.6989949076,
+          "cashReal": 51535.16385365772
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.48063592194823945,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 881539.4992402924,
+          "cashReal": 50524.37297145779
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.2955575651788198,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 847694.2974382797,
+          "cashReal": 49827.54311524274
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.20472588420535026,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 919114.0497468364,
+          "cashReal": 50236.68649130295
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.22273892549774305,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1034708.1449795819,
+          "cashReal": 50580.61637985179
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.25043357623811424,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 799552.9443485028,
+          "cashReal": 48444.14964521505
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0.009875372112663152,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 516977.8688253133,
+          "cashReal": 44897.91976218583
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 649222.8831724186,
+          "cashReal": 43713.02229592853
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 0,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 6,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.14061943060200904,
+          "plannedReal": 21209.376297107963,
+          "paidReal": 21209.376297107963,
+          "investmentsReal": 982143.6340877919,
+          "cashReal": 51834.87358289339
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.37355240692137426,
+          "plannedReal": 21209.376297107963,
+          "paidReal": 21209.376297107963,
+          "investmentsReal": 997585.4641765039,
+          "cashReal": 51535.16385365772
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.35535487089688733,
+          "plannedReal": 21209.376297107963,
+          "paidReal": 21209.376297107963,
+          "investmentsReal": 844941.0305872648,
+          "cashReal": 29314.99667434983
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.17501800992988495,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 812500.9644124972,
+          "cashReal": 28910.685572278915
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.17721062877772736,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 880955.6158170964,
+          "cashReal": 29148.076676871406
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0.18297432739567562,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 991750.6443324725,
+          "cashReal": 29347.629940891406
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.2124809099284215,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 766358.273666823,
+          "cashReal": 28108.01999548711
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0.0034123201086500425,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 495514.7371757187,
+          "cashReal": 26050.444391605608
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 622269.3962792158,
+          "cashReal": 25362.94916425462
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 20000,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 0.5512596828082946,
+      "maxFloorRun": 6,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.14061943060200904,
+          "plannedReal": 22732.38009617318,
+          "paidReal": 22732.38009617318,
+          "investmentsReal": 980620.6302887267,
+          "cashReal": 51834.87358289339
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.36300468572312233,
+          "plannedReal": 22732.38009617318,
+          "paidReal": 22732.38009617318,
+          "investmentsReal": 994482.6217890119,
+          "cashReal": 51535.16385365772
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.3457704998582179,
+          "plannedReal": 22732.38009617318,
+          "paidReal": 22732.38009617318,
+          "investmentsReal": 842312.9661869865,
+          "cashReal": 27791.992875284617
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.16545850627422287,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 777382.4870237639,
+          "cashReal": 40000
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.09220726258249781,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 822878.3442449687,
+          "cashReal": 40328.447561714165
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0.08180625178829899,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 906369.1762214976,
+          "cashReal": 40604.54376638022
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.0807182775395737,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 700381.2109055407,
+          "cashReal": 18889.45480066867
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0.0001450634284430018,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 450361.7471319752,
+          "cashReal": 0
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 505566.09010739985,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 20000,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 0.6051972426175934,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.14061943060200904,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 983353.0103848998,
+          "cashReal": 51834.87358289339
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.3824272741326379,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1000049.3477461952,
+          "cashReal": 51535.16385365772
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.3609830819144113,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 847027.9057447136,
+          "cashReal": 30524.372971457797
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.18213496700215878,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 784611.0997729014,
+          "cashReal": 40000
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.09665572474851315,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 830715.9804753753,
+          "cashReal": 40328.447561714165
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.08642908675527386,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 915192.5274119428,
+          "cashReal": 40604.54376638022
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.0875686302181772,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 707199.3039664401,
+          "cashReal": 18889.45480066867
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0.00029105108884513027,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 454770.2146949938,
+          "cashReal": 0
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 511102.2613716327,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 20000,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 0.6051972426175934,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.14061943060200904,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 983353.0103848998,
+          "cashReal": 51834.87358289339
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.3824272741326379,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1000049.3477461952,
+          "cashReal": 51535.16385365772
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.3609830819144113,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 847027.9057447136,
+          "cashReal": 30524.372971457797
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.18213496700215878,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 784611.0997729014,
+          "cashReal": 40000
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.09665572474851315,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 830715.9804753753,
+          "cashReal": 40328.447561714165
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.08642908675527386,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 915192.5274119428,
+          "cashReal": 40604.54376638022
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.0875686302181772,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 707199.3039664401,
+          "cashReal": 18889.45480066867
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0.00029105108884513027,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 454770.2146949938,
+          "cashReal": 0
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 511102.2613716327,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 20000,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 0.581323987777036,
+      "maxFloorRun": 6,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.14061943060200904,
+          "plannedReal": 21209.376297107963,
+          "paidReal": 21209.376297107963,
+          "investmentsReal": 982143.6340877919,
+          "cashReal": 51834.87358289339
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.37355240692137426,
+          "plannedReal": 21209.376297107963,
+          "paidReal": 21209.376297107963,
+          "investmentsReal": 997585.4641765039,
+          "cashReal": 51535.16385365772
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.35535487089688733,
+          "plannedReal": 21209.376297107963,
+          "paidReal": 21209.376297107963,
+          "investmentsReal": 844941.0305872648,
+          "cashReal": 29314.99667434983
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.17501800992988495,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 781411.6499847762,
+          "cashReal": 40000
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.09468761870688422,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 827246.971351907,
+          "cashReal": 40328.447561714165
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0.08437576404497399,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 911287.2318764761,
+          "cashReal": 40604.54376638022
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.08454246664720907,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 704181.5539283411,
+          "cashReal": 18889.45480066867
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0.00022330395595659264,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 452818.9868315092,
+          "cashReal": 0
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 508651.9015871099,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 40000,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.14061943060200904,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 935187.8839677932,
+          "cashReal": 80000
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.2622080657467676,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 929624.2554602742,
+          "cashReal": 80000
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.21013283070670968,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 787378.8308613,
+          "cashReal": 38430.91076986544
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.08024065551625914,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 675049.6403189895,
+          "cashReal": 80000
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.03167778569435222,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 691923.7731912505,
+          "cashReal": 80656.89512342833
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0.015940859867218757,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 738944.8589358331,
+          "cashReal": 81209.08753276044
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.008972948588919616,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 571006.9458136847,
+          "cashReal": 37778.90960133734
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 364217.1619949847,
+          "cashReal": 0
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 337385.3742492775,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 40000,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.14061943060200904,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 935187.8839677932,
+          "cashReal": 80000
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.2622080657467676,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 929624.2554602742,
+          "cashReal": 80000
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.21013283070670968,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 787378.8308613,
+          "cashReal": 38430.91076986544
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.08024065551625914,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 675049.6403189895,
+          "cashReal": 80000
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.03167778569435222,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 691923.7731912505,
+          "cashReal": 80656.89512342833
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.015940859867218757,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 738944.8589358331,
+          "cashReal": 81209.08753276044
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.008972948588919616,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 571006.9458136847,
+          "cashReal": 37778.90960133734
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 364217.1619949847,
+          "cashReal": 0
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 337385.3742492775,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 40000,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.14061943060200904,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 935187.8839677932,
+          "cashReal": 80000
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.2622080657467676,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 929624.2554602742,
+          "cashReal": 80000
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.21013283070670968,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 787378.8308613,
+          "cashReal": 38430.91076986544
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.08024065551625914,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 675049.6403189895,
+          "cashReal": 80000
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.03167778569435222,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 691923.7731912505,
+          "cashReal": 80656.89512342833
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.015940859867218757,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 738944.8589358331,
+          "cashReal": 81209.08753276044
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.008972948588919616,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 571006.9458136847,
+          "cashReal": 37778.90960133734
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 364217.1619949847,
+          "cashReal": 0
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 337385.3742492775,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 1966,
+      "floor": 40000,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 1966,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 851891.2059600751,
+          "cashReal": 51299.78827934871
+        },
+        {
+          "year": 1967,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.14061943060200904,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 935187.8839677932,
+          "cashReal": 80000
+        },
+        {
+          "year": 1968,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.2622080657467676,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 929624.2554602742,
+          "cashReal": 80000
+        },
+        {
+          "year": 1969,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.21013283070670968,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 787378.8308613,
+          "cashReal": 38430.91076986544
+        },
+        {
+          "year": 1970,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.08024065551625914,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 675049.6403189895,
+          "cashReal": 80000
+        },
+        {
+          "year": 1971,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.03167778569435222,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 691923.7731912505,
+          "cashReal": 80656.89512342833
+        },
+        {
+          "year": 1972,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0.015940859867218757,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 738944.8589358331,
+          "cashReal": 81209.08753276044
+        },
+        {
+          "year": 1973,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.008972948588919616,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 571006.9458136847,
+          "cashReal": 37778.90960133734
+        },
+        {
+          "year": 1974,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 364217.1619949847,
+          "cashReal": 0
+        },
+        {
+          "year": 1975,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 337385.3742492775,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 0,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.14737643269254544,
+          "plannedReal": 23947.46440431161,
+          "paidReal": 23947.46440431161,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 28719.929443682442
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.1397999721527146,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 547642.5217021592,
+          "cashReal": 29207.31315317917
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.08174611756258982,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 676344.953453425,
+          "cashReal": 29847.990688172726
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.12766224696629533,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 711070.349478435,
+          "cashReal": 30096.217020035874
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.1022034872020402,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 706598.5685174452,
+          "cashReal": 30299.527609866178
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0.05948540503595166,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 780951.4830436338,
+          "cashReal": 30764.5131855058
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.04232836957890961,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 775860.1478597728,
+          "cashReal": 30774.267189906306
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0.005409284888086953,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 482108.2636090016,
+          "cashReal": 32011.142049914666
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 579393.4101125767,
+          "cashReal": 32445.22501628965
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 0,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.14737643269254544,
+          "plannedReal": 10437.687611991956,
+          "paidReal": 10437.687611991956,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 42229.706236002094
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.2175790421052598,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 547642.5217021592,
+          "cashReal": 42946.35391846314
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.08332047567533131,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 676344.953453425,
+          "cashReal": 43888.404425510445
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.12923112497318529,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 711070.349478435,
+          "cashReal": 44253.39574957259
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.10099354856762602,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 706598.5685174452,
+          "cashReal": 44552.34308856373
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.058618022140784,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 780951.4830436338,
+          "cashReal": 45236.05661584604
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.0420277303233447,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 775860.1478597728,
+          "cashReal": 45250.3988774197
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0.006332137774428657,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 482108.2636090016,
+          "cashReal": 47069.0963115925
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 579393.4101125767,
+          "cashReal": 47707.37072615935
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 0,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.14737643269254544,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 52667.393847994055
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.2674011188057052,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 547642.5217021592,
+          "cashReal": 53561.17145401136
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.08466242344797441,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 676344.953453425,
+          "cashReal": 54736.06347912009
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.1302004222918392,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 711070.349478435,
+          "cashReal": 55191.267730555155
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.10054599173288631,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 706598.5685174452,
+          "cashReal": 55564.104263077206
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.05899929052139614,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 780951.4830436338,
+          "cashReal": 56416.807557278196
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.04100794601988836,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 775860.1478597728,
+          "cashReal": 56434.69471791221
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0.00614606780953728,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 482108.2636090016,
+          "cashReal": 58702.909739835675
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 579393.4101125767,
+          "cashReal": 59498.94298210417
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 0,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.14737643269254544,
+          "plannedReal": 22674.883215338836,
+          "paidReal": 22674.883215338836,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 29992.510632655216
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.1472156597244677,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 547642.5217021592,
+          "cashReal": 30501.49033324703
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.08182900101150091,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 676344.953453425,
+          "cashReal": 31170.556314696525
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.12769820880828164,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 711070.349478435,
+          "cashReal": 31429.78156496427
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.10213191354796887,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 706598.5685174452,
+          "cashReal": 31642.10085492541
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0.059442513337574734,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 780951.4830436338,
+          "cashReal": 32127.68995947909
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.042352102629307276,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 775860.1478597728,
+          "cashReal": 32137.876164193378
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0.005555605829709679,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 482108.2636090016,
+          "cashReal": 33429.55699728208
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 579393.4101125767,
+          "cashReal": 33882.87419675452
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 20000,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 0.5272737510430373,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.14737643269254544,
+          "plannedReal": 23947.46440431161,
+          "paidReal": 23947.46440431161,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 28719.929443682442
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.1397999721527146,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 547642.5217021592,
+          "cashReal": 9207.313153179171
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.033099430112490225,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 625754.2337873564,
+          "cashReal": 40000
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.05041299105464006,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 637882.1641750103,
+          "cashReal": 40332.6539926341
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.03298482213672614,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 613870.6492535891,
+          "cashReal": 40605.11533444343
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0.006764301283061692,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 658466.1267251249,
+          "cashReal": 41228.253528900015
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.004539977968580072,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 634173.3225866264,
+          "cashReal": 41241.325101459006
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 394066.12161068036,
+          "cashReal": 22898.890426951377
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 436794.5571998843,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 20000,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 0.6051972426175934,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.14737643269254544,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 32667.393847994055
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.16494333303557182,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 547642.5217021592,
+          "cashReal": 13221.766922776393
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.03415731153351372,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 629856.7466787209,
+          "cashReal": 40000
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.051932380034905884,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 642195.3112762154,
+          "cashReal": 40332.6539926341
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.03404129137988465,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 618156.6718247063,
+          "cashReal": 40605.11533444343
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.007336285965373585,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 663203.1525731892,
+          "cashReal": 41228.253528900015
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.00482210823639328,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 638879.4658678594,
+          "cashReal": 41241.325101459006
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 396990.4509139306,
+          "cashReal": 22898.890426951377
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 440308.99006734585,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 20000,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 0.6051972426175934,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.14737643269254544,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 32667.393847994055
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.16494333303557182,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 547642.5217021592,
+          "cashReal": 13221.766922776393
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.03415731153351372,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 629856.7466787209,
+          "cashReal": 40000
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.051932380034905884,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 642195.3112762154,
+          "cashReal": 40332.6539926341
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.03404129137988465,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 618156.6718247063,
+          "cashReal": 40605.11533444343
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.007336285965373585,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 663203.1525731892,
+          "cashReal": 41228.253528900015
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.00482210823639328,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 638879.4658678594,
+          "cashReal": 41241.325101459006
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 396990.4509139306,
+          "cashReal": 22898.890426951377
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 440308.99006734585,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 20000,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 0.552394679163009,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.14737643269254544,
+          "plannedReal": 22674.883215338836,
+          "paidReal": 22674.883215338836,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 29992.510632655216
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.1472156597244677,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 547642.5217021592,
+          "cashReal": 10501.490333247031
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.0334348628858248,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 627076.7994138802,
+          "cashReal": 40000
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.05090646561903686,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 639272.6339308036,
+          "cashReal": 40332.6539926341
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.0333229969304865,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 615252.3746197658,
+          "cashReal": 40605.11533444343
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0.006950552083453575,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 659993.2462551554,
+          "cashReal": 41228.253528900015
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.0046312497604886526,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 635690.4862134261,
+          "cashReal": 41241.325101459006
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 395008.86512411485,
+          "cashReal": 22898.890426951377
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 437927.5379437143,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 40000,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.14737643269254544,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 12667.39384799405
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.07854291924784046,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 520524.8840937006,
+          "cashReal": 0
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.00432575351532888,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 522854.3521592571,
+          "cashReal": 80000
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.005510054156865325,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 509699.12175415666,
+          "cashReal": 80665.3079852682
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.0017535206052207036,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 466493.72466487385,
+          "cashReal": 81210.23066888686
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 475581.2399563152,
+          "cashReal": 82456.50705780003
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 432480.7355685945,
+          "cashReal": 82482.65020291801
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 268737.26797861396,
+          "cashReal": 45797.780853902754
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 249384.86689635873,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 40000,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.14737643269254544,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 12667.39384799405
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.07854291924784046,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 520524.8840937006,
+          "cashReal": 0
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.00432575351532888,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 522854.3521592571,
+          "cashReal": 80000
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.005510054156865325,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 509699.12175415666,
+          "cashReal": 80665.3079852682
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.0017535206052207036,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 466493.72466487385,
+          "cashReal": 81210.23066888686
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 475581.2399563152,
+          "cashReal": 82456.50705780003
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 432480.7355685945,
+          "cashReal": 82482.65020291801
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 268737.26797861396,
+          "cashReal": 45797.780853902754
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 249384.86689635873,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 40000,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.14737643269254544,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 12667.39384799405
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.07854291924784046,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 520524.8840937006,
+          "cashReal": 0
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.00432575351532888,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 522854.3521592571,
+          "cashReal": 80000
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.005510054156865325,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 509699.12175415666,
+          "cashReal": 80665.3079852682
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.0017535206052207036,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 466493.72466487385,
+          "cashReal": 81210.23066888686
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 475581.2399563152,
+          "cashReal": 82456.50705780003
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 432480.7355685945,
+          "cashReal": 82482.65020291801
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 268737.26797861396,
+          "cashReal": 45797.780853902754
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 249384.86689635873,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 2000,
+      "floor": 40000,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2000,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 861379.7218718176,
+          "cashReal": 51371.09894919022
+        },
+        {
+          "year": 2001,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.14737643269254544,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 732948.0941782789,
+          "cashReal": 12667.39384799405
+        },
+        {
+          "year": 2002,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.07854291924784046,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 520524.8840937006,
+          "cashReal": 0
+        },
+        {
+          "year": 2003,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.00432575351532888,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 522854.3521592571,
+          "cashReal": 80000
+        },
+        {
+          "year": 2004,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.005510054156865325,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 509699.12175415666,
+          "cashReal": 80665.3079852682
+        },
+        {
+          "year": 2005,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.0017535206052207036,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 466493.72466487385,
+          "cashReal": 81210.23066888686
+        },
+        {
+          "year": 2006,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 475581.2399563152,
+          "cashReal": 82456.50705780003
+        },
+        {
+          "year": 2007,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 432480.7355685945,
+          "cashReal": 82482.65020291801
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 268737.26797861396,
+          "cashReal": 45797.780853902754
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 249384.86689635873,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 0,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.24125201149584136,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 54763.71588852597
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.01934003515624006,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 703100.0791828,
+          "cashReal": 55506.332200232086
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.17585593917721407,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 779710.6182529021,
+          "cashReal": 56938.37357610576
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.20710765700763334,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 757906.9548211712,
+          "cashReal": 57575.3480082779
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.1352166065278083,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 846272.6735598501,
+          "cashReal": 58918.372264003374
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0.15150316546469006,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1080016.0370736828,
+          "cashReal": 60434.85835802937
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.2948229524647107,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1192858.2241287192,
+          "cashReal": 62448.891596597765
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0.3255151121875508,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1176852.299003031,
+          "cashReal": 64547.32158714485
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0.1329064218188074,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1263233.8848863544,
+          "cashReal": 65837.10256302876
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 0,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.24125201149584136,
+          "plannedReal": 29358.098484858485,
+          "paidReal": 29358.098484858485,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 76063.82489087601
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.06080233860027488,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 703100.0791828,
+          "cashReal": 77095.27858568559
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.16991384754909644,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 779710.6182529021,
+          "cashReal": 79084.30622348632
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.20885643144567348,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 757906.9548211712,
+          "cashReal": 79969.02908939502
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.13493969978599396,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 846272.6735598501,
+          "cashReal": 81834.41678550468
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.15071656812597148,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1080016.0370736828,
+          "cashReal": 83940.7335471401
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.29771995886881775,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1192858.2241287192,
+          "cashReal": 86738.11625021866
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0.3275977656480974,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1176852.299003031,
+          "cashReal": 89652.72145472374
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0.1245061323754802,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1263233.8848863544,
+          "cashReal": 91444.1571289741
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 0,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.24125201149584136,
+          "plannedReal": 12324.416978693316,
+          "paidReal": 12324.416978693316,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 93097.50639704119
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.10006568962690876,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 703100.0791828,
+          "cashReal": 94359.94313472233
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.16936722137379318,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 779710.6182529021,
+          "cashReal": 96794.39227660681
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.2084577754061152,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 757906.9548211712,
+          "cashReal": 97877.23938279306
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.1353747315130268,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 846272.6735598501,
+          "cashReal": 100160.36073805853
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.1481861661629997,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1080016.0370736828,
+          "cashReal": 102738.3646508498
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.2982282453083995,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1192858.2241287192,
+          "cashReal": 106162.19134466187
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0.3298989732346849,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1176852.299003031,
+          "cashReal": 109729.49126759553
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0.12551139613444742,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1263233.8848863544,
+          "cashReal": 111922.09983523824
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 0,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 1,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.24125201149584136,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 54763.71588852597
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.01934003515624006,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 703100.0791828,
+          "cashReal": 55506.332200232086
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.17585593917721407,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 779710.6182529021,
+          "cashReal": 56938.37357610576
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.20710765700763334,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 757906.9548211712,
+          "cashReal": 57575.3480082779
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.1352166065278083,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 846272.6735598501,
+          "cashReal": 58918.372264003374
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0.15150316546469006,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1080016.0370736828,
+          "cashReal": 60434.85835802937
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.2948229524647107,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1192858.2241287192,
+          "cashReal": 62448.891596597765
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0.3255151121875508,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1176852.299003031,
+          "cashReal": 64547.32158714485
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0.1329064218188074,
+          "plannedReal": 0,
+          "paidReal": 0,
+          "investmentsReal": 1263233.8848863544,
+          "cashReal": 65837.10256302876
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 20000,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 0.6051972426175934,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.24125201149584136,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 54763.71588852597
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.01934003515624006,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 683100.0791828,
+          "cashReal": 55506.332200232086
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.10889647929294408,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 737531.3967924481,
+          "cashReal": 56938.37357610576
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.11843353147066188,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 716907.2242218227,
+          "cashReal": 37575.34800827789
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.05807859540700893,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 778944.5562395165,
+          "cashReal": 40000
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0.06051838029013407,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 974091.6669223217,
+          "cashReal": 41029.550570223415
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.13518786331490076,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1055866.6686949125,
+          "cashReal": 42396.88857443294
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0.11935761842143137,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1041698.9138855052,
+          "cashReal": 23821.523987742978
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0.010723334615184887,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1082457.6936288576,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 20000,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 0.4204670883336809,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.24125201149584136,
+          "plannedReal": 29358.098484858485,
+          "paidReal": 29358.098484858485,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 76063.82489087601
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.06080233860027488,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 683100.0791828,
+          "cashReal": 77095.27858568559
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.1148085631167114,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 737531.3967924481,
+          "cashReal": 79084.30622348632
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.12560403033811876,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 716907.2242218227,
+          "cashReal": 59969.029089395015
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.06243278867667629,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 780492.7115093223,
+          "cashReal": 61367.88925169546
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.0649271306467169,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 976067.4278933535,
+          "cashReal": 62947.42288600771
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.14429313542783892,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1058048.8610349388,
+          "cashReal": 65045.18906630682
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0.12451378824111689,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1043851.8252879501,
+          "cashReal": 47230.860773008164
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0.01753821990858328,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1100471.1055255486,
+          "cashReal": 48174.62519578755
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 20000,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 0.6051972426175934,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.24125201149584136,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 85421.9233757345
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.08223469280804546,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 683100.0791828,
+          "cashReal": 86580.27635903565
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.11308610338211456,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 737531.3967924481,
+          "cashReal": 88814.0131808716
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.12555757197902637,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 716907.2242218227,
+          "cashReal": 69807.58310677047
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.06341936621581781,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 780492.7115093223,
+          "cashReal": 71435.94108616967
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.06698852280350821,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 976067.4278933535,
+          "cashReal": 73274.61393316247
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.14737853746061688,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1058048.8610349388,
+          "cashReal": 75716.54086100227
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0.12672752738535276,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1043851.8252879501,
+          "cashReal": 58260.79514736445
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0.019166236721883147,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1100471.1055255486,
+          "cashReal": 59424.95910294375
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 20000,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 0.6051972426175934,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.24125201149584136,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 54763.71588852597
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.01934003515624006,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 683100.0791828,
+          "cashReal": 55506.332200232086
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.10889647929294408,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 737531.3967924481,
+          "cashReal": 56938.37357610576
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.11843353147066188,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 716907.2242218227,
+          "cashReal": 37575.34800827789
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.05807859540700893,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 778944.5562395165,
+          "cashReal": 40000
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0.06051838029013407,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 974091.6669223217,
+          "cashReal": 41029.550570223415
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.13518786331490076,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1055866.6686949125,
+          "cashReal": 42396.88857443294
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0.11935761842143137,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1041698.9138855052,
+          "cashReal": 23821.523987742978
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0.010723334615184887,
+          "plannedReal": 20000,
+          "paidReal": 20000,
+          "investmentsReal": 1082457.6936288576,
+          "cashReal": 40000
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 40000,
+      "schedule": "fixed",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.3,
+          "probability": 0.24125201149584136,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 54763.71588852597
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.3,
+          "probability": 0.01934003515624006,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 638606.4113830322,
+          "cashReal": 80000
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.3,
+          "probability": 0.044447874682210106,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 668189.651206502,
+          "cashReal": 82063.96829926758
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.3,
+          "probability": 0.045080434308047465,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 649504.5365980631,
+          "cashReal": 42982.024898466865
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.3,
+          "probability": 0.0181534221126291,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 649216.0645563927,
+          "cashReal": 80000
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.3,
+          "probability": 0.005960814177034291,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 788531.7287834887,
+          "cashReal": 82059.10114044683
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.3,
+          "probability": 0.013714859790120831,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 830919.0654375898,
+          "cashReal": 84793.77714886588
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.3,
+          "probability": 0.003693147067178671,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 819769.6865106723,
+          "cashReal": 47643.047975485955
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.3,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 808536.2670501173,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 40000,
+      "schedule": "steady",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.3666666666666667,
+          "probability": 0.24125201149584136,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 65421.92337573451
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.43333333333333335,
+          "probability": 0.04018766678733328,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 649409.1481193088,
+          "cashReal": 80000
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.5,
+          "probability": 0.04905511187346654,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 680169.4657291451,
+          "cashReal": 82063.96829926758
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.5666666666666667,
+          "probability": 0.0494099337627511,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 661149.3501117274,
+          "cashReal": 42982.024898466865
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.6333333333333333,
+          "probability": 0.020778376942947718,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 662218.5675716075,
+          "cashReal": 80000
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.7,
+          "probability": 0.008634542906003248,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 805125.5669366921,
+          "cashReal": 82059.10114044683
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.7666666666666667,
+          "probability": 0.015167945691903875,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 849246.6602430723,
+          "cashReal": 84793.77714886588
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.8333333333333335,
+          "probability": 0.005083345685274342,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 837851.3592910083,
+          "cashReal": 47643.047975485955
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 827945.1442481291,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 40000,
+      "schedule": "early",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 9,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.42592592592592593,
+          "probability": 0.24125201149584136,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 65421.92337573451
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.537037037037037,
+          "probability": 0.04018766678733328,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 649409.1481193088,
+          "cashReal": 80000
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.6333333333333333,
+          "probability": 0.04905511187346654,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 680169.4657291451,
+          "cashReal": 82063.96829926758
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.7148148148148148,
+          "probability": 0.0494099337627511,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 661149.3501117274,
+          "cashReal": 42982.024898466865
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.7814814814814816,
+          "probability": 0.020778376942947718,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 662218.5675716075,
+          "cashReal": 80000
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.8333333333333335,
+          "probability": 0.008634542906003248,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 805125.5669366921,
+          "cashReal": 82059.10114044683
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.8703703703703705,
+          "probability": 0.015167945691903875,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 849246.6602430723,
+          "cashReal": 84793.77714886588
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.8925925925925926,
+          "probability": 0.005083345685274342,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 837851.3592910083,
+          "cashReal": 47643.047975485955
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 827945.1442481291,
+          "cashReal": 80000
+        }
+      ]
+    },
+    {
+      "start": 2007,
+      "floor": 40000,
+      "schedule": "late",
+      "success": false,
+      "largestCut": 0.2103944852351869,
+      "maxFloorRun": 8,
+      "ledger": [
+        {
+          "year": 2007,
+          "yearsRemaining": 10,
+          "target": 0.3,
+          "probability": 0.2999999999999344,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 941514.5596650688,
+          "cashReal": 101348.53772414321
+        },
+        {
+          "year": 2008,
+          "yearsRemaining": 9,
+          "target": 0.3074074074074074,
+          "probability": 0.24125201149584136,
+          "plannedReal": 50658.20748720853,
+          "paidReal": 50658.20748720853,
+          "investmentsReal": 585043.5168952112,
+          "cashReal": 54763.71588852597
+        },
+        {
+          "year": 2009,
+          "yearsRemaining": 8,
+          "target": 0.3296296296296296,
+          "probability": 0.01934003515624006,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 638606.4113830322,
+          "cashReal": 80000
+        },
+        {
+          "year": 2010,
+          "yearsRemaining": 7,
+          "target": 0.3666666666666667,
+          "probability": 0.044447874682210106,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 668189.651206502,
+          "cashReal": 82063.96829926758
+        },
+        {
+          "year": 2011,
+          "yearsRemaining": 6,
+          "target": 0.4185185185185185,
+          "probability": 0.045080434308047465,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 649504.5365980631,
+          "cashReal": 42982.024898466865
+        },
+        {
+          "year": 2012,
+          "yearsRemaining": 5,
+          "target": 0.4851851851851852,
+          "probability": 0.0181534221126291,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 649216.0645563927,
+          "cashReal": 80000
+        },
+        {
+          "year": 2013,
+          "yearsRemaining": 4,
+          "target": 0.5666666666666667,
+          "probability": 0.005960814177034291,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 788531.7287834887,
+          "cashReal": 82059.10114044683
+        },
+        {
+          "year": 2014,
+          "yearsRemaining": 3,
+          "target": 0.662962962962963,
+          "probability": 0.013714859790120831,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 830919.0654375898,
+          "cashReal": 84793.77714886588
+        },
+        {
+          "year": 2015,
+          "yearsRemaining": 2,
+          "target": 0.7740740740740741,
+          "probability": 0.003693147067178671,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 819769.6865106723,
+          "cashReal": 47643.047975485955
+        },
+        {
+          "year": 2016,
+          "yearsRemaining": 1,
+          "target": 0.9000000000000001,
+          "probability": 0,
+          "plannedReal": 40000,
+          "paidReal": 40000,
+          "investmentsReal": 808536.2670501173,
+          "cashReal": 80000
+        }
+      ]
+    }
+  ]
+}

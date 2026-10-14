@@ -45,3 +45,17 @@ test('scheduled FI outputs converge with outer count and finer probability estim
   console.log(JSON.stringify({schedule,success10000:x.fiSuccessRate,success25000:y.fiSuccessRate,finerSuccess:z.fiSuccessRate,cuts:x.metrics.cuts.mean,finerCuts:z.metrics.cuts.mean}));
  }
 });
+test('floor duration distinguishes consecutive stretches from total years',()=>{
+ const a={...guardrailDefaults,years:7,floor:10,reserveYears:0},rails={lower:.4,target:.5,upper:.6,schedule:'fixed'},desired={6:10,5:10,4:20,3:10,2:10,1:10};
+ const m={probability:(i,c,w,h)=>w>desired[h]?0:w<desired[h]?1:.5,spendingFor:(i,c,h)=>({spending:desired[h]})};
+ const paths={count:1,years:7,stock:Array(7).fill(1),cash:Array(7).fill(1),positive:Array(7).fill(1)};
+ const r=runRetirement(a,rails,m,paths,0,{investment:1000,cash:0,spending:20});
+ assert.deepEqual(r.plannedSpending,[20,10,10,20,10,10,10]);assert.equal(r.floorYears,5);assert.equal(r.maxFloorRun,3);
+});
+test('deadline success uses final post-withdrawal investments, excluding cash and earlier target touches',()=>{
+ const a={...guardrailDefaults,years:2,fiWithdrawals:4,fiRate:.04,reserveYears:0};
+ const m={probability:()=>.5},rails={lower:.4,target:.5,upper:.6,schedule:'fixed'},initial={investment:110,cash:50,spending:5};
+ const flat={count:1,years:2,stock:[1,1],cash:[1,1],positive:[1,1]};
+ const exact=runRetirement(a,rails,m,flat,0,initial,'fixed');assert.equal(exact.investmentBalances.at(-1),100);assert.equal(exact.fiReached,true);
+ const miss=runRetirement(a,rails,m,{...flat,stock:[1,.9]},0,initial,'fixed');assert.ok(miss.investmentBalances[1]>100);assert.ok(miss.balances.at(-1)>100);assert.equal(miss.fiReached,false);
+});
