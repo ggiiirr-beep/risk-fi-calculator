@@ -106,3 +106,9 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 
 ## No minimum withdrawals (20261014-22)
 - Removed minimum input for both goals; saved floors reset to zero and all UI simulation runs enforce zero. Result labels now describe years at zero withdrawals and targets unattainable even with zero. Engine retains generic floor support for existing tests.
+
+## Question-aware scenario comparisons (20261014-23)
+- Withdrawal comparison now follows the selected solve question: required investments, required nominal/real return, FI date/age, or on-track status. Withdrawal-solving mode compares its solved amount with lower/higher withdrawals and FI timelines.
+- Return comparison solves withdrawals or investments, reports on-track status for Check my plan, and compares timelines for time/required-return questions. Required-return mode shows the calculated benchmark. Editing the comparison return no longer switches the main solve question.
+- Each comparison freezes starting cash and the FI goal; infeasible cases remain visible as result cards but are excluded from graph series. Graphs use each solved scenario's actual inputs. Withdrawal comparisons follow Plan calculator in navigation.
+- Verified 117 tests, build/syntax, browser investment/return/withdrawal solving and navigation order.
