@@ -80,3 +80,5 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 .projection-horizon{max-width:320px;margin:16px 0}.projection-horizon .hint{line-height:1.5}
 
 .guardrails .content-panel .guardrails-intro{font-family:Manrope,system-ui,sans-serif;font-size:clamp(1.25rem,2.2vw,1.8rem);line-height:1.45;font-weight:450;letter-spacing:-.025em;color:var(--ink);margin:0 0 28px;max-width:1050px}.guardrails-intro strong{font-weight:750;color:var(--purple)}
+
+.guardrail-goal{border:1px solid var(--border);border-left:4px solid var(--purple);border-radius:12px;background:var(--surface2);padding:20px;margin:0 0 26px}.guardrail-goal>.field:first-child label{font-family:Manrope,system-ui;font-size:1.5rem;font-weight:700;color:var(--purple)}.guardrail-goal>.field:first-child select{font-size:1.15rem;font-weight:600;padding:14px}.guardrails .guardrail-goal p{margin:0;font-size:.85rem}.guardrail-goal>.field:not(:first-child){margin-top:16px}

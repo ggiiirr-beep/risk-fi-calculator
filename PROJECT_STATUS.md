@@ -98,3 +98,6 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - 20261014-18: styled the guardrails explanation as a prominent responsive introduction with larger title typography and purple bold emphasis.
 
 - 20261014-19: shortened the connected-plan section heading to Your plan.
+
+## Guardrails hierarchy and copy (20261014-20)
+- Goal selector leads the page in a prominent box; retirement duration/ending balance are grouped with it. Removed repeated setup instructions and duplicate summaries; shared-plan behavior sits in a disclosure. Kept input meaning, probability interpretation and feasibility/result caveats.
