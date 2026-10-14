@@ -112,3 +112,9 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Return comparison solves withdrawals or investments, reports on-track status for Check my plan, and compares timelines for time/required-return questions. Required-return mode shows the calculated benchmark. Editing the comparison return no longer switches the main solve question.
 - Each comparison freezes starting cash and the FI goal; infeasible cases remain visible as result cards but are excluded from graph series. Graphs use each solved scenario's actual inputs. Withdrawal comparisons follow Plan calculator in navigation.
 - Verified 117 tests, build/syntax, browser investment/return/withdrawal solving and navigation order.
+
+## Explicit comparison questions and target dates (20261014-24)
+- All three comparison tools expose a compatible, independent What do you want to compare selector. Main solve mode supplies an initial compatible choice; selected comparison questions persist without changing the plan question.
+- Added Compare target dates, using calendar dates or target ages according to the plan's timeline mode. Defaults are five years earlier, current target and five years later, bounded to future/100-year horizons. Users can solve withdrawals, investments or return for each date.
+- Actual cash and real FI goal remain fixed across dates. Results show the future-dollar FI target for every date. Infeasible dates are reported independently. Comparison horizon overrides persist separately from the plan.
+- FI-date comparison cards indicate whether the desired date is met. Verified 118 tests, syntax/build and browser checks of calendar/age mode, independent selector options and date results.

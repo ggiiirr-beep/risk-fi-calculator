@@ -31,3 +31,15 @@ export function compareReturns(plan,rates,question='time'){
  const horizon=['spending','portfolio','projection'].includes(question)?plan.years:Math.min(100,Math.max(plan.years,...scenarios.map(s=>s.arrival?.error||!s.arrival?0:s.arrival.value)));
  return {horizon,scenarios:scenarios.map(s=>s.error?s:{...s,full:project(s.plan,{years:horizon})})};
 }
+
+export function compareTargetDates(plan,years,question='spending'){
+ if(!['spending','portfolio','return'].includes(question))throw Error('Choose withdrawals, investments or return.');
+ if(years.length!==3||years.some(y=>!Number.isFinite(y)||y<=0||y>100))throw Error('Choose three future targets within 100 years.');
+ const fixed={...plan,cashMode:'dollars',cash:cashAmount(plan),separateFiWithdrawals:true,fiWithdrawals:traditionalWithdrawals(plan)};
+ return {scenarios:years.map(year=>{
+  const solution=solve({...fixed,years:year},question);
+  if(solution.error)return {years:year,error:solution.error};
+  const p=resolveWithdrawals(solution.plan);
+  return {years:year,plan:p,solution,projection:project(p)};
+ })};
+}

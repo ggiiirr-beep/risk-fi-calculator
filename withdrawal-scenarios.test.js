@@ -33,3 +33,17 @@ test('return scenarios solve withdrawals or investments and isolate infeasible s
  const percentage=compareReturns({...p,withdrawalMode:'starting'},[.04,.07,.1],'spending');assert.ok(percentage.scenarios[1].plan.withdrawalRate<percentage.scenarios[2].plan.withdrawalRate);
  assert.throws(()=>compareReturns(p,[.02,NaN,.1]));
 });
+
+test('target dates solve each compatible question and keep the real FI target and actual cash fixed',async()=>{
+ const {compareTargetDates}=await import('./withdrawal-scenarios.js');
+ const p=simplifyPlan({...defaults,cashMode:'years',cashYears:2,spending:30000,separateFiWithdrawals:true,fiWithdrawals:60000}),before=structuredClone(p);
+ for(const question of ['spending','portfolio','return']){
+  const r=compareTargetDates(p,[10,15,20],question);
+  for(const s of r.scenarios){assert.equal(s.error,undefined);assert.equal(s.plan.cash,60000);assert.equal(s.plan.years,s.years);assert.equal(fiTarget(s.plan),fiTarget(p));assert.ok(Math.abs(s.projection.end.total-fiTarget(p))<1);}
+  if(question==='spending')assert.ok(r.scenarios[0].plan.spending<r.scenarios[2].plan.spending);
+  else assert.ok(r.scenarios[0].solution.value>r.scenarios[2].solution.value);
+ }
+ assert.deepEqual(p,before);
+ assert.ok(compareTargetDates(p,[1,15,20],'spending').scenarios[0].error);
+ assert.throws(()=>compareTargetDates(p,[0,15,20]));assert.throws(()=>compareTargetDates(p,[10,15,20],'time'));
+});
