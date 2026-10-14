@@ -72,3 +72,8 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 
 ## Input section headings (20261014-10)
 - Risk FI withdrawals now has its own heading after Cash reserve. Starting-point framing describes investments only. Cash entry still supports dollars or years of withdrawals; calculations unchanged.
+
+## Grouped inputs and plan summary (20261014-11)
+- Main calculator inputs are six distinct cards, two columns on desktop and one on mobile. Cash and Risk FI withdrawals are separate sections; results remain below inputs.
+- Your plan at a glance adds starting total assets/investments, annual and monthly withdrawal dollars, timeline or starting/desired/projected ages, return/inflation assumptions, and withdrawal policy. Existing FI goal/result cards stay prominent.
+- Verified syntax/build, section contents, age-mode summary and mobile single-column layout without horizontal overflow. Financial calculations unchanged.
