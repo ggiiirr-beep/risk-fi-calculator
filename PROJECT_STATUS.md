@@ -83,3 +83,6 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 
 ## Projection horizon controls (20261014-13)
 - Moved years after FI out of the goal form into synchronized dropdowns on both projection graphs. Both graphs and the annual table share the selection; existing saved values remain available.
+
+## Cash chart scale (20261014-14)
+- Verified the orange cash path changes, but its growth occupied only ~2.4 SVG pixels against multi-million asset values in the inspected plan. Added a Cash reserve only view with its own scale and explained the combined scale. Calculations unchanged.
