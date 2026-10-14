@@ -68,3 +68,5 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 .workspace:not([data-view="plan"]) .plan-result-divider{display:none}
 .result-divider:has(+ #gr-results:empty){display:none}
 @media(max-width:540px){.input-panel #inputs{grid-template-columns:minmax(0,1fr)}.result-divider{margin-top:24px}}
+
+.section-framing{margin:6px 0 18px}.section-framing h3{font-size:1rem;margin:0 0 6px}.section-framing p{font-size:.9rem;line-height:1.6;color:var(--muted);margin:0;max-width:760px}

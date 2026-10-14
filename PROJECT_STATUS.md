@@ -1,6 +1,6 @@
 # Risk FI Calculator — current status
 
-Updated October 13, 2026. Standalone web calculator, separate from Excerpt Tracker iOS.
+Updated October 14, 2026. Standalone web calculator, separate from Excerpt Tracker iOS.
 
 - Repository: `ggiiirr-beep/risk-fi-calculator`; publication branch `main`. GitHub Pages serves the repository root at https://ggiiirr-beep.github.io/risk-fi-calculator/.
 - Dependency-free JavaScript. Commands: `npm start`, `npm test`, `npm run build`.
@@ -12,7 +12,7 @@ Updated October 13, 2026. Standalone web calculator, separate from Excerpt Track
 - Existing features: fixed/steady/earlier/later schedules, fixed original FI deadline, retirement-funding alternative, independent probability estimation, shared outer market paths, fixed/zero-withdrawal references, floors, no-cash comparison, and fixed-target sweep.
 - Methods/data provenance are in `GUARDRAIL_METHOD.md`. Limits include independent annual samples, finite probability lookup, no separate taxes/fees, annual decisions/end-year withdrawals, and potentially large late-retirement increases. Targets are not guarantees.
 - Verification: 98 tests pass, including simulation convergence and new transfer/current-check tests; static build and syntax checks pass. Browser checks cover saved entries, plan transfer, comparison results, expandable charts, standalone check, scenarios, legacy simulator, saved-plan access and Help. Mobile 390px preview has no page overflow; no physical device testing.
-- Asset version: 20261013-7. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
+- Asset version: 20261014-1. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
 
 - Incorporated follow-up review: current checks lead with infeasibility before any suggested cut; fixed-withdrawal success comparison is visible with a plain explanation of the withdrawal-increase tradeoff. New stress-test models and cuts-only policies remain separate possible extensions, not part of this clarity update.
 
@@ -27,3 +27,5 @@ Updated October 13, 2026. Standalone web calculator, separate from Excerpt Track
 - Hierarchy verification: 98 regression tests and static build pass. Browser checks cover plan/scenario order, current check actions, two-strategy comparison, four-schedule results and expandable charts, and saved-baseline input order. At a 390px viewport the page has no horizontal overflow; wide comparison tables remain internally scrollable.
 
 - Inputs/results separation: removed the mobile CSS rule that moved the answer above inputs. Your plan now stacks its question and input panel above a numbered Results section on desktop and mobile. Comparisons, check-ins, scenarios and variable-return simulation have explicit input/result headings and dividers; empty guardrail results stay hidden. The main takeaway remains first within the results, not ahead of inputs. Verified desktop and 390px geometry, current-check divider visibility, syntax and static build; financial engines unchanged.
+
+- Added brief framing before the main solver question, starting amounts, FI goal, returns, withdrawal rules, floor, probability schedule, four-schedule comparison and current-position check. Inputs/results ordering and financial calculations are unchanged.

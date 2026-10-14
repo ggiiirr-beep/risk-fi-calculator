@@ -1,2 +1,2 @@
-import {runGuardrailComparison,runCurrentGuardrailCheck,runScheduleComparison} from './guardrails.js?v=20261013-7';
+import {runGuardrailComparison,runCurrentGuardrailCheck,runScheduleComparison} from './guardrails.js?v=20261014-1';
 self.onmessage=e=>{try{const result=(e.data.mode==='check'?runCurrentGuardrailCheck:e.data.mode==='schedules'?runScheduleComparison:runGuardrailComparison)(e.data.assumptions,e.data.strategies,{progress:progress=>self.postMessage({progress})});self.postMessage({result});}catch(error){self.postMessage({error:error.message});}};
