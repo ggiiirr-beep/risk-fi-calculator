@@ -1,7 +1,7 @@
 import {nominalReturn} from './finance.js';
 // Retire hidden settings without changing a saved return or custom FI balance.
 export function simplifyPlan(plan){
- return {...plan,timeEntry:plan.timeEntry==='age'?'age':'years',
+ return {...plan,fiBasis:'total',adjustWithdrawals:plan.adjustWithdrawals!==false,afterFIYears:plan.afterFIYears??30,timeEntry:plan.timeEntry==='age'?'age':'years',
   nominal:plan.returnMode==='real'?nominalReturn(plan.real,plan.inflation):plan.nominal,
   returnMode:'nominal',separateFiWithdrawals:true,fiWithdrawals:plan.targetOverride?plan.target*plan.fiRate:plan.separateFiWithdrawals?plan.fiWithdrawals:plan.spending,
   targetOverride:false,income:0,incomeStart:0,incomeEnd:0,timing:'end'};

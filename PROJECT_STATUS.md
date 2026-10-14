@@ -4,7 +4,7 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 
 - Repository: `ggiiirr-beep/risk-fi-calculator`; publication branch `main`. GitHub Pages serves the repository root at https://ggiiirr-beep.github.io/risk-fi-calculator/.
 - Dependency-free JavaScript. Commands: `npm start`, `npm test`, `npm run build`.
-- Primary navigation: Your plan, Withdrawal rules, Check my position; Help explains the concepts. Return scenarios and the existing variable-return simulator live under Your plan. Saved-baseline comparison lives under Check my position.
+- Primary navigation: Your plan, Withdrawal rules, Check my position; Help explains the concepts. Return scenarios live under Your plan; the standalone variable-return simulator is removed from the interface. Saved-baseline comparison lives under Check my position.
 - Saved inputs and numerical engines are retained. Disabled solver entries now say “Calculated below” and no longer describe an unused saved withdrawal as the active result.
 - Withdrawal rules offers explicit “Use my plan”: transfers solved investments plus cash (without double counting), FI target, horizon and return assumptions. Fractional horizons round up; custom targets preserve the same target via an equivalent FI withdrawal amount. Simulations still solve withdrawals/cash allocation independently. Income schedules, timing and percentage policies are not imported; limitations are explained next to the action.
 - Current withdrawal checks use shared guardrail settings, but a dedicated worker entry point builds only the probability model and current dollar thresholds. It does not run outer comparisons. Check-in inputs and dollar results now use current dollars. Conversion uses compounded assumed inflation or an optional entered cumulative price change; the original FI target and floor remain in starting-year dollars. Legacy saved check-in entries are converted once to preserve their meaning.
@@ -12,7 +12,7 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Existing features: fixed/steady/earlier/later schedules, fixed original FI deadline, retirement-funding alternative, independent probability estimation, shared outer market paths, fixed/zero-withdrawal references, floors, no-cash comparison, and fixed-target sweep.
 - Methods/data provenance are in `GUARDRAIL_METHOD.md`. Limits include independent annual samples, finite probability lookup, no separate taxes/fees, annual decisions/end-year withdrawals, and potentially large late-retirement increases. Targets are not guarantees.
 - Verification: 100 tests pass, including simulation convergence and new transfer/current-check tests; static build and syntax checks pass. Browser checks cover saved entries, plan transfer, comparison results, expandable charts, standalone check, scenarios, legacy simulator, saved-plan access and Help. Mobile 390px preview has no page overflow; no physical device testing.
-- Asset version: 20261014-4. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
+- Asset version: 20261014-5. Local test: 30-year 10,000-path comparison 5.31 seconds; standalone check 0.82 seconds.
 
 - Incorporated follow-up review: current checks lead with infeasibility before any suggested cut; fixed-withdrawal success comparison is visible with a plain explanation of the withdrawal-increase tradeoff. New stress-test models and cuts-only policies remain separate possible extensions, not part of this clarity update.
 
@@ -36,3 +36,12 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 
 - Main form simplification: years/target-age toggle shares one horizon; age mode uses current age and preserves target age when current age changes. Cash settings are regular visible inputs. Removed date picker, custom FI override, real-return entry selector, extra income and timing controls. Main projections use nominal return plus inflation, no additional income and year-end withdrawals. Saved real returns convert equivalently; saved custom targets become equivalent FI withdrawal goals. Historical baselines retain their original assumptions. The separate guardrail simulator remains unchanged.
 - Added tested `plan-settings.js` normalization and age conversion; static build includes the module. Browser verified years/age round trips, current-age updates, blank solved age, nominal return result and removed controls.
+
+## October 14 main-calculator update (20261014-5)
+- Main plans use investments plus cash for the FI goal. Engine legacy default remains investment-only for saved baselines and unchanged guardrail dependencies.
+- Today/future-dollar preference persists and applies to plan projections and return scenarios. Inputs and goal remain in today’s purchasing power; both target equivalents appear together.
+- Dollar/starting-percentage withdrawals can rise with inflation or remain nominally fixed. Annual-portfolio percentages have no extra inflation overlay.
+- Full projection includes exact FI crossing, switches to Traditional FI dollar withdrawals, then continues (default 30 years, 100-year overall cap). Fixed nominal post-FI withdrawals start at the inflation-adjusted amount at FI.
+- Plan numbers are visible; withdrawal chart has two lines. Table and chart share the full horizon. Return scenarios deliberately retain the Risk FI withdrawal policy throughout to isolate returns, disclosed above the chart.
+- Guardrail models, simulations and current-position check deferred to the next authorized phase. Transfer disclosure highlights the different asset basis and unsupported inflation choice.
+- Verification: 105 tests, syntax and build; browser checks of future dollars, full table, inflation choice, scenarios and responsive layout.

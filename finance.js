@@ -22,17 +22,21 @@ export function validate(p){
  if(p.targetOverride&&(!Number.isFinite(p.target)||p.target<=0))throw Error('Enter a positive custom FI target.');
  if(p.incomeEnd<p.incomeStart)throw Error('Earned income must end after it starts.');
 }
-export function project(p,{years=p.years,returns,guards=null}={}){
+export const fiAssets=(p,investment,cash)=>investment+(p.fiBasis==='total'?cash:0);
+export function project(p,{years=p.years,returns,guards=null,transitionAt=null}={}){
  p=resolveWithdrawals(p);
  validate({...p,years});
- let investment=p.portfolio,cash=cashAmount(p),unfunded=0,depleted=false,firstFI=investment>=fiTarget(p)?0:null;
+ let investment=p.portfolio,cash=cashAmount(p),unfunded=0,depleted=false,firstFI=fiAssets(p,investment,cash)>=fiTarget(p)?0:null;
  const target=fiTarget(p),cashRate=realReturn(p.cashNominal,p.inflation),baseReturn=expectedReturn(p);
- const rows=[{year:0,beginning:investment,investment, cash,total:investment+cash,investmentReturn:0,cashInterest:0,investmentWithdrawal:0,cashWithdrawal:0,spending:p.spending,income:0,unfunded:0,actualRate:0,spendingRate:investment>0?p.spending/investment:null,progress:investment/target,target}];
- for(let start=0;start<years-1e-9;start+=1){
-  const dt=Math.min(1,years-start),year=start+dt,r=returns?.[start]??baseReturn;
+ const rows=[{year:0,beginning:investment,investment, cash,total:investment+cash,investmentReturn:0,cashInterest:0,investmentWithdrawal:0,cashWithdrawal:0,spending:p.spending,income:0,unfunded:0,actualRate:0,spendingRate:investment>0?p.spending/investment:null,progress:fiAssets(p,investment,cash)/target,target}];
+ for(let start=0;start<years-1e-9;){
+  const boundary=transitionAt!==null&&transitionAt>start+1e-9?transitionAt:Infinity;
+  const year=Math.min(Math.floor(start+1e-9)+1,years,boundary),dt=year-start,r=returns?.[Math.floor(start+1e-9)]??baseReturn;
+  const traditional=transitionAt!==null&&start>=transitionAt-1e-9;
   if(!Number.isFinite(r)||r<=-1)throw Error('Annual returns must be greater than −100%.');
   const beginning=investment,beginCash=cash;
-  let annualSpending=p.withdrawalMode==='annual'?beginning*p.withdrawalRate:p.spending,annualIncome=p.income,stop=false;
+  let annualSpending=traditional?traditionalWithdrawals(p):p.withdrawalMode==='annual'?beginning*p.withdrawalRate:p.spending,annualIncome=p.income,stop=false;
+  if(p.adjustWithdrawals===false&&(traditional||p.withdrawalMode!=='annual'))annualSpending/=Math.pow(1+p.inflation,year-(traditional?transitionAt:0));
   if(guards?.enabled){
    if(investment<guards.reduceBelow)annualSpending*=1-guards.reducePercent;
    if(cash<guards.cashMonths/12*p.spending)annualSpending*=1-guards.cashReducePercent;
@@ -57,8 +61,9 @@ export function project(p,{years=p.years,returns,guards=null}={}){
   if(p.timing==='begin'){withdraw();grow();}else{grow();withdraw();}
   investment=Math.max(0,investment);cash=Math.max(0,cash);unfunded+=shortfall;
   depleted ||= investment<=1e-7 && (beginning>0||investmentWithdrawal>0||shortfall>0);
-  if(firstFI===null&&investment>=target)firstFI=year;
-  rows.push({year,beginning,beginCash,investmentReturn,cashInterest,investmentWithdrawal,cashWithdrawal,investment,cash,total:investment+cash,spending,income,unfunded:shortfall,actualRate:beginning>0?investmentWithdrawal/dt/beginning:null,spendingRate:investment>0?annualSpending/investment:null,progress:investment/target,target});
+  if(firstFI===null&&fiAssets(p,investment,cash)>=target-.00001)firstFI=year;
+  rows.push({year,phase:traditional?'Traditional FI':'Risk FI',annualSpending,withdrawalRate:beginning+beginCash>0?annualSpending/(beginning+beginCash):null,beginning,beginCash,investmentReturn,cashInterest,investmentWithdrawal,cashWithdrawal,investment,cash,total:investment+cash,spending,income,unfunded:shortfall,actualRate:beginning>0?investmentWithdrawal/dt/beginning:null,spendingRate:investment>0?annualSpending/investment:null,progress:fiAssets(p,investment,cash)/target,target});
+  start=year;
  }
  return {rows,end:rows.at(-1),target,unfunded,depleted,firstFI};
 }
@@ -82,11 +87,11 @@ export function solve(p,unknown){
  p=resolveWithdrawals(p);
  validate(p);
  if(unknown==='time'||unknown==='date'){
-  const target=fiTarget(p);if(p.portfolio>=target)return {value:0,plan:{...p,years:0}};
+  const target=fiTarget(p);if(fiAssets(p,p.portfolio,cashAmount(p))>=target)return {value:0,plan:{...p,years:0}};
   for(let y=1;y<=100;y++){
    const pr=project(p,{years:y});
    if(pr.unfunded>1e-5)return {error:'This plan runs out of withdrawal funds before reaching FI.'};
-   if(pr.end.investment>=target){const value=root(t=>project(p,{years:t}).end.investment-target,y-1,y);return {value,plan:{...p,years:value}};}
+   if(fiAssets(p,pr.end.investment,pr.end.cash)>=target){const value=root(t=>{const q=project(p,{years:t});return fiAssets(p,q.end.investment,q.end.cash)-target;},y-1,y);return {value,plan:{...p,years:value}};}
   }
   return {error:'FI is not reached within 100 years under these assumptions.'};
  }
@@ -103,7 +108,7 @@ export function solve(p,unknown){
  if(!bounds[unknown])throw Error('Choose a supported solver.');
  if(unknown==='spending'&&percentage)bounds.spending=[0,1];
  const candidate=x=>resolveWithdrawals(unknown==='return'?{...p,returnMode:'real',real:x}:unknown==='spending'&&percentage?{...p,withdrawalRate:x}:{...p,[unknown]:x});
- const residual=x=>{const q=project(candidate(x));return q.end.investment-q.target-q.unfunded;};
+ const residual=x=>{const q=project(candidate(x));return fiAssets(p,q.end.investment,q.end.cash)-q.target-q.unfunded;};
  if(unknown==='income'&&residual(0)>=0)return {value:0,plan:{...p,income:0}};
  if(unknown==='portfolio'&&residual(0)>=0)return {value:0,plan:candidate(0)};
  const value=root(residual,...bounds[unknown]);
@@ -134,4 +139,13 @@ export function annualCheckIn(originalPlan,current,elapsed){
  const plan={...originalPlan,portfolio:current.portfolio,cash:current.cash,spending:current.spending,withdrawalMode:'dollars',cashMode:'dollars',cashMinimum:originalPlan.cashMinimum*factor,years:remaining,target:originalPlan.target*factor,fiWithdrawals:originalPlan.fiWithdrawals==null?originalPlan.fiWithdrawals:originalPlan.fiWithdrawals*factor,income:originalPlan.income*factor,incomeStart:Math.max(0,originalPlan.incomeStart-elapsed),incomeEnd:Math.max(0,originalPlan.incomeEnd-elapsed)};
  validate(plan);
  return {factor,original,planned,delta,remaining,plan,spending:solve(plan,'spending'),requiredReturn:solve(plan,'return'),time:solve(plan,'time'),status:delta>.05?'Ahead of plan':delta<-.05?'Behind plan':'On track'};
+}
+
+/** Continue a smooth-return plan through its first funded FI crossing. */
+export function lifetimeProjection(p){
+ const arrival=solve(p,'time'),transitionAt=arrival.error?null:arrival.value;
+ const after=p.afterFIYears??30;
+ if(!Number.isFinite(after)||after<0||after>100)throw Error('Choose 0–100 years after FI.');
+ const years=Math.min(100,Math.max(p.years,transitionAt===null?p.years:transitionAt+after));
+ return {...project(p,{years,transitionAt}),transitionAt,capped:transitionAt!==null&&transitionAt+after>100};
 }

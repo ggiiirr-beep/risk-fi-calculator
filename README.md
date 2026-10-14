@@ -82,3 +82,6 @@ Run `npm run validate:guardrails` for the independent cash/inflation ledger and 
 ## Simplified main form
 
 Choose years from now or target age (with current age). Enter return before inflation and inflation separately. Cash reserve settings are visible in the form. FI withdrawals divided by the FI rate define the target; there is no custom target, additional-income schedule or withdrawal-timing control. Withdrawals occur at year-end. `plan-settings.js` converts saved real returns and custom goals without changing their equivalent values, and disables retired income/timing settings. Saved historical baselines retain their original assumptions.
+
+### Main calculator, October 14 update
+Inputs and FI targets are in today’s dollars. Display projections in today’s or future dollars without changing calculations. FI uses investments plus cash. Dollar withdrawals can rise with inflation or remain fixed in nominal dollars; annual-portfolio percentages follow opening investments. The lifetime projection switches to Traditional FI withdrawals at FI and continues for the chosen extension (100-year cap). Return scenarios retain Risk FI withdrawals throughout for comparison. The separate guardrail model is unchanged and still uses its documented investment-based target; its next update is deferred.
