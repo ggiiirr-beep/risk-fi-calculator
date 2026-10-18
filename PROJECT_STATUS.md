@@ -131,3 +131,8 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Kept initial cash in the probability grid when replenishment is off; aligned the outer exhaustion threshold with the forward model; zero-withdrawal summaries count actual payments, including unfunded years.
 - Added independent nominal-ledger checks (200 path-years), terminal probability/solver and exhaustion regressions. Full suite: 126 tests; static build and browser simulation verified.
 - A 100,000-path holdout on the synthetic $1.1m / $1.5m target / 10-year example gave 28.187% fixed-withdrawal success versus the initial 30% estimate. Zero withdrawals: 59.580% versus 64.119%. Earlier stochastic checkpoints still use an approximate finite-sample surface; this is not a certification of forecast accuracy. Before/after output saved in validation/guardrails-audit-20261014.json.
+
+## Solve menu wording (20261017-1)
+- Renamed Your question to Solve for; choices are Withdrawal amount, Investment needed, When will I reach Traditional FI?, and What return do I need?. Removed Check my plan from the selector.
+- Existing explicit snapshots from saved plans/guardrail edits retain their inputs and show a choose-what-to-solve prompt instead of silently selecting a different calculation. Updated the connected-plan explanation and result labels.
+- Verified all four solve choices in the browser, JavaScript syntax, static build and diff checks. Calculation engine unchanged.

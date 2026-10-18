@@ -1,2 +1,2 @@
-import {runStartingWithdrawals,runGuardrailComparison,runCurrentGuardrailCheck,runScheduleComparison} from './guardrails.js?v=20261014-26';
+import {runStartingWithdrawals,runGuardrailComparison,runCurrentGuardrailCheck,runScheduleComparison} from './guardrails.js?v=20261017-1';
 self.onmessage=e=>{try{const result=(e.data.mode==='starting'?runStartingWithdrawals:e.data.mode==='check'?runCurrentGuardrailCheck:e.data.mode==='schedules'?runScheduleComparison:runGuardrailComparison)(e.data.assumptions,e.data.strategies,{progress:progress=>self.postMessage({progress})});self.postMessage({result});}catch(error){self.postMessage({error:error.message});}};
