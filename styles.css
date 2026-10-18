@@ -153,3 +153,18 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
  .gr-confidence td::before{content:attr(data-label);display:block;color:var(--muted);font-size:.72rem;margin-bottom:4px}
  .gr-confidence td:first-child{font-weight:700;color:var(--purple)}
 }
+/* Four connected workspaces: inputs are separate from projections. */
+.workspace:not([data-view="numbers"]) > .input-panel{display:none}
+.workspace[data-view="numbers"] > .input-panel{display:block}
+.workspace[data-view="numbers"] > .results{display:none}
+.workspace[data-view="gap"] .plan-result-divider{display:none}
+.gap-periods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}
+.gap-periods .input-group{min-width:0;padding:20px;border:1px solid var(--border);border-radius:14px}
+.gap-periods .segmented{display:flex;flex-wrap:wrap;margin-bottom:16px}
+#gap-results .table-scroll{overflow-x:auto}
+#show-riskfi{margin:20px}
+@media(max-width:650px){.gap-periods{grid-template-columns:1fr}.tabs{flex-wrap:wrap}.tabs button{flex:1 1 auto}}
+.workspace{grid-template-columns:minmax(0,1fr)}
+#view>.content-panel{margin-bottom:20px}
+.summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media(max-width:650px){.summary-grid{grid-template-columns:1fr}}

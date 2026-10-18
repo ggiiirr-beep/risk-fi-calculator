@@ -1,10 +1,10 @@
 # Risk FI Calculator — current status
 
-Updated October 14, 2026. Standalone web calculator, separate from Excerpt Tracker iOS.
+Updated October 18, 2026. Standalone web calculator, separate from Excerpt Tracker iOS.
 
 - Repository: `ggiiirr-beep/risk-fi-calculator`; publication branch `main`. GitHub Pages serves the repository root at https://ggiiirr-beep.github.io/risk-fi-calculator/.
 - Dependency-free JavaScript. Commands: `npm start`, `npm test`, `npm run build`.
-- Primary navigation: Your plan, Withdrawal rules, Check my position; Help explains the concepts. Return scenarios live under Your plan; the standalone variable-return simulator is removed from the interface. Saved-baseline comparison lives under Check my position.
+- Current navigation: Your numbers, RiskFi (results and comparisons), Risk-Based Guardrails, GapFi; Help is a utility. See the latest dated entries below for current behavior. Earlier entries describe prior releases.
 - Saved inputs and numerical engines are retained. Disabled solver entries now say “Calculated below” and no longer describe an unused saved withdrawal as the active result.
 - Withdrawal rules offers explicit “Use my plan”: transfers solved investments plus cash (without double counting), FI target, horizon and return assumptions. Fractional horizons round up; custom targets preserve the same target via an equivalent FI withdrawal amount. Simulations still solve withdrawals/cash allocation independently. Income schedules, timing and percentage policies are not imported; limitations are explained next to the action.
 - Current withdrawal checks use shared guardrail settings, but a dedicated worker entry point builds only the probability model and current dollar thresholds. It does not run outer comparisons. Check-in inputs and dollar results now use current dollars. Conversion uses compounded assumed inflation or an optional entered cumulative price change; the original FI target and floor remain in starting-year dollars. Legacy saved check-in entries are converted once to preserve their meaning.
@@ -155,3 +155,9 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Two market choices: unadjusted U.S. history or custom parametric return/inflation/volatility. Historical mode explicitly ignores plan mean/inflation, disables old custom-history transforms, and hides irrelevant inputs. Prior centered-bootstrap selections migrate to the visibly labeled historical choice.
 - Results emphasize annual withdrawal dollars/rate, actual goal success, cumulative withdrawals, cuts, lowest withdrawals and zero years. Withdrawal/asset charts and individual annual decisions remain. Unattainable targets remain explicit.
 - Dashboard engine calls skip the unused sweep; the existing engine API retains it by default. 126 tests passed plus updated focused tests covering 10–90% rows and two-scenario output. Browser-tested both goal/model modes, presets, ramps, paths and completed 10k comparisons; checked 320/390px layout, desktop, syntax/build/diff.
+
+## GapFi and shared-number navigation (20261018-1)
+- Navigation separates Your numbers, RiskFi results/comparisons, Risk-Based Guardrails, and GapFi; Help remains a utility. Guardrail sharing remains connected.
+- GapFi supports editable withdrawal/break-even/contribution periods, whole-year durations and a final Until FI period. Add/remove and amounts persist locally. Uses solved shared assets/returns and fixed starting cash; replaces the RiskFi withdrawal policy with its periods. No GapFi guardrails.
+- Independent monthly real-dollar engine includes cash in the FI goal, cash yield/strategy/minimum, inflation-adjusted or fixed nominal flows, exact monthly flow totals, monthly arrival and a 100-year limit. Stops on unfunded withdrawals; period changes appear on chart, age mode and future dollars supported, final partial year visible.
+- Verification: existing 126 tests plus four initial GapFi tests passed (130 total); fifth regression verifies actual nominal monthly flow totals. Focused tests/build/syntax/diff pass. Browser verified period add/remove/amount edits, persistence on reload, separate RiskFi results, connected guardrails, and 320/390px layouts without horizontal overflow.
