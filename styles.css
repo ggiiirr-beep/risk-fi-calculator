@@ -122,3 +122,20 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 .gr-headline{gap:0;border:1px solid var(--border);border-radius:10px;background:var(--surface2);overflow:hidden}
 .gr-headline .metric{border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent;padding:16px}
 .gr-headline .metric:last-child{border-bottom:0}
+
+/* Guardrail dashboard: choices and results stay visible. */
+.gr-options{border:0;padding:0;min-width:0;margin:0 0 18px}
+.gr-options legend{font-size:.85rem;font-weight:600;margin-bottom:9px;padding:0}
+.gr-option-list{display:flex;flex-wrap:wrap;gap:8px}
+.gr-options .gr-option-list label{position:relative;display:block;margin:0;cursor:pointer;min-width:0}
+.gr-option-list input{position:absolute;opacity:0;width:1px;height:1px}
+.gr-option-list span{display:block;border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--surface);font-size:.82rem;line-height:1.4;min-height:44px}
+.gr-option-list input:checked+span{border-color:var(--purple);background:var(--surface2);box-shadow:inset 0 0 0 1px var(--purple);font-weight:650}
+.gr-option-list input:focus-visible+span{outline:3px solid var(--purple);outline-offset:3px}
+.gr-options:disabled{opacity:.5}.gr-options:disabled label{cursor:default}
+.guardrails .gr-grid:has(.gr-options){grid-template-columns:repeat(2,minmax(0,1fr))}
+.gr-schedule-fields{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.guardrails section>h3{font-size:1rem}.guardrails #gr-preview{margin:24px 0}
+.guardrails .gr-run{padding:18px 0;border-top:1px solid var(--border)}
+.guardrails #gr-run{font-size:1rem;padding:12px 22px}
+@media(max-width:740px){.guardrails .gr-grid:has(.gr-options),.gr-schedule-fields{grid-template-columns:minmax(0,1fr)}}

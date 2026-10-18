@@ -142,3 +142,9 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Replaced the individual plan-summary tiles with four labeled definition-list groups: assets, withdrawals, timeline and assumptions. Retained the key amounts, percentages, ages, dates and withdrawal policy. Combined strategy headline outcomes into a single panel.
 - Neutral gray/white surfaces replace lavender fills; restrained purple accents remain. Increased mobile control sizes, stacked narrow fields and improved related-tool navigation.
 - Verified plan, all three comparisons and guardrails at 320/390/768px with no page overflow; inspected populated 10k-path guardrail results at 390px, summary at 1280px, and dark-mode contrast. Syntax, static build and diff checks pass. Calculation engine unchanged.
+
+## Open guardrail dashboard (20261017-3)
+- Replaced every guardrail select with accessible visible radio choices, including goal, markets, schedules, simulation counts and graph views. Selected/disabled states remain explicit and keyboard accessible.
+- Removed collapsible sections: target preview, schedule comparison, result charts and metrics remain visible. Main charts precede the detailed metrics; condensed technical text links to the documented methodology.
+- Renamed the primary action Run Simulations and placed simulation settings before the calculation steps. Shortened plan-sharing and schedule explanations.
+- Browser-verified market/volatility and schedule controls, a 10k-path comparison, graph/path/balance switches and four-schedule comparison. No selects or accordions remain in guardrails. Verified 320/390px fit and desktop layout; syntax/build/diff checks pass. Engine unchanged.
