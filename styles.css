@@ -84,3 +84,41 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 .guardrail-goal{border:1px solid var(--border);border-left:4px solid var(--purple);border-radius:12px;background:var(--surface2);padding:14px 16px;margin:0 0 20px}.guardrail-goal>.field:first-child label{font-family:Manrope,system-ui;font-size:1rem;font-weight:600;color:var(--ink)}.guardrail-goal>.field:first-child select{font-size:1rem;font-weight:500;padding:10px 12px}.guardrails .guardrail-goal p{margin:0;font-size:.85rem}.guardrail-goal>.field:not(:first-child){margin-top:16px}
 
 .gr-input-box{padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);margin:20px 0}.guardrails .gr-input-box h3{margin-top:0}.gr-input-box .metric{background:var(--surface)}#gr-start-results:empty{display:none}#gr-start-results{margin-top:22px}
+
+/* Quiet surfaces, clearly grouped information and comfortable mobile controls. */
+:root{--surface2:#f6f7f8;--border:#dfe2e6;--muted:#626872;--ink:#272c33;--purple:#705591;--secondary:#a297b3}
+.input-group h3,.guardrails-intro strong{color:var(--ink)}
+.input-panel #inputs>.input-group:first-of-type{grid-column:1/-1}
+.input-panel #inputs>.input-group{background:var(--surface)}
+.connected-cards .field,.gr-input-box,.guardrail-goal{background:var(--surface2)}
+.solved-tag{background:var(--surface2);color:var(--muted)}
+.plan-overview>h3{margin-bottom:4px}.plan-overview>.hint{margin-top:0;color:var(--muted);font-size:.85rem}
+.summary-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:20px}
+.summary-group{min-width:0;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.summary-group h4{font-size:1rem;margin:0 0 12px}.summary-group dl{margin:0}
+.summary-group dl>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;padding:11px 0;border-top:1px solid var(--border);align-items:baseline}
+.summary-group dt{color:var(--muted);font-size:.85rem}.summary-group dd{margin:0;text-align:right;font-weight:600;font-size:.95rem;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+[data-theme=dark]{--surface2:#252830;--border:#41454e;--ink:#eeeef2;--muted:#b8bcc6;--purple:#b69bd4;--secondary:#a297b3}
+@media(max-width:740px){
+ .summary-groups{grid-template-columns:minmax(0,1fr);gap:14px}
+ .input-panel #inputs{gap:14px}.input-panel,.content-panel,.chart-panel{padding:18px}
+ .section-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.section-tools button{white-space:normal;min-height:44px;padding:8px}
+ .field select,.input-wrap input,.guardrails select{font-size:16px;min-height:44px}
+ .segmented button{min-height:40px}.connected-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .connected-cards .field{padding:12px}.connected-cards .field input{font-size:16px}
+ .metric{min-width:0;overflow-wrap:anywhere}.metric .value{font-size:1.3rem}
+ .table-scroll{max-width:100%;overscroll-behavior-x:contain}
+}
+@media(max-width:480px){
+ main{padding:22px 12px}.input-panel,.content-panel,.chart-panel,.guardrails .content-panel{padding:16px}
+ .input-panel #inputs>.input-group{padding:16px}.summary-group{padding:16px}
+ .metrics,.gr-headline,.connected-cards{grid-template-columns:minmax(0,1fr)}
+ .two-fields{grid-template-columns:minmax(0,1fr);gap:0}
+ .answer{padding:22px 18px}.answer h2{font-size:2.15rem;overflow-wrap:anywhere}
+ .field label{flex-wrap:wrap}.tabs{gap:0 18px}.tabs button{min-height:44px}
+ .summary-group dl>div{gap:12px}.summary-group dd{font-size:.9rem}
+}
+/* Strategy outcomes form one readable summary rather than six nested cards. */
+.gr-headline{gap:0;border:1px solid var(--border);border-radius:10px;background:var(--surface2);overflow:hidden}
+.gr-headline .metric{border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent;padding:16px}
+.gr-headline .metric:last-child{border-bottom:0}

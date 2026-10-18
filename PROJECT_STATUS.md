@@ -136,3 +136,9 @@ Updated October 14, 2026. Standalone web calculator, separate from Excerpt Track
 - Renamed Your question to Solve for; choices are Withdrawal amount, Investment needed, When will I reach Traditional FI?, and What return do I need?. Removed Check my plan from the selector.
 - Existing explicit snapshots from saved plans/guardrail edits retain their inputs and show a choose-what-to-solve prompt instead of silently selecting a different calculation. Updated the connected-plan explanation and result labels.
 - Verified all four solve choices in the browser, JavaScript syntax, static build and diff checks. Calculation engine unchanged.
+
+## Responsive grouping and neutral surfaces (20261017-2)
+- Reordered inputs: Solve for, FI goal, timeline, starting investments, Risk FI withdrawals, cash reserve, returns. Goal withdrawal amount precedes the rate; timeline has its own group. Desktop uses two columns after the full-width solve choice; mobile stacks groups.
+- Replaced the individual plan-summary tiles with four labeled definition-list groups: assets, withdrawals, timeline and assumptions. Retained the key amounts, percentages, ages, dates and withdrawal policy. Combined strategy headline outcomes into a single panel.
+- Neutral gray/white surfaces replace lavender fills; restrained purple accents remain. Increased mobile control sizes, stacked narrow fields and improved related-tool navigation.
+- Verified plan, all three comparisons and guardrails at 320/390/768px with no page overflow; inspected populated 10k-path guardrail results at 390px, summary at 1280px, and dark-mode contrast. Syntax, static build and diff checks pass. Calculation engine unchanged.
