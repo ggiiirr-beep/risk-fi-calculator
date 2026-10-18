@@ -1,12 +1,12 @@
 # Risk-Based Guardrails — connected model
 
-Updated October 14, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261014-26; earlier validation files describe explicitly older model versions.
+Updated October 14, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261017-4; earlier validation files describe explicitly older model versions.
 
 ## One plan, two tabs
 
 Shared cards show total wealth, actual cash/investments, FI target and horizon, returns and inflation. They remain linked and editable in both tabs. Calculated source timelines/investments/returns have visible provenance notes. Editing creates an explicit Check my plan snapshot. Retirement duration and ending balance are independent of the FI deadline.
 
-Step 1 builds the probability model and solves starting withdrawals at 20–90% confidence plus each strategy's selected target. It preserves actual entered cash and investments; it does not use the main plan's withdrawal amount or reallocate initial cash. Annual/monthly dollars, percent of wealth and achieved confidence are shown. Targets above zero-withdrawal confidence are marked unattainable; they are never presented as successful $0 solutions.
+Step 1 builds the probability model and solves starting withdrawals at 10–90% confidence plus each strategy's selected target. It preserves actual entered cash and investments; it does not use the main plan's withdrawal amount or reallocate initial cash. Annual/monthly dollars, percent of wealth and achieved confidence are shown. Targets above zero-withdrawal confidence are marked unattainable; they are never presented as successful $0 solutions.
 
 Step 2 runs each strategy from its own solved withdrawals on shared market paths, with fixed and zero-withdrawal references. Unattainable strategies start from zero and remain explicitly flagged. A schedule comparison uses a common starting confidence and solved withdrawal amount. The minimum withdrawal is always zero in both modes; engine floor support remains only for legacy tests.
 
@@ -97,3 +97,11 @@ Regression example: $1 million, one year, certain 10% return, no inflation or ca
 An independent nominal ledger reconciles 200 path-years of cash, investments, withdrawals and terminal outcomes. A separate 100,000-path sample for the documented $1.1m / 10-year / $1.5m-target scenario achieved 28.187% at the lookup's 30% starting solution; zero-withdrawal success was 59.580% against a 64.119% lookup estimate. Finite sampling and earlier-checkpoint interpolation remain limitations. See validation/guardrails-audit-20261014.json for assumptions and before/after strategy outcomes.
 
 The outer ledger now uses the same exhaustion threshold as the forward model (remaining assets at or below 1e-12), rather than classifying positive sub-cent balances as exhausted. This matters at terminal withdrawal quantiles. The cashflow shortfall reporting tolerance remains one cent in outer dollar ledgers.
+
+## Focused two-scenario interface (20261017-4)
+
+The main interface has four steps: goal/assumptions, starting withdrawals at 10–90% confidence, two scenarios, and observed outcomes with charts. Selecting a table confidence updates that scenario's reset/start target and preserves its lower/upper gaps, clamped to 0–100%. Unattainable targets remain selectable and visibly start at zero.
+
+The two visible market choices are unadjusted historical U.S. data and custom parametric return/volatility. Older centered-bootstrap selections migrate to the historical choice; the interface explicitly says entered stock mean/inflation are not used by historical sampling. Historical volatility transforms are disabled in this simplified interface. The engine retains legacy models for reproducibility and tests.
+
+A per-scenario optional switch reveals steady/earlier/later confidence ramps; new scenarios default to fixed confidence. Existing saved ramps are preserved. The separate four-schedule comparison and target sweep are removed from the main flow. Dashboard runs skip the unused sweep, while the engine's default API continues supporting it. Numerical guardrail mechanics are unchanged.

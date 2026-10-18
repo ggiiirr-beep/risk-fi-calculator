@@ -286,7 +286,7 @@ export function currentGuardrailCheck(a,strategy,model){
 export function runGuardrailComparison(input,strategies=defaultStrategies,{progress=()=>{}}={}){
  const a={...guardrailDefaults,...input};validateGuardrails(a,strategies);
  const started=Date.now(),paths=marketPaths(a,a.count,a.seed),model=buildProbabilityModel(a,{progress}),calibration=calibrate(a,model),results=[];
- const sweep=Array.from({length:8},(_,i)=>{const target=(i+2)/10;return {name:Math.round(target*100)+'% target',target,lower:Math.max(0,target-.1),upper:Math.min(1,target+.1)};});
+ const sweep=a.includeSweep===false?[]:Array.from({length:8},(_,i)=>{const target=(i+2)/10;return {name:Math.round(target*100)+'% target',target,lower:Math.max(0,target-.1),upper:Math.min(1,target+.1)};});
  const cache=new Map(),key=s=>[s.lower,s.target,s.upper,s.endTarget??s.target,s.schedule||'fixed'].join(':');
  for(const [index,s]of [...strategies,...sweep].entries()){
   let result=cache.get(key(s));if(!result){result=aggregateStrategy(a,s,model,paths,{progress:p=>progress({...p,label:s.name,index,total:strategies.length+sweep.length})});cache.set(key(s),result);}results.push({...result,strategy:s});
@@ -320,7 +320,7 @@ export function runScheduleComparison(input,strategies=defaultStrategies,{progre
 }
 
 function startingTable(a,strategies,model){
- const targets=[...new Set([.2,.3,.4,.5,.6,.7,.8,.9,...strategies.map(s=>s.target)])].sort((a,b)=>a-b);
+ const targets=[...new Set([.1,.2,.3,.4,.5,.6,.7,.8,.9,...strategies.map(s=>s.target)])].sort((a,b)=>a-b);
  return targets.map(target=>({target,...initialSpending({...a,initialMode:'target'}, {target},model)}));
 }
 export function runStartingWithdrawals(input,strategies=defaultStrategies,{progress=()=>{}}={}){

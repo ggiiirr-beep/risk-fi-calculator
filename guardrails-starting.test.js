@@ -20,9 +20,10 @@ test('target confidence solves withdrawals with the exact supplied cash and labe
  assert.equal(r.unreachable,true);assert.equal(r.spending,0);assert.equal(r.cash,150000);
 });
 test('starting table and simulated strategies use the same amounts; references and zero summaries reconcile',()=>{
- const a={...guardrailDefaults,goal:'retirement',initialMode:'target',initialCash:150000,years:3,innerCount:512,count:10000,volatilityMode:'custom',stockVol:.25};
+ const a={...guardrailDefaults,goal:'retirement',initialMode:'target',initialCash:150000,years:3,innerCount:512,count:10000,includeSweep:false,volatilityMode:'custom',stockVol:.25};
  const strategies=[{name:'A',lower:.2,target:.3,upper:.4},{name:'B',lower:.7,target:.8,upper:.9}];
  const start=runStartingWithdrawals(a,strategies),r=runGuardrailComparison(a,strategies);
+ assert.equal(start.starting[0].target,.1);assert.equal(start.starting.at(-1).target,.9);assert.equal(start.starting.length,9);assert.deepEqual(r.sweep,[]);assert.equal(r.results.length,2);
  for(let i=0;i<2;i++){
   const initial=start.starting.find(s=>s.target===strategies[i].target),sim=r.results[i];
   assert.equal(initial.spending,sim.initial.spending);assert.deepEqual(sim.initial,r.references[i].fixed.initial);

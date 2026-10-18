@@ -139,3 +139,17 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 .guardrails .gr-run{padding:18px 0;border-top:1px solid var(--border)}
 .guardrails #gr-run{font-size:1rem;padding:12px 22px}
 @media(max-width:740px){.guardrails .gr-grid:has(.gr-options),.gr-schedule-fields{grid-template-columns:minmax(0,1fr)}}
+
+.guardrails [hidden]{display:none!important}
+.gr-preset-actions{display:flex;gap:6px}.gr-preset-actions button{min-height:40px;min-width:40px}
+.guardrails .toggle-row{flex-wrap:wrap;margin-top:20px}.guardrails .gr-schedule-fields{padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px}
+.guardrails .gr-schedule-fields p{grid-column:1/-1;margin:0}
+.guardrails #gr-results>.panel{margin:20px 0}
+@media(max-width:540px){
+ .gr-confidence table,.gr-confidence tbody{display:block;width:100%;min-width:0;white-space:normal}
+ .gr-confidence thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ .gr-confidence tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--border);border-radius:10px;margin:12px 0;background:var(--surface);padding:10px}
+ .gr-confidence td{display:block;border:0;padding:8px;text-align:left;min-width:0;overflow-wrap:anywhere}
+ .gr-confidence td::before{content:attr(data-label);display:block;color:var(--muted);font-size:.72rem;margin-bottom:4px}
+ .gr-confidence td:first-child{font-weight:700;color:var(--purple)}
+}
