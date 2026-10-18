@@ -88,7 +88,7 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 /* Quiet surfaces, clearly grouped information and comfortable mobile controls. */
 :root{--surface2:#f6f7f8;--border:#dfe2e6;--muted:#626872;--ink:#272c33;--purple:#705591;--secondary:#a297b3}
 .input-group h3,.guardrails-intro strong{color:var(--ink)}
-.input-panel #inputs>.input-group:first-of-type{grid-column:1/-1}
+
 .input-panel #inputs>.input-group{background:var(--surface)}
 .connected-cards .field,.gr-input-box,.guardrail-goal{background:var(--surface2)}
 .solved-tag{background:var(--surface2);color:var(--muted)}
@@ -168,3 +168,10 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 #view>.content-panel{margin-bottom:20px}
 .summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 @media(max-width:650px){.summary-grid{grid-template-columns:1fr}}
+.shared-cards{margin:20px 0}.shared-cards .shared-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+.shared-row label,.shared-row>span{font-size:.875rem}.shared-row input{width:45%;min-width:0;padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink);text-align:right}
+.shared-cards .connected-cards{display:block}.shared-cards .connected-cards>.field{background:transparent;border:0;padding:0}.shared-cards h3{margin-top:0}
+#inputs>.input-group{grid-column:auto}#inputs>.section-framing{grid-column:1/-1}
+@media(max-width:540px){.shared-row{flex-wrap:wrap}.shared-row input{width:100%}}
+
+.input-panel #inputs>.input-group{background:var(--surface2)}
