@@ -1,6 +1,6 @@
 # Risk-Based Guardrails — connected model
 
-Updated October 14, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261017-4; earlier validation files describe explicitly older model versions.
+Updated October 21, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261021-1; earlier validation files describe explicitly older model versions.
 
 ## One plan, two tabs
 
@@ -10,7 +10,7 @@ Step 1 builds the probability model and solves starting withdrawals at 10–90% 
 
 Step 2 runs each strategy from its own solved withdrawals on shared market paths, with fixed and zero-withdrawal references. Unattainable strategies start from zero and remain explicitly flagged. A schedule comparison uses a common starting confidence and solved withdrawal amount. The minimum withdrawal is always zero in both modes; engine floor support remains only for legacy tests.
 
-The main cash policy is not identical to the guardrail policy: guardrails replenish cash after positive stock-return years, toward the entered reserve-years target. Starting cash is preserved, not recalculated from spending. Cash is included exactly once in starting wealth. The optional no-cash comparison instead invests all starting wealth, with starting withdrawals recalculated for that cash policy and the same market paths.
+The main cash policy is not identical to the guardrail policy: guardrails replenish cash after positive combined investment-return years, toward the entered reserve-years target. Starting cash is preserved, not recalculated from spending. Cash is included exactly once in starting wealth. The optional no-cash comparison instead invests all starting wealth, with starting withdrawals recalculated for that cash policy and the same market paths.
 
 Annual guardrail models support 1–60 whole years. Fractional FI horizons round up and the interface reports that difference. A zero-year main horizon uses one annual guardrail checkpoint. Retirement mode has its own duration. This is not a chained simulation of the Risk FI phase followed by retirement.
 
@@ -105,3 +105,14 @@ The main interface has four steps: goal/assumptions, starting withdrawals at 10�
 The two visible market choices are unadjusted historical U.S. data and custom parametric return/volatility. Older centered-bootstrap selections migrate to the historical choice; the interface explicitly says entered stock mean/inflation are not used by historical sampling. Historical volatility transforms are disabled in this simplified interface. The engine retains legacy models for reproducibility and tests.
 
 A per-scenario optional switch reveals steady/earlier/later confidence ramps; new scenarios default to fixed confidence. Existing saved ramps are preserved. The separate four-schedule comparison and target sweep are removed from the main flow. Dashboard runs skip the unused sweep, while the engine's default API continues supporting it. Numerical guardrail mechanics are unchanged.
+
+
+## Shared assets and scheduled changes — October 21, 2026
+
+The asset editor supports U.S. stocks, 10-year U.S. Treasury bonds, and cash. Basic calculators compound each row separately; investment contributions and withdrawals are proportional. Historical simulations pair stock, bond total return and inflation observations from the same NYU Stern workbook year (1928–2025). Bonds were retrieved October 21, 2026; the accompanying stock/inflation values matched the existing dataset. Historical simulations rebalance investment weights annually. Cash uses the entered weighted yield. Custom-volatility mode describes the combined investment portfolio, not independent guessed asset correlations.
+
+Recurring income reduces required portfolio withdrawals. Surplus enters cash. One-time additions enter investments; expenses draw assets. Entries can preserve real purchasing power or use fixed future-dollar payments. The FI target remains explicit and is not reduced by pensions.
+
+When scheduled events are enabled, the scale-free probability surface is replaced by direct forward Monte Carlo: the same independent inner paths are reused for every candidate withdrawal at each checkpoint. Event dates are relative to the original plan; nominal payments use each sampled inflation path and the checkpoint price level. Withdrawal bisection solves the empirical success function. This is slower, especially over long horizons, but accounts for known future flows in both checkpoint and outer simulations. Independent validation paths check estimated probabilities.
+
+Annual guardrail flows occur at year end (year-zero events immediately). Basic accumulation uses monthly flows. With scheduled support, success requires every withdrawal funded and the ending goal reached; temporary zero assets remain reported as depletion, but do not automatically invalidate a later funded recovery. Reported withdrawal totals are actual net portfolio withdrawals, including one-time expenses. Guardrail cuts refer to the planned base amount before future-income offsets.

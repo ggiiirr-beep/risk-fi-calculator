@@ -1,7 +1,10 @@
+import {createLedger,ledgerTotal,growLedger,changeLedger} from './plan-assets.js';
+import {validateChanges,futureFlows} from './future-changes.js';
 import {cashAmount,expectedReturn,realReturn,fiTarget} from './finance.js';
 export const gapDefaults=()=>[{action:'withdraw',amount:60000,years:2},{action:'even',amount:0,years:2},{action:'contribute',amount:40000,years:null}];
 /** Monthly end-of-period flows; all balances and flows in today's dollars. */
 export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true}={}){
+ validateChanges(plan.futureChanges);
  if(!periods.length||periods.at(-1).years!==null)throw Error('End your timeline with an Until FI period.');
  let duration=0;
  for(const [i,p] of periods.entries()){
@@ -12,19 +15,24 @@ export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true}={}){
  if(duration>=100)throw Error('Fixed periods must total less than 100 years.');
  let investment=plan.portfolio,cash=cashAmount(plan),target=fiTarget(plan),r=expectedReturn(plan),cr=realReturn(plan.cashNominal,plan.inflation);
  if(![investment,cash,target,r,cr,plan.inflation].every(Number.isFinite)||investment<0||cash<0||target<=0||r<=-1||cr<=-1)throw Error('Enter valid assets, returns and an FI goal in Your numbers.');
+ const ledger=createLedger({...plan,cash});
+ const opening=futureFlows(plan.futureChanges,0,0,plan.inflation);changeLedger(ledger,opening.addition);const openingCash=plan.cashStrategy==='first'||(plan.cashStrategy==='downturn'&&r<0)?Math.min(opening.expense,Math.max(0,cash-(plan.cashMinimum||0))):0;changeLedger(ledger,-openingCash,true);const openingPaid=openingCash-changeLedger(ledger,-(opening.expense-openingCash));investment=ledgerTotal(ledger);cash=ledgerTotal(ledger,true);
  const rows=[{year:0,investment,cash,total:investment+cash,target,withdrawals:0,contributions:0,period:0,nominalWithdrawals:0,nominalContributions:0}], boundaries=[];
  let elapsed=0;periods.forEach(p=>{elapsed+=p.years??Infinity;boundaries.push(elapsed);});
- let reached=investment+cash>=target?0:null,shortfall=null,withdrawals=0,contributions=0,nominalWithdrawals=0,nominalContributions=0;
- for(let month=1;(!stopAtGoal||reached===null)&&month<=maxYears*12;month++){
+ let reached=investment+cash>=target?0:null,shortfall=openingPaid<opening.expense-1e-7?0:null,withdrawals=0,contributions=0,nominalWithdrawals=0,nominalContributions=0;
+ for(let month=1;(!stopAtGoal||reached===null)&&month<=maxYears*12&&shortfall===null;month++){
   const start=(month-1)/12,year=month/12,index=boundaries.findIndex(end=>start<end),p=periods[index];
-  investment*=Math.pow(1+r,1/12);cash*=Math.pow(1+cr,1/12);
-  const amount=p.amount/12/(plan.adjustWithdrawals===false?Math.pow(1+plan.inflation,year):1);
-  if(p.action==='contribute'){investment+=amount;contributions+=amount;nominalContributions+=amount*Math.pow(1+plan.inflation,year);}
-  if(p.action==='withdraw'){
-   let need=amount;
+  growLedger(ledger,plan.inflation,1/12);const flows=futureFlows(plan.futureChanges,start,year,plan.inflation);changeLedger(ledger,flows.addition);
+  investment=ledgerTotal(ledger);cash=ledgerTotal(ledger,true);
+  const amount=(start>=(plan.coastAt??Infinity)?0:p.amount)/12/(plan.adjustWithdrawals===false?Math.pow(1+plan.inflation,year):1);
+  if(p.action==='contribute'){changeLedger(ledger,amount);investment=ledgerTotal(ledger);contributions+=amount;nominalContributions+=amount*Math.pow(1+plan.inflation,year);}
+  const requested=p.action==='withdraw'?amount:0,net=Math.max(0,requested-flows.income)+flows.expense;
+  const surplus=Math.max(0,flows.income-requested);changeLedger(ledger,surplus,true);cash=ledgerTotal(ledger,true);
+  if(net>0){
+   let need=net;
    const useCash=plan.cashStrategy==='first'||(plan.cashStrategy==='downturn'&&r<0);
-   if(useCash){const paid=Math.min(need,Math.max(0,cash-(plan.cashMinimum||0)));cash-=paid;need-=paid;}
-   const paid=Math.min(need,investment);investment-=paid;need-=paid;withdrawals+=amount-need;nominalWithdrawals+=(amount-need)*Math.pow(1+plan.inflation,year);
+   if(useCash){const paid=Math.min(need,Math.max(0,cash-(plan.cashMinimum||0)));changeLedger(ledger,-paid,true);cash=ledgerTotal(ledger,true);need-=paid;}
+   const paid=Math.min(need,investment);changeLedger(ledger,-paid);investment=ledgerTotal(ledger);need-=paid;withdrawals+=net-need;nominalWithdrawals+=(net-need)*Math.pow(1+plan.inflation,year);
    if(need>1e-7)shortfall=year;
   }
   if(reached===null&&investment+cash>=target-1e-7)reached=year;

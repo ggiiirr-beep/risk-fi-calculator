@@ -6,12 +6,11 @@ export function traditionalProjection(plan,{contribution=0,years=100,adjust=true
  return projectGap({...plan,spending:0,withdrawalMode:'dollars',adjustWithdrawals:adjust},[{action:'contribute',amount:contribution,years:null}],{maxYears:years,stopAtGoal});
 }
 export function contributionNeeded(plan,{years,adjust=true}){
- const base=traditionalProjection(plan,{years,adjust,stopAtGoal:false});
- const unit=traditionalProjection(plan,{contribution:1000,years,adjust,stopAtGoal:false});
- const gain=(unit.rows.at(-1).total-base.rows.at(-1).total)/1000;
- const missing=base.target-base.rows.at(-1).total;
- if(missing<=0)return {contribution:0,projection:base};
- if(!Number.isFinite(gain)||gain<=0)throw Error('A contribution solution could not be calculated.');
- const contribution=Math.ceil(missing/gain*100-1e-6)/100;
- return {contribution,projection:traditionalProjection(plan,{contribution,years,adjust,stopAtGoal:false})};
+ const run=contribution=>traditionalProjection(plan,{contribution,years,adjust,stopAtGoal:false});
+ const meets=q=>q.shortfall===null&&q.rows.at(-1).total>=q.target-1e-7;
+ const base=run(0);if(meets(base))return {contribution:0,projection:base};
+ let lo=0,hi=1000;for(let i=0;i<50&&!meets(run(hi));i++)hi*=2;
+ if(!meets(run(hi)))throw Error('Contributions cannot fund this plan. Check any immediate expenses.');
+ for(let i=0;i<70;i++){const mid=(lo+hi)/2;if(meets(run(mid)))hi=mid;else lo=mid;}
+ const contribution=Math.ceil(hi*100)/100;return {contribution,projection:run(contribution)};
 }

@@ -1,6 +1,6 @@
 # Risk FI Calculator — current status
 
-Updated October 20, 2026. Standalone web calculator, separate from Excerpt Tracker iOS.
+Updated October 21, 2026. Standalone web calculator, separate from Excerpt Tracker iOS.
 
 - Repository: `ggiiirr-beep/risk-fi-calculator`; publication branch `main`. GitHub Pages serves the repository root at https://ggiiirr-beep.github.io/risk-fi-calculator/.
 - Dependency-free JavaScript. Commands: `npm start`, `npm test`, `npm run build`.
@@ -181,3 +181,13 @@ Updated October 20, 2026. Standalone web calculator, separate from Excerpt Track
 - Cash amounts/yields remain global; cash-use rules remain scenario-specific. Fixed a duplicate GapFi cash amount/strategy element ID that prevented reliable strategy changes.
 - Added a linked data/method page explaining the bundled 1928–2025 NYU source, paired consecutive-year block sampling, custom volatility, cash mechanics, distinct success measures, and limitations. Added a short educational/hypothetical-results footer disclaimer.
 - Added known-answer, infeasibility, phase isolation and inflation tests for the new solver. Browser checked all three GapFi modes, both dollar views, Traditional FI captions, disabled unknown entry, and 320/390px layouts with no overflow or duplicate IDs. Static build, syntax and diff checks pass; all 140 automated tests pass.
+
+
+## Shared planning additions (20261021-1)
+- Retained RiskFi Calculator branding with Financial independence planning tools subtitle. Top navigation is Your numbers / Calculators / Risk-based guardrails; calculators are Traditional FI, Coast FI, Risk FI and Gap FI. Help remains separate.
+- Shared asset rows support stocks, bonds and cash, with custom names, balances and expected nominal returns. Existing balances migrate to market/cash rows. Basic projections grow rows individually; investment flows are proportional. Aggregate cards remain bidirectionally editable, preserving asset proportions.
+- Optional Future income & one-time changes supports recurring income, additions and expenses, age/year timing, inflation adjustment and include toggles. Surplus income enters cash; additions enter investments. All calculators and guardrail forward estimates account for the events. The FI target remains unchanged.
+- Coast FI solves required investments now, the date regular contributions can stop, or FI arrival without regular contributions. Monthly projections include shared scheduled events.
+- Historical guardrails pair U.S. stocks, 10-year U.S. Treasury total returns and inflation by year; stock/bond weights rebalance annually. Parametric mode models the combined investments. With future events, independent direct forward samples replace the scale-free lookup, preserving event timing and sampled inflation; this can take several minutes for long horizons.
+- Verification: 149 tests including new independent ledger, bond pairing, Coast, immediate-expense and income-surplus checks; production static build. A 10,000-path, five-year scheduled stock/bond comparison completed in 5.6 seconds, with maximum independent calibration discrepancy 0.93 percentage points. Timing/results are fixture-specific. Desktop and 390px browser checks cover adding assets/events, shared totals, Coast results and starting withdrawal probabilities. No horizontal page overflow on the mobile inputs.
+- Source/data and scheduled-model limitations updated in simulation-method.html and GUARDRAIL_METHOD.md. Existing GitHub Pages hosting retained; no podcast domain was supplied.

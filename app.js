@@ -1,11 +1,13 @@
-import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261020-2';
-import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261020-2';
-import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261020-2';
-import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261020-2';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261020-2';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261020-2';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261020-2';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261020-2';
+import {assetRows,assetTotals,syncAssets} from './plan-assets.js';
+import {solveCoast} from './coast-fi.js';
+import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261021-1';
+import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261021-1';
+import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261021-1';
+import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261021-1';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261021-1';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261021-1';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261021-1';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261021-1';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -17,21 +19,23 @@ const dateLabel=(years,start=today)=>dateAfter(years,start).toLocaleDateString('
 const yearsBetween=(a,b)=>(new Date(b+'T12:00:00Z')-new Date(a+'T12:00:00Z'))/yearMS;
 let state={...defaults},unknown='spending',tab='numbers',nominal=false,baseline=null,worker=null,riskTimer=null,riskOutput=null,checkValues={};
 let returnComparisonRate=null,comparisonQuestions={},targetHorizons=null;
+let coast={mode:'amount',years:30,contribution:40000};
 let gapPeriods=gapDefaults(),gapSettings={mode:'time',index:0,years:15,adjust:true,cashStrategy:'reserve',cashMinimum:0},traditional={mode:'time',contribution:40000,years:15,adjust:true};
 let withdrawalComparisons={mode:null,values:null};
 let risk={count:2000,volatility:.16,enabled:false,reduceBelow:800000,reducePercent:.2,stopBelow:0,incomeBelow:700000,extraIncome:40000,cashMonths:0,cashReducePercent:.1};
-try{const saved=JSON.parse(localStorage.getItem('riskfi-v1'));if(saved){state={...defaults,...saved.state};gapPeriods=saved.gapPeriods||gapPeriods;gapSettings={...gapSettings,adjust:saved.state.adjustWithdrawals!==false,cashStrategy:saved.state.cashStrategy||'reserve',cashMinimum:saved.state.cashMinimum||0,...saved.gapSettings};traditional={...traditional,...saved.traditional};if(!Object.hasOwn(saved.state,'withdrawalRate')&&state.portfolio>0)state.withdrawalRate=state.spending/state.portfolio;withdrawalComparisons=saved.withdrawalComparisons||withdrawalComparisons;comparisonQuestions=saved.comparisonQuestions||{};targetHorizons=saved.targetHorizons||null;nominal=saved.nominal===true;unknown=saved.unknown||unknown;baseline=saved.baseline||null;risk={...risk,...saved.risk};}document.documentElement.dataset.theme=localStorage.getItem('riskfi-theme')||'light';}catch{}
+try{const saved=JSON.parse(localStorage.getItem('riskfi-v1'));if(saved){state={...defaults,...saved.state};gapPeriods=saved.gapPeriods||gapPeriods;gapSettings={...gapSettings,adjust:saved.state.adjustWithdrawals!==false,cashStrategy:saved.state.cashStrategy||'reserve',cashMinimum:saved.state.cashMinimum||0,...saved.gapSettings};traditional={...traditional,...saved.traditional};coast={...coast,...saved.coast};if(!Object.hasOwn(saved.state,'withdrawalRate')&&state.portfolio>0)state.withdrawalRate=state.spending/state.portfolio;withdrawalComparisons=saved.withdrawalComparisons||withdrawalComparisons;comparisonQuestions=saved.comparisonQuestions||{};targetHorizons=saved.targetHorizons||null;nominal=saved.nominal===true;unknown=saved.unknown||unknown;baseline=saved.baseline||null;risk={...risk,...saved.risk};}document.documentElement.dataset.theme=localStorage.getItem('riskfi-theme')||'light';}catch{}
 // Older linked plans start with the same effective withdrawal target.
 if(!state.separateFiWithdrawals)state.fiWithdrawals=state.spending??defaults.fiWithdrawals;
 state.separateFiWithdrawals=true;
 state=simplifyPlan(state);
 if(state.cashMode==='years'){let cashSource=state;try{cashSource=solve(state,unknown).plan||state;}catch{}state.cash=cashAmount(cashSource);state.cashMode='dollars';}
+state.assets=assetRows(state);state.futureChanges=state.futureChanges||[];
 let resolved={...state},currentProjection,scenarioTimer;
 const labels={spending:'Withdrawal amount',portfolio:'Investment needed',time:'When will I reach Traditional FI?',return:'What return do I need?'};
 // Preserve saved assumptions when retiring older menu choices.
 unknown=unknown==='date'?'time':Object.hasOwn(labels,unknown)?unknown:'projection';
 function toast(text){$('#toast').textContent=text;$('#toast').style.display='block';setTimeout(()=>$('#toast').style.display='none',3500);}
-function persist(){try{localStorage.setItem('riskfi-v1',JSON.stringify({state,unknown,baseline,risk,nominal,withdrawalComparisons,comparisonQuestions,targetHorizons,gapPeriods,gapSettings,traditional}));}catch{toast('Browser storage is unavailable. Your entries cannot be saved here.');}}
+function persist(){try{localStorage.setItem('riskfi-v1',JSON.stringify({state,unknown,baseline,risk,nominal,withdrawalComparisons,comparisonQuestions,targetHorizons,gapPeriods,gapSettings,traditional,coast}));}catch{toast('Browser storage is unavailable. Your entries cannot be saved here.');}}
 const entry=(value,scale=1,digits=8)=>Number.isFinite(value)?+(value*scale).toFixed(digits):'';
 const enteredAge=()=>Number.isFinite(state.years)&&Number.isFinite(state.age)?entry(state.age+state.years,1,2):'';
 function field(key,label,value,{type='number',prefix='',suffix='',step='any',min, max,disabled=false,hint='',className=''}={}){const amount=prefix==='$'&&type==='number';return `<div class="field ${className}"><label for="${key}">${label}${disabled?`<span class="solved-tag">${key==='target'?'Not in use':'Calculated below'}</span>`:''}</label><div class="input-wrap ${prefix?'has-prefix':''} ${suffix?'has-suffix':''}">${prefix?`<span class="prefix">${prefix}</span>`:''}<input id="${key}" type="${amount?'text':type}" ${amount?'inputmode="decimal" data-amount="true"':''} value="${disabled?'':amount?formatAmount(value):value??''}" step="${step}" ${min!==undefined?`min="${min}"`:''} ${max!==undefined?`max="${max}"`:''} ${disabled?'disabled':''}>${suffix?`<span class="suffix">${suffix}</span>`:''}</div>${key==='years'?`<input id="horizonSlider" type="range" aria-label="Target years slider" min="0" max="50" step="0.5" value="${value}" ${disabled?'disabled hidden':''}>`:''}${hint?`<small class="hint">${hint}</small>`:''}</div>`;}
@@ -39,11 +43,12 @@ function select(key,label,options,value){return `<div class="field"><label for="
 function summaryGroup(title,rows){return `<section class="summary-group"><h4>${title}</h4><dl>${rows.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl></section>`;}
 function renderInputs(){
  const p=state;$('#inputs').innerHTML=`<div class="wide section-framing"><p>Your shared starting point. All amounts are in today’s dollars.</p></div>
- <section class="input-group"><h3>Starting assets</h3>${field('portfolio','Current investments',entry(p.portfolio),{prefix:'$',min:0})}${field('cash','Cash reserve',p.cash,{prefix:'$',min:0})}</section>
+ <section class="input-group wide"><h3>Your assets</h3>${assetEditor()}<button id="asset-add">Add asset</button><p class="hint">Returns before inflation. Cash is separate; other assets share withdrawals and contributions proportionally.</p></section>
  <section class="input-group"><h3>Your FI goal</h3>${field('fiWithdrawals','Annual withdrawals at Traditional FI',entry(p.fiWithdrawals),{prefix:'$',min:1})}${field('fiRate','FI withdrawal rate',entry(p.fiRate,100),{suffix:'%',min:.01,max:100})}<div class="metric"><div class="label">Traditional FI target · today’s dollars</div><div class="value" id="fi-target-preview"></div></div></section>
  <section class="input-group"><h3>Age & display</h3>${field('age','Current age',p.age,{min:0,max:120})}${select('timeEntry','Show timelines as',{years:'Years from now',age:'Age'},p.timeEntry)}</section>
- <section class="input-group"><h3>Return assumptions</h3>${field('returnInput','Return before inflation',entry(p.nominal,100),{suffix:'%'})}${field('inflation','Inflation',entry(p.inflation,100),{suffix:'%'})}${field('cashNominal','Cash yield',entry(p.cashNominal,100),{suffix:'%'})}<small class="hint" id="real-summary"></small></section>`;
- $('#inputs').addEventListener('input',onInput,{signal:inputController.signal});syncSolved();
+ <section class="input-group"><h3>Inflation</h3>${field('inflation','Annual inflation',entry(p.inflation,100),{suffix:'%'})}<small class="hint" id="real-summary"></small></section>
+ <section class="input-group wide"><h3>Future income & one-time changes</h3><p class="hint">Optional. Add only income not already included in your withdrawals. Surplus income goes to cash; one-time additions go to investments. Your FI goal stays unchanged.</p>${futureEditor()}<button id="future-add">Add a future change</button></section>`;
+ $('#inputs').addEventListener('input',onInput,{signal:inputController.signal});bindPlanningEditors();syncSolved();
 }
 let inputController=new AbortController();
 function rebuildInputs(){const expanded=$$('#inputs details').map(el=>el.open);inputController.abort();inputController=new AbortController();renderInputs();$$('#inputs details').forEach((el,i)=>el.open=expanded[i]||false);}
@@ -57,11 +62,11 @@ function onInput(e){const el=e.target,k=el.id;let rebuild=false;
  else if(k==='returnInput')state.nominal=el.value===''?null:readNumber(el.value)/100;
  else if(k==='targetAge'){state.years=yearsToAge(state.age,readNumber(el.value));syncTime(k);}
  else if(k==='age')state.age=readNumber(el.value);
- else if(k==='timeEntry')state.timeEntry=el.value;
+ else if(k==='timeEntry'){state.timeEntry=el.value;rebuild=true;}
  else if(['cashMode','cashStrategy'].includes(k)){state[k]=el.value;rebuild=k==='cashMode';}
  else if(k in state){state[k]=el.value===''?null:readNumber(el.value)/(['inflation','fiRate','cashNominal','withdrawalRate'].includes(k)?100:1);if(k==='years'||k==='age')syncTime(k);}
  else return;
- riskOutput=null;update();if(rebuild)rebuildInputs();else syncSolved();persist();
+ syncAssets(state);riskOutput=null;update();if(rebuild)rebuildInputs();else syncSolved();persist();
 }
 function syncTime(active=''){
  const values={horizonSlider:state.years??0,years:entry(state.years,1,3),targetAge:enteredAge()};
@@ -85,7 +90,7 @@ function timingNotice(p,q){const eventual=outcome(p);const funded=q.unfunded<.01
 }
 let charts=[],assetChartView='all';
 function chart(id,rows,series,{percentAxis=false,marker=null,point=null,start=today,boundaries=[]}={}){
- const age=state.timeEntry==='age'&&Number.isFinite(state.age)&&['plan','gap','traditional','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
+ const age=state.timeEntry==='age'&&Number.isFinite(state.age)&&['plan','gap','traditional','coast','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
  charts.push({id,rows,series,percentAxis,marker,point,start,age,boundaries});
  return `<div class="chart" id="${id}" aria-label="${id.replaceAll('-',' ')}"><svg role="img" aria-label="Interactive ${id.replaceAll('-',' ')}" viewBox="0 0 820 280"></svg><div class="chart-tip" hidden></div></div><div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.label}</span>`).join('')}</div><p class="chart-caption">Hover, tap, or focus the chart and use the arrow keys to inspect a year.</p>`;
 }
@@ -212,17 +217,19 @@ function bindView(){
  for(const [id,key]of Object.entries({checkDate:'date',checkPortfolio:'portfolio',checkCash:'cash',checkSpending:'spending'})){const el=$('#'+id);if(el)el.oninput=()=>{checkValues[key]=key==='date'?el.value:readNumber(el.value);calculateCheck();};}
  for(const id of ['originalStart','originalTarget','originalPortfolio','originalSpending','originalCash','originalReturn']){const el=$('#'+id);if(el)el.oninput=()=>{if(id==='originalStart'){const end=$('#originalTarget').value;baseline.start=el.value;baseline.plan.years=Math.max(0,yearsBetween(el.value,end));}else if(id==='originalTarget')baseline.plan.years=Math.max(0,yearsBetween(baseline.start,el.value));else if(id==='originalReturn'){baseline.plan.returnMode='real';baseline.plan.real=readNumber(el.value)/100;}else if(id==='originalCash'){baseline.plan.cashMode='dollars';baseline.plan.cash=readNumber(el.value);}else{baseline.plan[id==='originalPortfolio'?'portfolio':'spending']=readNumber(el.value);if(id==='originalSpending')baseline.plan.withdrawalMode='dollars';}calculateCheck();persist();};}
 }
-function update(){renderSectionTools();renderToolSetup();if(!['guardrails','position'].includes(tab))leaveGuardrails();$('.workspace').dataset.view=tab;charts=[];worker?.terminate();clearTimeout(riskTimer);try{
+function update(){renderCalculatorNav();renderSectionTools();renderToolSetup();if(!['guardrails','position'].includes(tab))leaveGuardrails();$('.workspace').dataset.view=tab;charts=[];worker?.terminate();clearTimeout(riskTimer);try{
  if(['guardrails','position'].includes(tab)){
  const shared=guardrailPlanInputs(baselinePlan(state));
  connectGuardrailPlan(shared,()=>navigate('numbers'),nominal,value=>{nominal=value;persist();},(key,value)=>{
  const edited=editConnectedPlan(baselinePlan(state),key,value);
- for(const k of ['portfolio','cash','fiWithdrawals','fiRate','nominal','inflation','cashNominal'])state[k]=edited[k];
+ for(const k of ['portfolio','cash','fiWithdrawals','fiRate','nominal','inflation','cashNominal'])state[k]=edited[k];syncAssets(state);
  persist();rebuildInputs();update();
  });$('#error').hidden=true;mountGuardrails($('#view'),{mode:'compare',usePlan:()=>guardrailPlanInputs(baselinePlan(state))});return;}
  if(state.timeEntry==='age'&&(!Number.isFinite(state.age)||state.age<0||state.age>120)&&tab==='plan')throw Error('Enter a current age between 0 and 120.');
  if(tab==='numbers'){$('#error').hidden=true;$('#view').innerHTML='';syncSolved();return;}
  if(tab==='gap'){renderGap();return;}
+ if(tab==='calculators'){renderCalculatorHome();return;}
+ if(tab==='coast'){renderCoast();return;}
  if(tab==='traditional'){renderTraditional();return;}
  if(tab==='method'){ $('#error').hidden=true;$('#view').innerHTML=methodView();return;}
  if(tab==='checkin'){ $('#error').hidden=true;$('#view').innerHTML=checkView();bindView();calculateCheck();return;}
@@ -232,10 +239,22 @@ function update(){renderSectionTools();renderToolSetup();if(!['guardrails','posi
  }catch(e){$('#error').hidden=false;$('#error').textContent=e.message;$('#view').innerHTML='<div class="panel content-panel"><h2>Check your inputs</h2><p>Check the missing or invalid values in Your numbers.</p><button id="fix-numbers">Edit your numbers</button></div>';$('#fix-numbers').onclick=()=>navigate('numbers');}}
 function saveBaseline(){baseline={start:today,plan:{...resolved}};checkValues={};persist();toast('Baseline saved in this browser.');if(tab==='checkin')update();}
 $('#theme').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('riskfi-theme',t);}catch{}};
-function navigate(next){tab=next;const main=['scenarios','withdrawals','dates','risk'].includes(tab)?'plan':tab==='checkin'?'position':tab;$$('nav [data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===main));update();}
+const calculatorItems=[['traditional','Traditional FI','Build toward financial independence.'],['coast','Coast FI','Find when you can stop contributing.'],['plan','Risk FI','Withdraw while working toward FI.'],['gap','Gap FI','Plan periods of withdrawals, contributions, or neither.']];
+function renderCalculatorHome(){
+ $('#error').hidden=true;
+ $('#view').innerHTML=`<section class="panel content-panel"><h2>What would you like to plan?</h2><div class="calculator-cards">${calculatorItems.map(([key,label,description])=>`<button data-calculator="${key}"><strong>${label}</strong><span>${description}</span></button>`).join('')}</div></section>`;
+ $$('[data-calculator]').forEach(b=>b.onclick=()=>navigate(b.dataset.calculator));
+}
+function navigate(next){tab=next;const main=['traditional','coast','plan','gap','scenarios','withdrawals','dates','risk'].includes(tab)?'calculators':tab==='checkin'?'position':tab;$$('.tabs [data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===main));update();}
+function renderCalculatorNav(){
+ const host=$('#calculator-nav'),current=['scenarios','withdrawals','dates','risk'].includes(tab)?'plan':tab;
+ host.hidden=!calculatorItems.some(([key])=>key===current);
+ host.innerHTML=host.hidden?'':calculatorItems.map(([key,label])=>`<button data-calculator="${key}" class="${key===current?'active':''}" aria-pressed="${key===current}">${label}</button>`).join('');
+ host.querySelectorAll('button').forEach(b=>b.onclick=()=>navigate(b.dataset.calculator));
+}
 function renderSectionTools(){const host=$('#section-tools');host.innerHTML=['plan','scenarios','withdrawals','dates','risk'].includes(tab)?`<button data-tab="plan">Plan calculator</button><button data-tab="withdrawals">Compare withdrawal scenarios</button><button data-tab="scenarios">Compare return scenarios</button><button data-tab="dates">Compare target dates</button>`:['position','checkin'].includes(tab)?`<button data-tab="position">Withdrawal check</button><button data-tab="checkin">Compare with saved plan</button>`:'';host.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.onclick=()=>navigate(b.dataset.tab);});}
 $$('nav [data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
-$('#reset').onclick=()=>{state=simplifyPlan({...defaults,separateFiWithdrawals:true});unknown='spending';riskOutput=null;update();rebuildInputs();persist();toast('Assumptions reset. Your saved baseline is preserved.');};
+$('#reset').onclick=()=>{state=simplifyPlan({...defaults,separateFiWithdrawals:true});state.assets=assetRows(state);state.futureChanges=[];unknown='spending';riskOutput=null;update();rebuildInputs();persist();toast('Assumptions reset. Your saved baseline is preserved.');};
 
 update();renderInputs();
 $('#show-riskfi').onclick=()=>navigate('plan');
@@ -246,7 +265,7 @@ try{document.modelContext?.registerTool({name:'read_risk_fi_plan',description:'R
 function sharedCards(p,scope){
  const row=(key,label,value,percentValue=false,calculated=false)=>`<div class="shared-row"><label for="${scope}-${key}">${label}</label>${calculated?'<span class="hint">Calculated in results</span>':`<input id="${scope}-${key}" data-shared="${key}" ${percentValue?'type="number" step="any"':'type="text" inputmode="decimal" data-amount="true"'} value="${Number.isFinite(value)?percentValue?entry(value,100):formatAmount(value):''}">`}</div>`;
  const solving=scope==='riskfi';
- return `<div class="summary-grid shared-cards"><section class="summary-group"><h3>Starting numbers</h3>${row('portfolio','Investments ($)',p.portfolio,false,solving&&unknown==='portfolio')}${row('cash','Cash reserve ($)',cashAmount(p))}${row('fiWithdrawals','Annual withdrawals at FI ($)',p.fiWithdrawals)}${row('fiRate','FI withdrawal rate (%)',p.fiRate,true)}<div class="shared-row"><span>FI target · today’s dollars</span><strong>${money(fiTarget(p))}</strong></div></section><section class="summary-group"><h3>Assumptions</h3>${row('nominal','Return before inflation (%)',p.nominal,true,solving&&unknown==='return')}${row('inflation','Inflation (%)',p.inflation,true)}${row('cashNominal','Cash yield (%)',p.cashNominal,true)}${p.timeEntry==='age'?row('age','Current age',p.age):''}<p class="hint">Shared with Your numbers.</p></section></div>`;
+ return `<div class="summary-grid shared-cards"><section class="summary-group"><h3>Starting numbers</h3>${row('portfolio','Investments ($)',p.portfolio,false,solving&&unknown==='portfolio')}${row('cash','Cash reserve ($)',cashAmount(p))}${row('fiWithdrawals','Annual withdrawals at FI ($)',p.fiWithdrawals)}${row('fiRate','FI withdrawal rate (%)',p.fiRate,true)}<div class="shared-row"><span>FI target · today’s dollars</span><strong>${money(fiTarget(p))}</strong></div></section><section class="summary-group"><h3>Assumptions</h3>${row('nominal','Return before inflation (%)',p.nominal,true,solving&&unknown==='return')}${row('inflation','Inflation (%)',p.inflation,true)}${row('cashNominal','Cash yield (%)',p.cashNominal,true)}${p.timeEntry==='age'?row('age','Current age',p.age):''}<p class="hint">${state.futureChanges.some(e=>e.enabled!==false)?state.futureChanges.filter(e=>e.enabled!==false).length+' future changes included. ':''}Shared with Your numbers. Aggregate asset edits preserve the allocation; return edits shift asset growth rates together.</p></section></div>`;
 }
 function bindSharedCards(scope,p){
  $$('#'+(scope==='riskfi'?'tool-setup':'view')+' [data-shared]').forEach(el=>{el.oninput=()=>{
@@ -256,13 +275,13 @@ function bindSharedCards(scope,p){
  else state[key]=value===null?null:value/(isRate?100:1);
  if(key==='cash')state.cashMode='dollars';
  if(key==='spending')state.withdrawalMode='dollars';
- persist();rebuildInputs();
+ syncAssets(state);persist();rebuildInputs();
  };el.onblur=()=>update();});
 }
 function renderToolSetup(){
  const host=$('#tool-setup');host.hidden=tab!=='plan';if(tab!=='plan'){host.innerHTML='';return;}
  let solution;try{solution=unknown==='projection'?{plan:state}:solve(state,unknown);}catch{solution={plan:state};}const p=resolveWithdrawals(solution.plan||state);
- host.innerHTML=`<section class="panel content-panel"><h2>Solve for</h2>${select('riskfi-solve','What would you like to find?',labels,unknown)}${sharedCards(p,'riskfi')}${riskfiSettings()}</section>`;
+ host.innerHTML=`<section class="panel content-panel"><h2>Risk FI</h2><p><strong>Risk FI:</strong> The point at which you have enough invested assets to begin funding some or all of your lifestyle from your portfolio <strong>before reaching traditional FI</strong>, because you retain the ability and willingness to <strong>reduce withdrawals or earn income if investment returns are unfavorable</strong>.</p><h3>Solve for</h3>${select('riskfi-solve','What would you like to find?',labels,unknown)}${sharedCards(p,'riskfi')}${riskfiSettings()}</section>`;
  $('#riskfi-solve').onchange=e=>{unknown=e.target.value;persist();rebuildInputs();update();};bindSharedCards('riskfi',p);bindRiskfiSettings();
 }
 function targetCaption(target,p,year){return `<p>FI target: <strong>${money(displayAmount(target,p,year))}</strong> ${nominal?'in future dollars at '+dateLabel(year):'in today’s dollars'}.</p>`;}
@@ -333,3 +352,31 @@ function traditionalResults(p){
  $$('[data-trad-dollar]').forEach(b=>b.onclick=()=>{nominal=b.dataset.tradDollar==='nominal';persist();traditionalResults(p);});drawCharts();
  }catch(e){$('#traditional-results').innerHTML='<div class="panel content-panel" role="alert"></div>';$('#traditional-results div').textContent=e.message;}
 }
+
+function safeText(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function assetEditor(){return `<div class="asset-editor">${state.assets.map((a,i)=>`<section class="asset-row">${select('asset-type-'+i,'Asset type',{stocks:'Stocks',bonds:'Bonds',cash:'Cash'},a.type)}${field('asset-name-'+i,'Name',safeText(a.name),{type:'text'})}${field('asset-amount-'+i,'Amount',a.amount,{prefix:'$',min:0})}${field('asset-rate-'+i,'Expected return',entry(a.rate,100),{suffix:'%'})}<button data-remove-asset="${i}" class="text-button" ${state.assets.length===1?'disabled':''}>Remove asset</button></section>`).join('')}</div>`;}
+function futureEditor(){return `<div class="future-editor">${state.futureChanges.map((e,i)=>`<section class="input-group"><div class="section-head"><h4>Change ${i+1}</h4><label><input type="checkbox" id="future-enabled-${i}" ${e.enabled!==false?'checked':''}> Include</label></div>${select('future-kind-'+i,'Type',{income:'Recurring income',add:'One-time addition',expense:'One-time expense'},e.kind)}${field('future-name-'+i,'Name',safeText(e.name),{type:'text'})}${field('future-amount-'+i,e.kind==='income'?'Annual amount':'Amount',e.amount,{prefix:'$',min:0})}<div class="two-fields">${field('future-start-'+i,state.timeEntry==='age'?'Starting age':'Starts in years',e.start+(state.timeEntry==='age'?state.age:0),{min:0})}${e.kind==='income'?field('future-end-'+i,state.timeEntry==='age'?'Ending age (optional)':'Ends in years (optional)',e.end==null?'':e.end+(state.timeEntry==='age'?state.age:0),{min:0}):''}</div>${select('future-adjust-'+i,'Dollar amounts',{yes:'Keep purchasing power (rise with inflation)',no:'Fixed future-dollar payments'},e.adjust!==false?'yes':'no')}<button data-remove-future="${i}" class="text-button">Remove change</button></section>`).join('')}</div>`;}
+function bindPlanningEditors(){
+ const refresh=()=>{persist();rebuildInputs();update();};
+ $('#asset-add').onclick=()=>{state.assets.push({type:'bonds',name:'Bonds',amount:0,rate:.04});refresh();};
+ $$('[data-remove-asset]').forEach(b=>b.onclick=()=>{state.assets.splice(+b.dataset.removeAsset,1);Object.assign(state,assetTotals(state.assets));refresh();});
+ state.assets.forEach((a,i)=>{for(const key of ['type','name','amount','rate']){
+ const el=$('#asset-'+key+'-'+i);el.oninput=()=>{a[key]=['name','type'].includes(key)?el.value:readNumber(el.value)/(key==='rate'?100:1);Object.assign(state,assetTotals(state.assets));persist();syncSolved();};el.onblur=()=>update();
+ }});
+ $('#future-add').onclick=()=>{state.futureChanges.push({kind:'income',name:'',amount:0,start:Math.max(0,67-state.age),end:null,adjust:true,enabled:true});refresh();};
+ $$('[data-remove-future]').forEach(b=>b.onclick=()=>{state.futureChanges.splice(+b.dataset.removeFuture,1);refresh();});
+ state.futureChanges.forEach((e,i)=>{for(const key of ['kind','name','amount','start','end','adjust','enabled']){const el=$('#future-'+key+'-'+i);if(!el)continue;el.oninput=()=>{e[key]=key==='enabled'?el.checked:key==='adjust'?el.value==='yes':['kind','name'].includes(key)?el.value:el.value===''?null:readNumber(el.value)-(['start','end'].includes(key)&&state.timeEntry==='age'?state.age:0);persist();if(key==='kind')refresh();};el.onblur=()=>update();}});
+}
+function renderCoast(){
+ const p=baselinePlan(state);$('#error').hidden=true;
+ $('#view').innerHTML=`<section class="panel content-panel"><h2>When can your investments grow to FI without further contributions?</h2><p>Cover living costs elsewhere during the coast period. Scheduled future changes still apply.</p>${select('coast-mode','Solve for',{amount:'Coast FI investment amount',time:'When can I stop contributing?',retirement:'When can I retire without contributing?'},coast.mode)}<div class="two-fields">${coast.mode!=='retirement'?field('coast-years',p.timeEntry==='age'?'Retirement age':'Years until retirement',coast.years+(p.timeEntry==='age'?p.age:0),{min:1,max:p.timeEntry==='age'?p.age+100:100,step:1}):''}${coast.mode==='time'?field('coast-contribution','Annual contributions until coasting',coast.contribution,{prefix:'$',min:0,hint:'Increases with inflation.'}):''}</div>${sharedCards(p,'coast')}</section><section id="coast-results"></section>`;
+ bindSharedCards('coast',p);$('#coast-mode').onchange=e=>{coast.mode=e.target.value;persist();renderCoast();};
+ for(const key of ['years','contribution']){const el=$('#coast-'+key);if(el)el.oninput=()=>{coast[key]=readNumber(el.value)-(key==='years'&&p.timeEntry==='age'?p.age:0);persist();coastResults(p);};}coastResults(p);
+}
+function coastResults(p){charts=[];try{
+ const solved=solveCoast(p,coast),q=solved.projection,at=coast.mode==='retirement'?solved.value:coast.years;
+ const headline=coast.mode==='amount'?money(solved.value)+' invested to coast now':coast.mode==='time'?(solved.value===0?'You can coast now':'Coast in '+num(solved.value,2)+' years · '+dateLabel(solved.value)):'FI in '+num(solved.value,2)+' years · '+dateLabel(solved.value);
+ const rows=q.rows.map(r=>({...r,total:displayAmount(r.total,p,r.year),target:displayAmount(r.target,p,r.year)}));
+ $('#coast-results').innerHTML=`<h2 class="result-divider">Your Coast FI results</h2><section class="panel content-panel"><h2>${headline}</h2><p>${coast.mode==='amount'?'Plus your existing cash. Investment allocation stays proportional.':coast.mode==='time'?'Regular contributions stop at the coast date.':'No regular contributions or withdrawals.'} ${p.timeEntry==='age'?'Retirement age: '+num(p.age+at,1)+'.':''}</p>${dollarControls()}${targetCaption(q.target,p,at)}${chart('coast-assets',rows,[{key:'total',label:'Total assets',color:'var(--purple)'},{key:'target',label:'FI target',color:'var(--muted)',dash:true}],{marker:coast.mode==='time'?solved.value:null})}<p class="hint">Constant-return projection, not a probability of success.</p></section>`;
+ $$('[data-dollars]').forEach(b=>b.onclick=()=>{nominal=b.dataset.dollars==='nominal';persist();coastResults(p);});drawCharts();
+ }catch(e){$('#coast-results').innerHTML='<section class="panel content-panel" role="alert"></section>';$('#coast-results section').textContent=e.message;}}

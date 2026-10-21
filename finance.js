@@ -1,3 +1,5 @@
+import {createLedger,ledgerTotal,growLedger,changeLedger} from './plan-assets.js';
+import {validateChanges,futureFlows,changeBoundaries} from './future-changes.js';
 /** All engine amounts are real, today's dollars. Rates are decimal annual rates. */
 export const defaults = {portfolio:1000000,spending:60000,withdrawalMode:'dollars',withdrawalRate:.06,separateFiWithdrawals:false,fiWithdrawals:60000,nominal:.09,inflation:.025,real:.06341463414634152,returnMode:'nominal',fiRate:.04,targetOverride:false,target:1500000,years:10,age:35,cash:100000,cashYears:1.6666666667,cashMode:'dollars',cashNominal:.035,cashStrategy:'reserve',cashMinimum:0,income:0,incomeStart:0,incomeEnd:10,timing:'end',poor:.02,strong:.09};
 export const realReturn = (nominal,inflation)=>(1+nominal)/(1+inflation)-1;
@@ -10,6 +12,7 @@ export const fiTarget = p=>p.targetOverride?p.target:traditionalWithdrawals(p)/p
 export const cashAmount = p=>p.cashMode==='years'?p.cashYears*withdrawalAmount(p):p.cash;
 export const expectedReturn = p=>p.returnMode==='real'?p.real:realReturn(p.nominal,p.inflation);
 export function validate(p){
+ validateChanges(p.futureChanges);
  if(!['dollars','starting','annual'].includes(p.withdrawalMode||'dollars'))throw Error('Choose dollars or a supported percentage basis.');
  if(p.withdrawalMode&&p.withdrawalMode!=='dollars'&&(!Number.isFinite(p.withdrawalRate)||p.withdrawalRate<0||p.withdrawalRate>1))throw Error('Enter a Risk FI withdrawal percentage between 0% and 100%.');
  if(p.separateFiWithdrawals&&!p.targetOverride&&(!Number.isFinite(p.fiWithdrawals)||p.fiWithdrawals<=0))throw Error('Enter positive Traditional FI annual withdrawals.');
@@ -26,12 +29,13 @@ export const fiAssets=(p,investment,cash)=>investment+(p.fiBasis==='total'?cash:
 export function project(p,{years=p.years,returns,guards=null,transitionAt=null}={}){
  p=resolveWithdrawals(p);
  validate({...p,years});
- let investment=p.portfolio,cash=cashAmount(p),unfunded=0,depleted=false,firstFI=fiAssets(p,investment,cash)>=fiTarget(p)?0:null;
+ const ledger=createLedger({...p,cash:cashAmount(p)}),opening=futureFlows(p.futureChanges,0,0,p.inflation);changeLedger(ledger,opening.addition);const openingCash=p.cashStrategy==='first'||(p.cashStrategy==='downturn'&&expectedReturn(p)<0)?Math.min(opening.expense,Math.max(0,ledgerTotal(ledger,true)-p.cashMinimum)):0;changeLedger(ledger,-openingCash,true);const initialPaid=openingCash-changeLedger(ledger,-(opening.expense-openingCash));
+ let investment=ledgerTotal(ledger),cash=ledgerTotal(ledger,true),unfunded=opening.expense-initialPaid,depleted=false,firstFI=fiAssets(p,investment,cash)>=fiTarget(p)?0:null;
  const target=fiTarget(p),cashRate=realReturn(p.cashNominal,p.inflation),baseReturn=expectedReturn(p);
- const rows=[{year:0,beginning:investment,investment, cash,total:investment+cash,investmentReturn:0,cashInterest:0,investmentWithdrawal:0,cashWithdrawal:0,spending:p.spending,income:0,unfunded:0,actualRate:0,spendingRate:investment>0?p.spending/investment:null,progress:fiAssets(p,investment,cash)/target,target}];
+ const rows=[{year:0,beginning:investment,investment, cash,total:investment+cash,investmentReturn:0,cashInterest:0,investmentWithdrawal:0,cashWithdrawal:0,spending:p.spending,income:0,unfunded,actualRate:0,spendingRate:investment>0?p.spending/investment:null,progress:fiAssets(p,investment,cash)/target,target}];
  for(let start=0;start<years-1e-9;){
   const boundary=transitionAt!==null&&transitionAt>start+1e-9?transitionAt:Infinity;
-  const year=Math.min(Math.floor(start+1e-9)+1,years,boundary),dt=year-start,r=returns?.[Math.floor(start+1e-9)]??baseReturn;
+  const year=Math.min(Math.floor(start+1e-9)+1,years,boundary,...changeBoundaries(p.futureChanges,start,years)),dt=year-start,r=returns?.[Math.floor(start+1e-9)]??baseReturn;
   const traditional=transitionAt!==null&&start>=transitionAt-1e-9;
   if(!Number.isFinite(r)||r<=-1)throw Error('Annual returns must be greater than −100%.');
   const beginning=investment,beginCash=cash;
@@ -45,18 +49,20 @@ export function project(p,{years=p.years,returns,guards=null,transitionAt=null}=
   }
   const spending=annualSpending*dt;
   const incomeDuration=Math.max(0,Math.min(year,p.incomeEnd)-Math.max(start,p.incomeStart));
-  const income=p.income*incomeDuration+(annualIncome-p.income)*dt;
-  const need=Math.max(0,spending-income),surplus=Math.max(0,income-spending);
+  const flows=futureFlows(p.futureChanges,start,year,p.inflation);
+  const income=p.income*incomeDuration+(annualIncome-p.income)*dt+flows.income;
+  const need=Math.max(0,spending-income)+flows.expense,surplus=Math.max(0,income-spending);
   let cashWithdrawal=0,investmentWithdrawal=0,shortfall=0,investmentReturn=0,cashInterest=0;
-  const grow=()=>{investmentReturn=investment*(Math.pow(1+r,dt)-1);cashInterest=cash*(Math.pow(1+cashRate,dt)-1);investment+=investmentReturn;cash+=cashInterest;};
+  const grow=()=>{const gains=growLedger(ledger,p.inflation,dt,returns?.[Math.floor(start+1e-9)]);investmentReturn=gains.investmentReturn;cashInterest=gains.cashInterest;investment=ledgerTotal(ledger);cash=ledgerTotal(ledger,true);};
   const withdraw=()=>{
+   changeLedger(ledger,flows.addition);investment=ledgerTotal(ledger);
    const useCash=p.cashStrategy==='first'||(p.cashStrategy==='downturn'&&r<0);
    cashWithdrawal=useCash?Math.min(need,Math.max(0,cash-p.cashMinimum)):0;
-   cash-=cashWithdrawal;
+   changeLedger(ledger,-cashWithdrawal,true);cash=ledgerTotal(ledger,true);
    investmentWithdrawal=stop?0:Math.min(investment,need-cashWithdrawal);
-   investment-=investmentWithdrawal;
+   changeLedger(ledger,-investmentWithdrawal);investment=ledgerTotal(ledger);
    shortfall=Math.max(0,need-cashWithdrawal-investmentWithdrawal);
-   investment+=surplus;
+   changeLedger(ledger,surplus,Boolean(p.futureChanges?.length));cash=ledgerTotal(ledger,true);investment=ledgerTotal(ledger);
   };
   if(p.timing==='begin'){withdraw();grow();}else{grow();withdraw();}
   investment=Math.max(0,investment);cash=Math.max(0,cash);unfunded+=shortfall;
