@@ -1,10 +1,10 @@
 # Risk FI Calculator — current status
 
-Updated October 18, 2026. Standalone web calculator, separate from Excerpt Tracker iOS.
+Updated October 20, 2026. Standalone web calculator, separate from Excerpt Tracker iOS.
 
 - Repository: `ggiiirr-beep/risk-fi-calculator`; publication branch `main`. GitHub Pages serves the repository root at https://ggiiirr-beep.github.io/risk-fi-calculator/.
 - Dependency-free JavaScript. Commands: `npm start`, `npm test`, `npm run build`.
-- Current navigation: Your numbers, RiskFi (results and comparisons), Risk-Based Guardrails, GapFi; Help is a utility. See the latest dated entries below for current behavior. Earlier entries describe prior releases.
+- Current navigation: Your numbers, Traditional FI, RiskFi (results and comparisons), Risk-Based Guardrails, GapFi; Help is a utility. See the latest dated entries below for current behavior. Earlier entries describe prior releases.
 - Saved inputs and numerical engines are retained. Disabled solver entries now say “Calculated below” and no longer describe an unused saved withdrawal as the active result.
 - Withdrawal rules offers explicit “Use my plan”: transfers solved investments plus cash (without double counting), FI target, horizon and return assumptions. Fractional horizons round up; custom targets preserve the same target via an equivalent FI withdrawal amount. Simulations still solve withdrawals/cash allocation independently. Income schedules, timing and percentage policies are not imported; limitations are explained next to the action.
 - Current withdrawal checks use shared guardrail settings, but a dedicated worker entry point builds only the probability model and current dollar thresholds. It does not run outer comparisons. Check-in inputs and dollar results now use current dollars. Conversion uses compounded assumed inflation or an optional entered cumulative price change; the original FI target and floor remain in starting-year dollars. Legacy saved check-in entries are converted once to preserve their meaning.
@@ -167,3 +167,10 @@ Updated October 18, 2026. Standalone web calculator, separate from Excerpt Track
 - RiskFi and GapFi share editable starting-number/assumption cards backed by the same persisted plan. RiskFi labels its unknown as calculated; percentage withdrawals retain their rule when edited. GapFi labels calculated source assets/returns and materializes a solved snapshot if the user overrides that unknown.
 - Guardrails retains its existing connected editing behavior in two matching cards, with goal choice first. Its historical-return distinction and tool-specific controls remain separate.
 - Verified 131 automated tests, static build/syntax/diff checks; browser tested blank solved withdrawal/timeline, RiskFi→GapFi and GapFi→Your numbers edits, guardrails→Your numbers edits, saved values after reload, and 390px layouts with no horizontal overflow. Inputs and results remain separate.
+
+## Baseline facts and Traditional FI (20261020-1)
+- Your numbers holds investments, dollar cash, current age/display preference, Traditional FI goal/rate, and returns/inflation. RiskFi withdrawals, percentage basis, inflation rule, cash-use strategy/minimum and timeline now live on RiskFi. Existing cash-years entries convert once to their effective dollar reserve.
+- Added Traditional FI: solve arrival from annual contributions or required contributions for a chosen whole-year deadline. Monthly end-of-month contributions, real/future dollar views, age axes, chart and annual/final-partial-year ledger. Deadline solutions hold the FI target at the deadline; no negative contributions.
+- `baselinePlan` supplies shared facts without RiskFi's solve result, withdrawals, deadline, cash-use or inflation rules. GapFi owns its inflation/cash-use choices. Guardrails preserves its own deadline and withdrawal inflation rule across baseline edits; no longer imports a RiskFi-computed deadline or asset amount. Shared asset/goal/return edits still propagate across tabs.
+- New pure contribution solver reuses the monthly projection engine with an explicit option to continue through the deadline. Tests cover known-value contributions, cash, zero contributions, inflation, invalid values, and scenario isolation. All 136 tests pass; syntax/build/diff checks pass.
+- Browser verified both Traditional FI solves, RiskFi/Traditional FI/guardrail deadline isolation, shared baseline edits, persistence, and 390px baseline/Traditional FI layout without overflow.

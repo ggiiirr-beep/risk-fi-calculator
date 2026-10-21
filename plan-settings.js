@@ -10,3 +10,8 @@ export function yearsToAge(age,target){
  if(!Number.isFinite(age)||age<0||age>120||!Number.isFinite(target)||target<age) return null;
  return target-age;
 }
+
+// Scenario engines consume baseline facts, never RiskFi's unknown or cash-flow rule.
+export function baselinePlan(state){
+ return {...state,spending:0,withdrawalMode:'dollars',withdrawalRate:0,cashMode:'dollars',cashStrategy:'reserve',cashMinimum:0,adjustWithdrawals:true,years:10,income:0,incomeStart:0,incomeEnd:0,returnMode:'nominal',targetOverride:false,separateFiWithdrawals:true};
+}

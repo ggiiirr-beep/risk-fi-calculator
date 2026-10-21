@@ -1,7 +1,7 @@
 import {cashAmount,expectedReturn,realReturn,fiTarget} from './finance.js';
 export const gapDefaults=()=>[{action:'withdraw',amount:60000,years:2},{action:'even',amount:0,years:2},{action:'contribute',amount:40000,years:null}];
 /** Monthly end-of-period flows; all balances and flows in today's dollars. */
-export function projectGap(plan,periods,{maxYears=100}={}){
+export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true}={}){
  if(!periods.length||periods.at(-1).years!==null)throw Error('End your timeline with an Until FI period.');
  let duration=0;
  for(const [i,p] of periods.entries()){
@@ -15,7 +15,7 @@ export function projectGap(plan,periods,{maxYears=100}={}){
  const rows=[{year:0,investment,cash,total:investment+cash,target,withdrawals:0,contributions:0,period:0,nominalWithdrawals:0,nominalContributions:0}], boundaries=[];
  let elapsed=0;periods.forEach(p=>{elapsed+=p.years??Infinity;boundaries.push(elapsed);});
  let reached=investment+cash>=target?0:null,shortfall=null,withdrawals=0,contributions=0,nominalWithdrawals=0,nominalContributions=0;
- for(let month=1;reached===null&&month<=maxYears*12;month++){
+ for(let month=1;(!stopAtGoal||reached===null)&&month<=maxYears*12;month++){
   const start=(month-1)/12,year=month/12,index=boundaries.findIndex(end=>start<end),p=periods[index];
   investment*=Math.pow(1+r,1/12);cash*=Math.pow(1+cr,1/12);
   const amount=p.amount/12/(plan.adjustWithdrawals===false?Math.pow(1+plan.inflation,year):1);
@@ -27,8 +27,8 @@ export function projectGap(plan,periods,{maxYears=100}={}){
    const paid=Math.min(need,investment);investment-=paid;need-=paid;withdrawals+=amount-need;nominalWithdrawals+=(amount-need)*Math.pow(1+plan.inflation,year);
    if(need>1e-7)shortfall=year;
   }
-  if(investment+cash>=target-1e-7)reached=year;
-  if(month%12===0||reached!==null||shortfall!==null){rows.push({year,investment,cash,total:investment+cash,target,withdrawals,contributions,nominalWithdrawals,nominalContributions,period:index});withdrawals=0;contributions=0;nominalWithdrawals=0;nominalContributions=0;}
+  if(reached===null&&investment+cash>=target-1e-7)reached=year;
+  if(month%12===0||(stopAtGoal&&reached!==null)||shortfall!==null){rows.push({year,investment,cash,total:investment+cash,target,withdrawals,contributions,nominalWithdrawals,nominalContributions,period:index});withdrawals=0;contributions=0;nominalWithdrawals=0;nominalContributions=0;}
   if(shortfall!==null)break;
  }
  return {rows,reached,shortfall,target,boundaries:boundaries.filter(Number.isFinite)};

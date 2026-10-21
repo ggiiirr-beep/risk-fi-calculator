@@ -175,3 +175,4 @@ input[type=range],.toggle-row input{accent-color:var(--red)}
 @media(max-width:540px){.shared-row{flex-wrap:wrap}.shared-row input{width:100%}}
 
 .input-panel #inputs>.input-group{background:var(--surface2)}
+#traditional-results .table-scroll{overflow-x:auto}

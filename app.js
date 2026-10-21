@@ -1,10 +1,11 @@
-import {projectGap,gapDefaults} from './gap-fi.js?v=20261018-2';
-import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261018-2';
-import {simplifyPlan,yearsToAge} from './plan-settings.js?v=20261018-2';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261018-2';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261018-2';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261018-2';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261018-2';
+import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261020-1';
+import {projectGap,gapDefaults} from './gap-fi.js?v=20261020-1';
+import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261020-1';
+import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261020-1';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261020-1';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261020-1';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261020-1';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261020-1';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -16,56 +17,33 @@ const dateLabel=(years,start=today)=>dateAfter(years,start).toLocaleDateString('
 const yearsBetween=(a,b)=>(new Date(b+'T12:00:00Z')-new Date(a+'T12:00:00Z'))/yearMS;
 let state={...defaults},unknown='spending',tab='numbers',nominal=false,baseline=null,worker=null,riskTimer=null,riskOutput=null,checkValues={};
 let returnComparisonRate=null,comparisonQuestions={},targetHorizons=null;
-let gapPeriods=gapDefaults();
+let gapPeriods=gapDefaults(),gapSettings={adjust:true,cashStrategy:'reserve',cashMinimum:0},traditional={mode:'time',contribution:40000,years:15,adjust:true};
 let withdrawalComparisons={mode:null,values:null};
 let risk={count:2000,volatility:.16,enabled:false,reduceBelow:800000,reducePercent:.2,stopBelow:0,incomeBelow:700000,extraIncome:40000,cashMonths:0,cashReducePercent:.1};
-try{const saved=JSON.parse(localStorage.getItem('riskfi-v1'));if(saved){state={...defaults,...saved.state};gapPeriods=saved.gapPeriods||gapPeriods;if(!Object.hasOwn(saved.state,'withdrawalRate')&&state.portfolio>0)state.withdrawalRate=state.spending/state.portfolio;withdrawalComparisons=saved.withdrawalComparisons||withdrawalComparisons;comparisonQuestions=saved.comparisonQuestions||{};targetHorizons=saved.targetHorizons||null;nominal=saved.nominal===true;unknown=saved.unknown||unknown;baseline=saved.baseline||null;risk={...risk,...saved.risk};}document.documentElement.dataset.theme=localStorage.getItem('riskfi-theme')||'light';}catch{}
+try{const saved=JSON.parse(localStorage.getItem('riskfi-v1'));if(saved){state={...defaults,...saved.state};gapPeriods=saved.gapPeriods||gapPeriods;gapSettings={adjust:saved.state.adjustWithdrawals!==false,cashStrategy:saved.state.cashStrategy||'reserve',cashMinimum:saved.state.cashMinimum||0,...saved.gapSettings};traditional={...traditional,...saved.traditional};if(!Object.hasOwn(saved.state,'withdrawalRate')&&state.portfolio>0)state.withdrawalRate=state.spending/state.portfolio;withdrawalComparisons=saved.withdrawalComparisons||withdrawalComparisons;comparisonQuestions=saved.comparisonQuestions||{};targetHorizons=saved.targetHorizons||null;nominal=saved.nominal===true;unknown=saved.unknown||unknown;baseline=saved.baseline||null;risk={...risk,...saved.risk};}document.documentElement.dataset.theme=localStorage.getItem('riskfi-theme')||'light';}catch{}
 // Older linked plans start with the same effective withdrawal target.
 if(!state.separateFiWithdrawals)state.fiWithdrawals=state.spending??defaults.fiWithdrawals;
 state.separateFiWithdrawals=true;
 state=simplifyPlan(state);
+if(state.cashMode==='years'){let cashSource=state;try{cashSource=solve(state,unknown).plan||state;}catch{}state.cash=cashAmount(cashSource);state.cashMode='dollars';}
 let resolved={...state},currentProjection,scenarioTimer;
 const labels={spending:'Withdrawal amount',portfolio:'Investment needed',time:'When will I reach Traditional FI?',return:'What return do I need?'};
 // Preserve saved assumptions when retiring older menu choices.
 unknown=unknown==='date'?'time':Object.hasOwn(labels,unknown)?unknown:'projection';
 function toast(text){$('#toast').textContent=text;$('#toast').style.display='block';setTimeout(()=>$('#toast').style.display='none',3500);}
-function persist(){try{localStorage.setItem('riskfi-v1',JSON.stringify({state,unknown,baseline,risk,nominal,withdrawalComparisons,comparisonQuestions,targetHorizons,gapPeriods}));}catch{toast('Browser storage is unavailable. Your entries cannot be saved here.');}}
+function persist(){try{localStorage.setItem('riskfi-v1',JSON.stringify({state,unknown,baseline,risk,nominal,withdrawalComparisons,comparisonQuestions,targetHorizons,gapPeriods,gapSettings,traditional}));}catch{toast('Browser storage is unavailable. Your entries cannot be saved here.');}}
 const entry=(value,scale=1,digits=8)=>Number.isFinite(value)?+(value*scale).toFixed(digits):'';
 const enteredAge=()=>Number.isFinite(state.years)&&Number.isFinite(state.age)?entry(state.age+state.years,1,2):'';
 function field(key,label,value,{type='number',prefix='',suffix='',step='any',min, max,disabled=false,hint='',className=''}={}){const amount=prefix==='$'&&type==='number';return `<div class="field ${className}"><label for="${key}">${label}${disabled?`<span class="solved-tag">${key==='target'?'Not in use':'Calculated below'}</span>`:''}</label><div class="input-wrap ${prefix?'has-prefix':''} ${suffix?'has-suffix':''}">${prefix?`<span class="prefix">${prefix}</span>`:''}<input id="${key}" type="${amount?'text':type}" ${amount?'inputmode="decimal" data-amount="true"':''} value="${disabled?'':amount?formatAmount(value):value??''}" step="${step}" ${min!==undefined?`min="${min}"`:''} ${max!==undefined?`max="${max}"`:''} ${disabled?'disabled':''}>${suffix?`<span class="suffix">${suffix}</span>`:''}</div>${key==='years'?`<input id="horizonSlider" type="range" aria-label="Target years slider" min="0" max="50" step="0.5" value="${value}" ${disabled?'disabled hidden':''}>`:''}${hint?`<small class="hint">${hint}</small>`:''}</div>`;}
 function select(key,label,options,value){return `<div class="field"><label for="${key}">${label}</label><select id="${key}">${['unknown','riskfi-solve'].includes(key)&&!Object.hasOwn(options,value)?'<option value="" selected disabled hidden>Choose what to solve for</option>':''}${Object.entries(options).map(([v,l])=>`<option value="${v}" ${v===value?'selected':''}>${l}</option>`).join('')}</select></div>`;}
 function summaryGroup(title,rows){return `<section class="summary-group"><h4>${title}</h4><dl>${rows.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl></section>`;}
 function renderInputs(){
- const p=state;$('#inputs').innerHTML=`<div class="wide section-framing"><p>Enter your numbers. Leave blank what you want to solve for.</p><p>All amounts are in today’s dollars.</p></div>
- <section class="input-group"><h3>Your FI goal</h3>
- ${field('fiWithdrawals','Annual withdrawals once you reach FI',entry(p.fiWithdrawals),{prefix:'$',min:1,hint:'In today’s dollars. Your FI target rises with inflation.'})}
- ${field('fiRate','Traditional FI withdrawal rate',entry(p.fiRate,100),{suffix:'%',min:.01,max:100})}
- <div class="metric"><div class="label">Traditional FI target</div><div class="value" id="fi-target-preview" aria-live="polite"></div><div class="detail">In today’s dollars · investments + cash</div></div>
- </section>
- <section class="input-group"><h3>Your timeline</h3> <div class="wide"><div class="field"><label>Set your FI timeline by</label><div class="segmented" role="group" aria-label="FI timeline format"><button type="button" data-time-entry="years" aria-pressed="${p.timeEntry!=='age'}" class="${p.timeEntry!=='age'?'active':''}">Years from now</button><button type="button" data-time-entry="age" aria-pressed="${p.timeEntry==='age'}" class="${p.timeEntry==='age'?'active':''}">Target age</button></div></div>${p.timeEntry==='age'?`<div class="two-fields">${field('age','Current age',p.age,{min:0,max:120})}${field('targetAge','Target age',enteredAge(),{min:0})}</div>`:field('years','Years to FI',entry(p.years,1,3),{suffix:'years',min:0,max:100})}</div>
-</section>
- <section class="input-group"><h3>Your starting point</h3>
- ${field('portfolio','Current investments',entry(p.portfolio),{prefix:'$',min:0,hint:''})}</section>
- <section class="input-group"><h3>Risk FI withdrawals</h3>${select('withdrawalEntry','Enter Risk FI withdrawals as',{dollars:'Dollars',percentage:'Percentage'},p.withdrawalMode==='dollars'?'dollars':'percentage')}
- ${p.withdrawalMode==='dollars'?field('spending','Risk FI annual withdrawals',entry(p.spending),{prefix:'$',min:0}):`${select('withdrawalBasis','Percentage of',{starting:'Starting portfolio (default)',annual:'Portfolio at the start of each year'},p.withdrawalMode)}${field('withdrawalRate','Risk FI withdrawal percentage',entry(p.withdrawalRate,100),{suffix:'%',min:0,max:100})}`}
- <small class="hint" id="withdrawal-summary"></small>${select('adjustWithdrawals','Dollar amounts over time',{'yes':'Increase with inflation','no':'Keep the dollar amount fixed'},p.adjustWithdrawals?'yes':'no')}<small class="hint">${p.withdrawalMode==='annual'?'During Risk FI, your percentage follows the opening investment balance; no extra inflation increase is applied. This choice applies after FI.':'Applies to withdrawals and GapFi contributions.'}</small></section>
- <section class="input-group"><h3>Cash reserve</h3>${select('cashMode','Enter cash as',{dollars:'Dollar amount',years:'Years of withdrawals'},state.cashMode)}${state.cashMode==='dollars'?field('cash','Cash reserve',state.cash,{prefix:'$',min:0}):field('cashYears','Years of withdrawals',state.cashYears,{suffix:'years',min:0})}<small id="cash-equivalent" class="hint"></small>${select('cashStrategy','Cash strategy',{reserve:'Reserve only',first:'Spend cash first',downturn:'Market downturn buffer'},state.cashStrategy)}<div class="two-fields">${field('cashNominal','Cash yield (nominal)',entry(state.cashNominal,100),{suffix:'%'})}${field('cashMinimum','Minimum reserve',state.cashMinimum,{prefix:'$',min:0})}</div></section>
- <section class="input-group"><h3>Return assumptions</h3>
- <div class="wide"><div class="two-fields">${field('returnInput','Return before inflation',entry(p.nominal,100),{suffix:'%'})}${field('inflation','Inflation',entry(state.inflation,100),{suffix:'%',min:-99.9})}</div><small class="hint" id="real-summary"></small></div></section>
-
-
-`;
- const groups=[...$('#inputs').querySelectorAll(':scope > .input-group')];
- const [goal,timeline,assets,withdrawals,cash,returns]=groups;
- assets.querySelector('h3').textContent='Starting assets';
- cash.querySelector('h3').remove();assets.append(...cash.childNodes);cash.remove();
- withdrawals.querySelector('h3').textContent='Withdrawals & FI goal';
- const sub=document.createElement('h4');sub.textContent='Traditional FI';withdrawals.append(sub,...[...goal.childNodes].filter(n=>n.nodeName!=='H3'));goal.remove();
- const cashYield=assets.querySelector('#cashNominal').closest('.field');returns.append(cashYield);
- $('#inputs').append(assets,withdrawals,timeline,returns);
- $('#inputs').addEventListener('input',onInput,{signal:inputController.signal});
- $('#inputs').querySelectorAll('[data-time-entry]').forEach(button=>button.onclick=()=>{state.timeEntry=button.dataset.timeEntry;rebuildInputs();update();persist();});
- syncSolved();
+ const p=state;$('#inputs').innerHTML=`<div class="wide section-framing"><p>Your shared starting point. All amounts are in today’s dollars.</p></div>
+ <section class="input-group"><h3>Starting assets</h3>${field('portfolio','Current investments',entry(p.portfolio),{prefix:'$',min:0})}${field('cash','Cash reserve',p.cash,{prefix:'$',min:0})}</section>
+ <section class="input-group"><h3>Your FI goal</h3>${field('fiWithdrawals','Annual withdrawals at Traditional FI',entry(p.fiWithdrawals),{prefix:'$',min:1})}${field('fiRate','FI withdrawal rate',entry(p.fiRate,100),{suffix:'%',min:.01,max:100})}<div class="metric"><div class="label">Traditional FI target · today’s dollars</div><div class="value" id="fi-target-preview"></div></div></section>
+ <section class="input-group"><h3>Age & display</h3>${field('age','Current age',p.age,{min:0,max:120})}${select('timeEntry','Show timelines as',{years:'Years from now',age:'Age'},p.timeEntry)}</section>
+ <section class="input-group"><h3>Return assumptions</h3>${field('returnInput','Return before inflation',entry(p.nominal,100),{suffix:'%'})}${field('inflation','Inflation',entry(p.inflation,100),{suffix:'%'})}${field('cashNominal','Cash yield',entry(p.cashNominal,100),{suffix:'%'})}<small class="hint" id="real-summary"></small></section>`;
+ $('#inputs').addEventListener('input',onInput,{signal:inputController.signal});syncSolved();
 }
 let inputController=new AbortController();
 function rebuildInputs(){const expanded=$$('#inputs details').map(el=>el.open);inputController.abort();inputController=new AbortController();renderInputs();$$('#inputs details').forEach((el,i)=>el.open=expanded[i]||false);}
@@ -78,7 +56,8 @@ function onInput(e){const el=e.target,k=el.id;let rebuild=false;
  else if(k==='horizonSlider'){state.years=readNumber(el.value);syncTime(k);}
  else if(k==='returnInput')state.nominal=el.value===''?null:readNumber(el.value)/100;
  else if(k==='targetAge'){state.years=yearsToAge(state.age,readNumber(el.value));syncTime(k);}
- else if(k==='age'){const target=readNumber($('#targetAge')?.value);state.age=readNumber(el.value);state.years=yearsToAge(state.age,target);syncTime(k);}
+ else if(k==='age')state.age=readNumber(el.value);
+ else if(k==='timeEntry')state.timeEntry=el.value;
  else if(['cashMode','cashStrategy'].includes(k)){state[k]=el.value;rebuild=k==='cashMode';}
  else if(k in state){state[k]=el.value===''?null:readNumber(el.value)/(['inflation','fiRate','cashNominal','withdrawalRate'].includes(k)?100:1);if(k==='years'||k==='age')syncTime(k);}
  else return;
@@ -106,7 +85,7 @@ function timingNotice(p,q){const eventual=outcome(p);const funded=q.unfunded<.01
 }
 let charts=[],assetChartView='all';
 function chart(id,rows,series,{percentAxis=false,marker=null,point=null,start=today,boundaries=[]}={}){
- const age=state.timeEntry==='age'&&Number.isFinite(state.age)&&['plan','gap','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
+ const age=state.timeEntry==='age'&&Number.isFinite(state.age)&&['plan','gap','traditional','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
  charts.push({id,rows,series,percentAxis,marker,point,start,age,boundaries});
  return `<div class="chart" id="${id}" aria-label="${id.replaceAll('-',' ')}"><svg role="img" aria-label="Interactive ${id.replaceAll('-',' ')}" viewBox="0 0 820 280"></svg><div class="chart-tip" hidden></div></div><div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.label}</span>`).join('')}</div><p class="chart-caption">Hover, tap, or focus the chart and use the arrow keys to inspect a year.</p>`;
 }
@@ -234,10 +213,17 @@ function bindView(){
  for(const id of ['originalStart','originalTarget','originalPortfolio','originalSpending','originalCash','originalReturn']){const el=$('#'+id);if(el)el.oninput=()=>{if(id==='originalStart'){const end=$('#originalTarget').value;baseline.start=el.value;baseline.plan.years=Math.max(0,yearsBetween(el.value,end));}else if(id==='originalTarget')baseline.plan.years=Math.max(0,yearsBetween(baseline.start,el.value));else if(id==='originalReturn'){baseline.plan.returnMode='real';baseline.plan.real=readNumber(el.value)/100;}else if(id==='originalCash'){baseline.plan.cashMode='dollars';baseline.plan.cash=readNumber(el.value);}else{baseline.plan[id==='originalPortfolio'?'portfolio':'spending']=readNumber(el.value);if(id==='originalSpending')baseline.plan.withdrawalMode='dollars';}calculateCheck();persist();};}
 }
 function update(){renderSectionTools();renderToolSetup();if(!['guardrails','position'].includes(tab))leaveGuardrails();$('.workspace').dataset.view=tab;charts=[];worker?.terminate();clearTimeout(riskTimer);try{
- if(['guardrails','position'].includes(tab)){const shared=unknown==='projection'?{plan:{...state}}:solve(state,unknown);if(shared.error)throw Error(shared.error);connectGuardrailPlan({...guardrailPlanInputs(resolveWithdrawals(shared.plan)),sourceSolved:unknown},()=>navigate('numbers'),nominal,value=>{nominal=value;persist();},(key,value)=>{const current=unknown==='projection'?{plan:{...state}}:solve(state,unknown);if(current.error)throw Error(current.error);state=editConnectedPlan(resolveWithdrawals(current.plan),key,value);unknown='projection';persist();rebuildInputs();update();});$('#error').hidden=true;mountGuardrails($('#view'),{mode:tab==='position'?'check':'compare',usePlan:()=>{const solved=unknown==='projection'?{plan:{...state}}:solve(state,unknown);if(solved.error)throw Error(solved.error);return guardrailPlanInputs(resolveWithdrawals(solved.plan));}});return;}
+ if(['guardrails','position'].includes(tab)){
+ const shared=guardrailPlanInputs(baselinePlan(state));
+ connectGuardrailPlan(shared,()=>navigate('numbers'),nominal,value=>{nominal=value;persist();},(key,value)=>{
+ const edited=editConnectedPlan(baselinePlan(state),key,value);
+ for(const k of ['portfolio','cash','fiWithdrawals','fiRate','nominal','inflation','cashNominal'])state[k]=edited[k];
+ persist();rebuildInputs();update();
+ });$('#error').hidden=true;mountGuardrails($('#view'),{mode:'compare',usePlan:()=>guardrailPlanInputs(baselinePlan(state))});return;}
  if(state.timeEntry==='age'&&(!Number.isFinite(state.age)||state.age<0||state.age>120)&&tab==='plan')throw Error('Enter a current age between 0 and 120.');
  if(tab==='numbers'){$('#error').hidden=true;$('#view').innerHTML='';syncSolved();return;}
  if(tab==='gap'){renderGap();return;}
+ if(tab==='traditional'){renderTraditional();return;}
  if(tab==='method'){ $('#error').hidden=true;$('#view').innerHTML=methodView();return;}
  if(tab==='checkin'){ $('#error').hidden=true;$('#view').innerHTML=checkView();bindView();calculateCheck();return;}
  const sol=unknown==='projection'?{plan:{...state}}:solve(state,unknown);if(sol.error){$('#error').hidden=true;$('#view').innerHTML=`<div class="answer"><p class="eyebrow">${labels[unknown]||'Your plan'}</p><h2 class="plan-status">${unknown==='time'?'Traditional FI is not reached':'No solution with these inputs'}</h2><p class="sub">${sol.error}</p></div>`;syncSolved();return;}resolved=resolveWithdrawals(sol.plan);currentProjection=project(resolved);$('#error').hidden=!sol.error;$('#error').textContent=sol.error||'';
@@ -253,43 +239,41 @@ $('#reset').onclick=()=>{state=simplifyPlan({...defaults,separateFiWithdrawals:t
 
 update();renderInputs();
 $('#show-riskfi').onclick=()=>navigate('plan');
+$('#show-traditional').onclick=()=>navigate('traditional');
 // Optional progressive enhancement. Ordinary browsers need no agent APIs.
 try{document.modelContext?.registerTool({name:'read_risk_fi_plan',description:'Read the current calculator assumptions and projected result without changing the plan.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true},execute:(input)=>{if(input&&Object.keys(input).length)throw Error('This read-only tool accepts no parameters.');return ({assumptions:resolved,endingInvestments:currentProjection?.end.investment,fiTarget:currentProjection?.target,arrival:outcome(resolved)});}});}catch{}
 
 function sharedCards(p,scope){
  const row=(key,label,value,percentValue=false,calculated=false)=>`<div class="shared-row"><label for="${scope}-${key}">${label}</label>${calculated?'<span class="hint">Calculated in results</span>':`<input id="${scope}-${key}" data-shared="${key}" ${percentValue?'type="number" step="any"':'type="text" inputmode="decimal" data-amount="true"'} value="${Number.isFinite(value)?percentValue?entry(value,100):formatAmount(value):''}">`}</div>`;
  const solving=scope==='riskfi';
- return `<div class="summary-grid shared-cards"><section class="summary-group"><h3>Starting numbers</h3>${row('portfolio','Investments ($)',p.portfolio,false,solving&&unknown==='portfolio')}${row('cash','Cash reserve ($)',cashAmount(p))}${scope==='riskfi'?(p.withdrawalMode==='dollars'?row('spending','Annual RiskFi withdrawals ($)',withdrawalAmount(p),false,unknown==='spending'):row('withdrawalRate',p.withdrawalMode==='annual'?'Annual portfolio withdrawals (%)':'Starting portfolio withdrawals (%)',p.withdrawalRate,true,unknown==='spending')):''}${row('fiWithdrawals','Annual withdrawals at FI ($)',p.fiWithdrawals)}${row('fiRate','FI withdrawal rate (%)',p.fiRate,true)}<div class="shared-row"><span>FI target · today’s dollars</span><strong>${money(fiTarget(p))}</strong></div></section><section class="summary-group"><h3>Assumptions</h3>${row('nominal','Return before inflation (%)',p.nominal,true,solving&&unknown==='return')}${row('inflation','Inflation (%)',p.inflation,true)}${row('cashNominal','Cash yield (%)',p.cashNominal,true)}${p.timeEntry==='age'?row('age','Current age',p.age):''}${scope==='riskfi'?(p.timeEntry==='age'?row('targetAge','Target FI age',Number.isFinite(p.years)?p.age+p.years:null,false,unknown==='time'):row('years','Years to FI',p.years,false,unknown==='time')):''}<p class="hint">Shared with Your numbers.${scope==='gap'&&['portfolio','return'].includes(unknown)?' '+(unknown==='portfolio'?'Investments':'Return')+' calculated by RiskFi.':''}</p></section></div>`;
+ return `<div class="summary-grid shared-cards"><section class="summary-group"><h3>Starting numbers</h3>${row('portfolio','Investments ($)',p.portfolio,false,solving&&unknown==='portfolio')}${row('cash','Cash reserve ($)',cashAmount(p))}${row('fiWithdrawals','Annual withdrawals at FI ($)',p.fiWithdrawals)}${row('fiRate','FI withdrawal rate (%)',p.fiRate,true)}<div class="shared-row"><span>FI target · today’s dollars</span><strong>${money(fiTarget(p))}</strong></div></section><section class="summary-group"><h3>Assumptions</h3>${row('nominal','Return before inflation (%)',p.nominal,true,solving&&unknown==='return')}${row('inflation','Inflation (%)',p.inflation,true)}${row('cashNominal','Cash yield (%)',p.cashNominal,true)}${p.timeEntry==='age'?row('age','Current age',p.age):''}<p class="hint">Shared with Your numbers.</p></section></div>`;
 }
 function bindSharedCards(scope,p){
- $$('#'+(scope==='gap'?'view':'tool-setup')+' [data-shared]').forEach(el=>{el.oninput=()=>{
+ $$('#'+(scope==='riskfi'?'tool-setup':'view')+' [data-shared]').forEach(el=>{el.oninput=()=>{
  const key=el.dataset.shared,value=readNumber(el.value),isRate=['nominal','inflation','cashNominal','fiRate','withdrawalRate'].includes(key);
  // Materialize a calculated value only when the user explicitly edits it.
  if(key==='targetAge')state.years=yearsToAge(state.age,value);
  else state[key]=value===null?null:value/(isRate?100:1);
  if(key==='cash')state.cashMode='dollars';
  if(key==='spending')state.withdrawalMode='dollars';
- if(scope==='gap'&&({portfolio:'portfolio',nominal:'return',spending:'spending',years:'time'}[key]===unknown)){
- state={...p,[key]:state[key]};unknown='projection';
- }
  persist();rebuildInputs();
  };el.onblur=()=>update();});
 }
 function renderToolSetup(){
  const host=$('#tool-setup');host.hidden=tab!=='plan';if(tab!=='plan'){host.innerHTML='';return;}
  let solution;try{solution=unknown==='projection'?{plan:state}:solve(state,unknown);}catch{solution={plan:state};}const p=resolveWithdrawals(solution.plan||state);
- host.innerHTML=`<section class="panel content-panel"><h2>Solve for</h2>${select('riskfi-solve','What would you like to find?',labels,unknown)}${sharedCards(p,'riskfi')}</section>`;
- $('#riskfi-solve').onchange=e=>{unknown=e.target.value;persist();rebuildInputs();update();};bindSharedCards('riskfi',p);
+ host.innerHTML=`<section class="panel content-panel"><h2>Solve for</h2>${select('riskfi-solve','What would you like to find?',labels,unknown)}${sharedCards(p,'riskfi')}${riskfiSettings()}</section>`;
+ $('#riskfi-solve').onchange=e=>{unknown=e.target.value;persist();rebuildInputs();update();};bindSharedCards('riskfi',p);bindRiskfiSettings();
 }
 function renderGap(){
- let solved;try{solved=unknown==='projection'?{plan:state}:solve(state,unknown);}catch{solved={error:'Check shared inputs.'};}
- if(solved.error&&['portfolio','return'].includes(unknown))throw Error('Your numbers must have a valid solution for investments and return before projecting GapFi.');
- const p=resolveWithdrawals(solved.plan||state);
+ const p={...baselinePlan(state),...gapSettings,adjustWithdrawals:gapSettings.adjust};
  const amounts=(v,y=0)=>money(nominal?toNominal(v,p.inflation,y):v);
  $('#error').hidden=true;
  $('#view').innerHTML=`<section class="panel content-panel"><h2>When will you reach FI with gaps in withdrawals or contributions?</h2><p>Choose what happens during each period. The last period continues until FI.</p>${sharedCards(p,'gap')}<p class="hint">GapFi uses the periods below instead of RiskFi withdrawals.</p></section>
- <section class="panel content-panel"><h2>Your periods</h2><p class="hint">Annual amounts start in today’s dollars.</p><div class="gap-periods">${gapPeriods.map((period,i)=>`<section class="input-group"><h3>Period ${i+1}</h3><div class="segmented">${[['withdraw','Withdraw'],['even','Break even'],['contribute','Contribute']].map(([v,l])=>`<button data-gap-action="${v}" data-index="${i}" aria-pressed="${period.action===v}" class="${period.action===v?'active':''}">${l}</button>`).join('')}</div>${period.action!=='even'?field('gap-amount-'+i,period.action==='withdraw'?'Annual withdrawals':'Annual contributions',period.amount,{prefix:'$',min:0}):'<p>No withdrawals or contributions.</p>'}<div class="segmented"><button data-gap-duration="years" data-index="${i}" class="${period.years!==null?'active':''}">For a period</button><button data-gap-duration="until" data-index="${i}" ${i!==gapPeriods.length-1?'disabled':''} class="${period.years===null?'active':''}">Until FI</button></div>${period.years!==null?field('gap-years-'+i,'Number of years',period.years,{min:1,max:99,step:1}):'<p class="hint">Continues until your total assets reach your FI target.</p>'}${gapPeriods.length>1?`<button class="text-button" data-gap-remove="${i}">Remove period ${i+1}</button>`:''}</section>`).join('')}</div><button id="gap-add">Add period</button><p class="hint">${p.adjustWithdrawals!==false?'Withdrawals and contributions increase with inflation.':'Withdrawals and contributions stay fixed in future dollars.'} Change this choice in Your numbers. Cash follows your selected cash strategy; contributions go into investments.</p></section><section id="gap-results"></section>`;
+ <section class="panel content-panel"><h2>Your periods</h2>${select('gap-adjust','Annual amounts',{'yes':'Increase with inflation','no':'Keep dollar amount fixed'},gapSettings.adjust?'yes':'no')}${select('gap-cash','Cash strategy',{reserve:'Reserve only',first:'Use cash first',downturn:'Use cash in downturns'},gapSettings.cashStrategy)}<p class="hint">Annual amounts start in today’s dollars.</p><div class="gap-periods">${gapPeriods.map((period,i)=>`<section class="input-group"><h3>Period ${i+1}</h3><div class="segmented">${[['withdraw','Withdraw'],['even','Break even'],['contribute','Contribute']].map(([v,l])=>`<button data-gap-action="${v}" data-index="${i}" aria-pressed="${period.action===v}" class="${period.action===v?'active':''}">${l}</button>`).join('')}</div>${period.action!=='even'?field('gap-amount-'+i,period.action==='withdraw'?'Annual withdrawals':'Annual contributions',period.amount,{prefix:'$',min:0}):'<p>No withdrawals or contributions.</p>'}<div class="segmented"><button data-gap-duration="years" data-index="${i}" class="${period.years!==null?'active':''}">For a period</button><button data-gap-duration="until" data-index="${i}" ${i!==gapPeriods.length-1?'disabled':''} class="${period.years===null?'active':''}">Until FI</button></div>${period.years!==null?field('gap-years-'+i,'Number of years',period.years,{min:1,max:99,step:1}):'<p class="hint">Continues until your total assets reach your FI target.</p>'}${gapPeriods.length>1?`<button class="text-button" data-gap-remove="${i}">Remove period ${i+1}</button>`:''}</section>`).join('')}</div><button id="gap-add">Add period</button><p class="hint">${p.adjustWithdrawals!==false?'Withdrawals and contributions increase with inflation.':'Withdrawals and contributions stay fixed in future dollars.'} Contributions go into investments.</p></section><section id="gap-results"></section>`;
  bindSharedCards('gap',p);
+ $('#gap-adjust').onchange=e=>{gapSettings.adjust=e.target.value==='yes';persist();renderGap();};
+ $('#gap-cash').onchange=e=>{gapSettings.cashStrategy=e.target.value;persist();renderGap();};
  const changed=()=>{persist();renderGap();};
  $$('[data-gap-action]').forEach(b=>b.onclick=()=>{gapPeriods[+b.dataset.index].action=b.dataset.gapAction;changed();});
  $$('[data-gap-duration]').forEach(b=>b.onclick=()=>{gapPeriods[+b.dataset.index].years=b.dataset.gapDuration==='until'?null:2;changed();});
@@ -306,4 +290,38 @@ function renderGapResults(p,amounts){
  $('#gap-results').innerHTML=`<h2 class="result-divider">Your GapFi results</h2><section class="panel content-panel"><h2>${result.shortfall!==null?'Withdrawals cannot be fully funded':arrival===null?'FI is not reached within 100 years':arrival===0?'You have reached your FI target':`FI in ${num(arrival,2)} years · ${dateLabel(arrival)}${p.timeEntry==='age'?' · Age '+num(p.age+arrival,1):''}`}</h2><p>${result.shortfall!==null?'A withdrawal shortfall occurs in '+dateLabel(result.shortfall)+'. The projection stops there.':arrival===null?'These periods do not reach the target within the projection limit.':'Total assets include investments and cash. Arrival is checked monthly.'}</p><div class="segmented"><button data-gap-dollars="real" class="${!nominal?'active':''}">Today’s dollars</button><button data-gap-dollars="nominal" class="${nominal?'active':''}">Future dollars</button></div><p>FI target: <strong>${money(result.target)} in today’s dollars</strong>${arrival!==null?' · '+money(toNominal(result.target,p.inflation,arrival))+' at FI':''}.</p>${chart('gap-assets',rows,[{key:'total',label:'Total assets',color:'var(--purple)'},{key:'target',label:'FI target',color:'var(--muted)',dash:true}],{marker:arrival,boundaries:result.boundaries})}<p class="hint">Dotted lines mark period changes. Constant returns; withdrawals and contributions occur monthly. This is a projection, not a probability of success. The last row may cover part of a year.</p></section><section class="panel content-panel"><h2>Year by year</h2><div class="table-scroll"><table><thead><tr><th>${p.timeEntry==='age'?'Age':'Year'}</th><th>Period</th><th>Withdrawals</th><th>Contributions</th><th>Total assets</th><th>FI target</th></tr></thead><tbody>${result.rows.map(r=>`<tr><td>${num(p.timeEntry==='age'?p.age+r.year:r.year,2)}</td><td>${r.year===0?'Start':r.period+1}</td><td>${nominal?money(r.nominalWithdrawals):money(r.withdrawals)}</td><td>${nominal?money(r.nominalContributions):money(r.contributions)}</td><td>${amounts(r.total,r.year)}</td><td>${amounts(r.target,r.year)}</td></tr>`).join('')}</tbody></table></div></section>`;
  $$('[data-gap-dollars]').forEach(b=>b.onclick=()=>{nominal=b.dataset.gapDollars==='nominal';persist();renderGap();});drawCharts();
  }catch(error){$('#gap-results').innerHTML='<div class="panel content-panel" role="alert"></div>';$('#gap-results div').textContent=error.message;}
+}
+
+function riskfiSettings(){
+ const p=state;
+ return `<div class="summary-grid"><section class="summary-group"><h3>RiskFi withdrawals</h3>${select('risk-withdrawalMode','Withdrawals as',{dollars:'Annual dollars',starting:'Percentage of starting investments',annual:'Percentage of each year’s investments'},p.withdrawalMode)}${p.withdrawalMode==='dollars'?field('risk-spending','Annual withdrawals',entry(p.spending,1,2),{prefix:'$',min:0,disabled:unknown==='spending'}):field('risk-withdrawalRate','Withdrawal percentage',entry(p.withdrawalRate,100),{suffix:'%',min:0,max:100,disabled:unknown==='spending'})}${select('risk-adjustWithdrawals','Dollar withdrawals',{'yes':'Increase with inflation','no':'Keep dollar amount fixed'},p.adjustWithdrawals?'yes':'no')}${p.withdrawalMode==='annual'?'<p class="hint">Annual percentages follow investments; inflation adjustment applies after FI.</p>':''}</section><section class="summary-group"><h3>RiskFi timeline & cash</h3>${p.timeEntry==='age'?field('risk-targetAge','Target FI age',enteredAge(),{min:0,disabled:unknown==='time'}):field('risk-years','Years to FI',entry(p.years),{min:0,max:100,disabled:unknown==='time'})}${select('risk-cashStrategy','Cash strategy',{reserve:'Reserve only',first:'Use cash first',downturn:'Use cash in downturns'},p.cashStrategy)}${field('risk-cashMinimum','Minimum cash reserve',p.cashMinimum,{prefix:'$',min:0})}<p class="hint">These settings apply to RiskFi only.</p></section></div>`;
+}
+function bindRiskfiSettings(){
+ $$('#tool-setup [id^="risk-"]').forEach(el=>{
+ const set=()=>{const key=el.id.slice(5);if(key==='withdrawalMode'||key==='cashStrategy')state[key]=el.value;else if(key==='adjustWithdrawals')state[key]=el.value==='yes';else if(key==='targetAge')state.years=yearsToAge(state.age,readNumber(el.value));else{const value=readNumber(el.value);state[key]=value===null?null:value/(key==='withdrawalRate'?100:1);}persist();};
+ if(el.tagName==='SELECT')el.onchange=()=>{set();update();};else{el.oninput=set;el.onblur=()=>update();}
+ });
+}
+function renderTraditional(){
+ const p={...baselinePlan(state),adjustWithdrawals:traditional.adjust};$('#error').hidden=true;
+ $('#view').innerHTML=`<section class="panel content-panel"><h2>Build toward Traditional FI</h2><p>Calculate when contributions reach your FI target.</p><div class="summary-grid"><section class="summary-group"><h3>Your question</h3>${select('traditional-mode','Solve for',{time:'When will I reach FI?',contribution:'Contributions needed by my target date'},traditional.mode)}${traditional.mode==='time'?field('traditional-contribution','Annual contributions',traditional.contribution,{prefix:'$',min:0}):field('traditional-years','Years to FI',traditional.years,{min:1,max:100,step:1})}${traditional.mode==='contribution'&&Number.isFinite(traditional.years)?`<p class="hint">${dateLabel(traditional.years)}${p.timeEntry==='age'?' · Age '+num(p.age+traditional.years):''}</p>`:''}</section><section class="summary-group"><h3>Contribution rule</h3>${select('traditional-adjust','Annual contributions',{'yes':'Increase with inflation','no':'Keep dollar amount fixed'},traditional.adjust?'yes':'no')}<p class="hint">Contributions enter investments monthly. Cash stays separate and earns its cash yield.</p></section></div>${sharedCards(p,'traditional')}</section><section id="traditional-results"></section>`;
+ bindSharedCards('traditional',p);
+ for(const key of ['mode','contribution','years','adjust']){
+ const el=$('#traditional-'+key);if(!el)continue;
+ const set=()=>{traditional[key]=key==='mode'?el.value:key==='adjust'?el.value==='yes':readNumber(el.value);persist();};
+ if(el.tagName==='SELECT')el.onchange=()=>{set();renderTraditional();};else{el.oninput=()=>{set();traditionalResults(p);};el.onblur=()=>renderTraditional();}
+ }
+ traditionalResults(p);
+}
+function traditionalResults(p){
+ charts=[];
+ try{
+ const calculated=traditional.mode==='contribution'?contributionNeeded(p,traditional):null;
+ const result=calculated?.projection||traditionalProjection(p,{...traditional,years:100});
+ const amount=calculated?.contribution??traditional.contribution,at=result.reached;
+ const moneyAt=(value,year)=>money(nominal?toNominal(value,p.inflation,year):value);
+ const rows=result.rows.map(row=>({...row,total:nominal?toNominal(row.total,p.inflation,row.year):row.total,target:nominal?toNominal(row.target,p.inflation,row.year):row.target}));
+ $('#traditional-results').innerHTML=`<h2 class="result-divider">Your Traditional FI results</h2><section class="panel content-panel"><h2>${calculated?money(amount)+' per year':at===null?'FI is not reached within 100 years':at===0?'Your assets already meet the FI target':'FI in '+num(at,2)+' years · '+dateLabel(at)+(p.timeEntry==='age'?' · Age '+num(p.age+at):'')}</h2>${calculated?`<p>${money(amount/12)} per month, starting in today’s dollars, to hold your FI target in ${dateLabel(traditional.years)}.</p>`:`<p>Annual contributions: ${money(amount)} in today’s dollars.</p>`}<div class="segmented"><button data-trad-dollar="real" class="${nominal?'':'active'}">Today’s dollars</button><button data-trad-dollar="nominal" class="${nominal?'active':''}">Future dollars</button></div><p>FI target: <strong>${money(result.target)} in today’s dollars</strong>${at!==null?' · '+money(toNominal(result.target,p.inflation,calculated?traditional.years:at))+' at '+dateLabel(calculated?traditional.years:at):''}.</p>${chart('traditional-assets',rows,[{key:'total',label:'Total assets',color:'var(--purple)'},{key:'target',label:'FI target',color:'var(--muted)',dash:true}],{marker:at})}<p class="hint">Constant returns; monthly contributions at month end. No withdrawals before FI. This is a projection, not a probability of success.</p></section><section class="panel content-panel"><h2>Year by year</h2><div class="table-scroll"><table><thead><tr><th>${p.timeEntry==='age'?'Age':'Year'}</th><th>Contributions</th><th>Investments</th><th>Cash</th><th>Total assets</th><th>FI target</th></tr></thead><tbody>${result.rows.map(r=>`<tr><td>${num(p.timeEntry==='age'?p.age+r.year:r.year,2)}</td><td>${money(nominal?r.nominalContributions:r.contributions)}</td><td>${moneyAt(r.investment,r.year)}</td><td>${moneyAt(r.cash,r.year)}</td><td>${moneyAt(r.total,r.year)}</td><td>${moneyAt(r.target,r.year)}</td></tr>`).join('')}</tbody></table></div></section>`;
+ $$('[data-trad-dollar]').forEach(b=>b.onclick=()=>{nominal=b.dataset.tradDollar==='nominal';persist();traditionalResults(p);});drawCharts();
+ }catch(e){$('#traditional-results').innerHTML='<div class="panel content-panel" role="alert"></div>';$('#traditional-results div').textContent=e.message;}
 }
