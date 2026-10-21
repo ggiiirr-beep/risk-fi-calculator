@@ -384,7 +384,7 @@ function scheduledProbabilityModel(a,{progress=()=>{}}={}){
  };
  const spendingFor=(investment,cash,years,target,floor=0,targetWealth=guardrailGoalTarget(a))=>{
   const zero=probability(investment,cash,floor,years,targetWealth);if(zero<target)return {spending:floor,probability:zero,limited:true};
-  let lo=floor,hi=Math.max(floor,investment+cash);for(let j=0;j<28&&hi-lo>.005;j++){const m=(lo+hi)/2;if(probability(investment,cash,m,years,targetWealth)>=target)lo=m;else hi=m;}
+  let lo=floor,hi=Math.max(floor,investment+cash,1);while(hi<1e12&&probability(investment,cash,hi,years,targetWealth)>=target)hi=Math.min(1e12,hi*2);for(let j=0;j<48&&hi-lo>.005;j++){const m=(lo+hi)/2;if(probability(investment,cash,m,years,targetWealth)>=target)lo=m;else hi=m;}
   const p=probability(investment,cash,lo,years,targetWealth);return {spending:lo,probability:p,limited:Math.abs(p-target)>.015};
  };
  progress({stage:'probability',fraction:1});

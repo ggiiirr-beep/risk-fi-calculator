@@ -1,6 +1,6 @@
 # Risk-Based Guardrails — connected model
 
-Updated October 21, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261021-1; earlier validation files describe explicitly older model versions.
+Updated October 21, 2026. Inputs and computation stay in the browser. This describes the connected site, version 20261021-2; earlier validation files describe explicitly older model versions.
 
 ## One plan, two tabs
 

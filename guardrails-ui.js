@@ -1,4 +1,4 @@
-import {guardrailDefaults,defaultStrategies,validateGuardrails,guardrailFiTarget,guardrailGoalTarget,scheduledStrategy} from './guardrails.js?v=20261021-1';
+import {guardrailDefaults,defaultStrategies,validateGuardrails,guardrailFiTarget,guardrailGoalTarget,scheduledStrategy} from './guardrails.js?v=20261021-2';
 import {formatAmount,readNumber} from './number-inputs.js';
 let assumptions={...guardrailDefaults,blockYears:5},strategies=defaultStrategies.map(s=>({...s})),result=null,startingResult=null,worker=null,root=null,busy=false;
 let mode='compare',usePlan=null,scheduleEnding=.9,sharedPlan=null,sharedSignature='',editPlan=null,futureDollars=false,onDollarChange=null,onPlanChange=null;
@@ -86,7 +86,7 @@ function run(kind=mode){
  const error=root.querySelector('#gr-error');error.hidden=true;
  try{if(kind==='schedules'&&!Number.isFinite(scheduleEnding))throw new Error('Enter a comparison ending target.');validateGuardrails(runInputs(),kind==='schedules'?[{...strategies[Number(root.querySelector('#gr-scheduleBase input:checked').value)],endTarget:scheduleEnding}]:strategies);}catch(e){error.hidden=false;error.textContent=e.message;return;}
  setRunning(true);result=null;root.querySelector('#gr-results').innerHTML='';root.querySelector('#gr-status').textContent='Building the independent probability model…';
- worker=new Worker(new URL('./guardrails-worker.js?v=20261021-1',import.meta.url),{type:'module'});
+ worker=new Worker(new URL('./guardrails-worker.js?v=20261021-2',import.meta.url),{type:'module'});
  worker.onmessage=e=>{if(!root)return;const {progress,result:finished,error:message}=e.data;
   if(progress){root.querySelector('#gr-status').textContent=progress.stage==='probability'?`Building probability model · ${Math.round(progress.fraction*100)}%`:`${progress.label||'Comparing strategies'} · ${Math.round(progress.fraction*100)}%`;}else{worker.terminate();worker=null;setRunning(false);if(message){error.hidden=false;error.textContent=message;}else{if(finished.kind==='starting'){startingResult=finished;renderStarting();root.querySelector('#gr-status').textContent='Starting withdrawals calculated.';root.querySelector('#gr-start-results').scrollIntoView({behavior:'smooth',block:'start'});return;}result=finished;if(finished.starting){startingResult=finished;renderStarting();}root.querySelector('#gr-status').textContent=mode==='check'?`Check complete · ${number(finished.elapsedMs/1000)} seconds`:`Complete · ${number(finished.elapsedMs/1000)} seconds · ${number(finished.assumptions.count)} shared paths per strategy`;renderResults();root.querySelector('#gr-results').scrollIntoView({behavior:'smooth',block:'start'});}}};
  worker.onerror=()=>{worker?.terminate();worker=null;setRunning(false);error.hidden=false;error.textContent='Simulation could not finish. Try fewer probability samples or outer paths.';};

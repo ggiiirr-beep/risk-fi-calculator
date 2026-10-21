@@ -52,3 +52,8 @@ test('sampled forward probabilities match independent outer ledgers with fixed-d
  for(let n=0;n<100;n++){let investment=900000,cash=100000,price=1,funded=true;for(let y=0;y<5;y++){const k=n*5+y;price*=paths.prices[k];const r=scheduledYear(a,investment,cash,50000,paths.stock[k],paths.cash[k],paths.positive[k],y,price);investment=r.investment;cash=r.cash;funded&&=r.shortfall<=.01;}successes+=Number(funded&&investment+cash>=750000);}
  assert.equal(fixedSuccess(a,paths,900000,100000,50000,5),successes/100);
 });
+
+test('scheduled income can support a planned amount above existing assets',()=>{
+ const a={...guardrailDefaults,years:3,goal:'retirement',endingBalance:1000,model:'parametric',stockMean:0,stockVol:0,cashReturn:0,inflation:0,reserveYears:0,innerCount:512,futureChanges:[{kind:'income',amount:50000,start:0,adjust:true}]};
+ const model=buildProbabilityModel(a),fit=model.spendingFor(10000,0,3,.8);near(fit.spending,53000);assert.equal(model.probability(10000,0,fit.spending,3),1);
+});
