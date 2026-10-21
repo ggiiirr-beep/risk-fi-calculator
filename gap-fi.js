@@ -9,7 +9,7 @@ export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true}={}){
   if(p.years===null){if(i!==periods.length-1)throw Error('Until FI must be the last period.');}
   else {if(!Number.isInteger(p.years)||p.years<1||p.years>100)throw Error('Period lengths must be whole years from 1 to 100.');duration+=p.years;}
  }
- if(duration>=maxYears)throw Error('Fixed periods must total less than 100 years.');
+ if(duration>=100)throw Error('Fixed periods must total less than 100 years.');
  let investment=plan.portfolio,cash=cashAmount(plan),target=fiTarget(plan),r=expectedReturn(plan),cr=realReturn(plan.cashNominal,plan.inflation);
  if(![investment,cash,target,r,cr,plan.inflation].every(Number.isFinite)||investment<0||cash<0||target<=0||r<=-1||cr<=-1)throw Error('Enter valid assets, returns and an FI goal in Your numbers.');
  const rows=[{year:0,investment,cash,total:investment+cash,target,withdrawals:0,contributions:0,period:0,nominalWithdrawals:0,nominalContributions:0}], boundaries=[];
@@ -32,4 +32,23 @@ export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true}={}){
   if(shortfall!==null)break;
  }
  return {rows,reached,shortfall,target,boundaries:boundaries.filter(Number.isFinite)};
+}
+
+/** Solve one phase's annual amount, holding all other phases fixed. */
+export function solveGapAmount(plan,periods,{mode,index,years}){
+ if(!['withdraw','contribute'].includes(mode)||periods[index]?.action!==mode)throw Error('Choose a matching period to calculate.');
+ if(!Number.isInteger(years)||years<1||years>100)throw Error('Choose an FI deadline from 1 to 100 whole years.');
+ const start=periods.slice(0,index).reduce((sum,p)=>sum+(p.years??Infinity),0);
+ if(start>=years)throw Error('The selected period starts at or after your FI deadline.');
+ const run=amount=>projectGap(plan,periods.map((p,i)=>i===index?{...p,amount}:p),{maxYears:years,stopAtGoal:false});
+ const meets=q=>q.shortfall===null&&q.rows.at(-1).total>=q.target-1e-7;
+ let low=0,high=Math.max(1000,plan.portfolio),zero=run(0);
+ if(mode==='withdraw'&&!meets(zero))throw Error('Even zero withdrawals in this period cannot meet the deadline. Adjust another period or the deadline.');
+ if(mode==='contribute'&&meets(zero))return {amount:0,projection:zero};
+ for(let i=0;i<60&&(mode==='contribute'?!meets(run(high)):meets(run(high)));i++)high*=2;
+ if(mode==='contribute'&&!meets(run(high)))throw Error('This contribution period cannot restore the plan. Check withdrawals before it starts.');
+ if(mode==='withdraw'&&meets(run(high)))throw Error('No finite withdrawal limit was found for this period.');
+ for(let i=0;i<80;i++){const mid=(low+high)/2,ok=meets(run(mid));if(mode==='withdraw'?ok:!ok)low=mid;else high=mid;}
+ const amount=mode==='withdraw'?Math.floor(low*100)/100:Math.ceil(high*100)/100;
+ return {amount,projection:run(amount)};
 }
