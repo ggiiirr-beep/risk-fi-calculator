@@ -1,5 +1,5 @@
 import {bondShare} from './plan-assets.js';
-import {cashAmount,expectedReturn,nominalReturn,fiTarget} from './finance.js?v=20261021-2';
+import {cashAmount,expectedReturn,nominalReturn,fiTarget} from './finance.js?v=20261021-3';
 // Transfer a solved plan explicitly: guardrails use total wealth, not investments alone.
 export function guardrailPlanInputs(plan){
  const cash=cashAmount(plan),years=Math.max(1,Math.ceil(plan.years)),target=fiTarget(plan);

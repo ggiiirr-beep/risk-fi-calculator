@@ -193,3 +193,9 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Source/data and scheduled-model limitations updated in simulation-method.html and GUARDRAIL_METHOD.md. Existing GitHub Pages hosting retained; no podcast domain was supplied.
 
 - Follow-up boundary check: scheduled income may support a gross planned amount above current assets. The solver expands its search bracket; actual net withdrawals remain limited by the ledger.
+
+## Direct calculator tabs (20261021-3)
+- Your numbers remains first, followed by Risk FI, Gap FI, Coast FI, Traditional FI, Risk-based guardrails, and Help. Removed the intermediary calculator menu and duplicate subnavigation.
+- Future-change cards use their entered name, updating while typing; blank names use Recurring income, One-time addition, or One-time expense.
+- UI-only change; syntax/static build and static navigation/order/binding checks pass. Local browser preview was blocked by browser security, so visual/mobile verification was not completed for this revision. Financial engines unchanged.
+- Repeated the five calculator/guardrail options at the bottom of Your numbers, in matching order.

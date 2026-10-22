@@ -1,13 +1,13 @@
 import {assetRows,assetTotals,syncAssets} from './plan-assets.js';
 import {solveCoast} from './coast-fi.js';
-import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261021-2';
-import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261021-2';
-import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261021-2';
-import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261021-2';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261021-2';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261021-2';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261021-2';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261021-2';
+import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261021-3';
+import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261021-3';
+import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261021-3';
+import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261021-3';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261021-3';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261021-3';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261021-3';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261021-3';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -217,7 +217,7 @@ function bindView(){
  for(const [id,key]of Object.entries({checkDate:'date',checkPortfolio:'portfolio',checkCash:'cash',checkSpending:'spending'})){const el=$('#'+id);if(el)el.oninput=()=>{checkValues[key]=key==='date'?el.value:readNumber(el.value);calculateCheck();};}
  for(const id of ['originalStart','originalTarget','originalPortfolio','originalSpending','originalCash','originalReturn']){const el=$('#'+id);if(el)el.oninput=()=>{if(id==='originalStart'){const end=$('#originalTarget').value;baseline.start=el.value;baseline.plan.years=Math.max(0,yearsBetween(el.value,end));}else if(id==='originalTarget')baseline.plan.years=Math.max(0,yearsBetween(baseline.start,el.value));else if(id==='originalReturn'){baseline.plan.returnMode='real';baseline.plan.real=readNumber(el.value)/100;}else if(id==='originalCash'){baseline.plan.cashMode='dollars';baseline.plan.cash=readNumber(el.value);}else{baseline.plan[id==='originalPortfolio'?'portfolio':'spending']=readNumber(el.value);if(id==='originalSpending')baseline.plan.withdrawalMode='dollars';}calculateCheck();persist();};}
 }
-function update(){renderCalculatorNav();renderSectionTools();renderToolSetup();if(!['guardrails','position'].includes(tab))leaveGuardrails();$('.workspace').dataset.view=tab;charts=[];worker?.terminate();clearTimeout(riskTimer);try{
+function update(){renderSectionTools();renderToolSetup();if(!['guardrails','position'].includes(tab))leaveGuardrails();$('.workspace').dataset.view=tab;charts=[];worker?.terminate();clearTimeout(riskTimer);try{
  if(['guardrails','position'].includes(tab)){
  const shared=guardrailPlanInputs(baselinePlan(state));
  connectGuardrailPlan(shared,()=>navigate('numbers'),nominal,value=>{nominal=value;persist();},(key,value)=>{
@@ -228,7 +228,7 @@ function update(){renderCalculatorNav();renderSectionTools();renderToolSetup();i
  if(state.timeEntry==='age'&&(!Number.isFinite(state.age)||state.age<0||state.age>120)&&tab==='plan')throw Error('Enter a current age between 0 and 120.');
  if(tab==='numbers'){$('#error').hidden=true;$('#view').innerHTML='';syncSolved();return;}
  if(tab==='gap'){renderGap();return;}
- if(tab==='calculators'){renderCalculatorHome();return;}
+
  if(tab==='coast'){renderCoast();return;}
  if(tab==='traditional'){renderTraditional();return;}
  if(tab==='method'){ $('#error').hidden=true;$('#view').innerHTML=methodView();return;}
@@ -239,26 +239,14 @@ function update(){renderCalculatorNav();renderSectionTools();renderToolSetup();i
  }catch(e){$('#error').hidden=false;$('#error').textContent=e.message;$('#view').innerHTML='<div class="panel content-panel"><h2>Check your inputs</h2><p>Check the missing or invalid values in Your numbers.</p><button id="fix-numbers">Edit your numbers</button></div>';$('#fix-numbers').onclick=()=>navigate('numbers');}}
 function saveBaseline(){baseline={start:today,plan:{...resolved}};checkValues={};persist();toast('Baseline saved in this browser.');if(tab==='checkin')update();}
 $('#theme').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('riskfi-theme',t);}catch{}};
-const calculatorItems=[['traditional','Traditional FI','Build toward financial independence.'],['coast','Coast FI','Find when you can stop contributing.'],['plan','Risk FI','Withdraw while working toward FI.'],['gap','Gap FI','Plan periods of withdrawals, contributions, or neither.']];
-function renderCalculatorHome(){
- $('#error').hidden=true;
- $('#view').innerHTML=`<section class="panel content-panel"><h2>What would you like to plan?</h2><div class="calculator-cards">${calculatorItems.map(([key,label,description])=>`<button data-calculator="${key}"><strong>${label}</strong><span>${description}</span></button>`).join('')}</div></section>`;
- $$('[data-calculator]').forEach(b=>b.onclick=()=>navigate(b.dataset.calculator));
-}
-function navigate(next){tab=next;const main=['traditional','coast','plan','gap','scenarios','withdrawals','dates','risk'].includes(tab)?'calculators':tab==='checkin'?'position':tab;$$('.tabs [data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===main));update();}
-function renderCalculatorNav(){
- const host=$('#calculator-nav'),current=['scenarios','withdrawals','dates','risk'].includes(tab)?'plan':tab;
- host.hidden=!calculatorItems.some(([key])=>key===current);
- host.innerHTML=host.hidden?'':calculatorItems.map(([key,label])=>`<button data-calculator="${key}" class="${key===current?'active':''}" aria-pressed="${key===current}">${label}</button>`).join('');
- host.querySelectorAll('button').forEach(b=>b.onclick=()=>navigate(b.dataset.calculator));
-}
+function navigate(next){tab=next;const main=['scenarios','withdrawals','dates','risk'].includes(tab)?'plan':tab==='checkin'?'position':tab;$$('.tabs [data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===main));update();}
 function renderSectionTools(){const host=$('#section-tools');host.innerHTML=['plan','scenarios','withdrawals','dates','risk'].includes(tab)?`<button data-tab="plan">Plan calculator</button><button data-tab="withdrawals">Compare withdrawal scenarios</button><button data-tab="scenarios">Compare return scenarios</button><button data-tab="dates">Compare target dates</button>`:['position','checkin'].includes(tab)?`<button data-tab="position">Withdrawal check</button><button data-tab="checkin">Compare with saved plan</button>`:'';host.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.onclick=()=>navigate(b.dataset.tab);});}
 $$('nav [data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
 $('#reset').onclick=()=>{state=simplifyPlan({...defaults,separateFiWithdrawals:true});state.assets=assetRows(state);state.futureChanges=[];unknown='spending';riskOutput=null;update();rebuildInputs();persist();toast('Assumptions reset. Your saved baseline is preserved.');};
 
 update();renderInputs();
-$('#show-riskfi').onclick=()=>navigate('plan');
-$('#show-traditional').onclick=()=>navigate('traditional');
+
+
 // Optional progressive enhancement. Ordinary browsers need no agent APIs.
 try{document.modelContext?.registerTool({name:'read_risk_fi_plan',description:'Read the current calculator assumptions and projected result without changing the plan.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true},execute:(input)=>{if(input&&Object.keys(input).length)throw Error('This read-only tool accepts no parameters.');return ({assumptions:resolved,endingInvestments:currentProjection?.end.investment,fiTarget:currentProjection?.target,arrival:outcome(resolved)});}});}catch{}
 
@@ -355,7 +343,7 @@ function traditionalResults(p){
 
 function safeText(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function assetEditor(){return `<div class="asset-editor">${state.assets.map((a,i)=>`<section class="asset-row">${select('asset-type-'+i,'Asset type',{stocks:'Stocks',bonds:'Bonds',cash:'Cash'},a.type)}${field('asset-name-'+i,'Name',safeText(a.name),{type:'text'})}${field('asset-amount-'+i,'Amount',a.amount,{prefix:'$',min:0})}${field('asset-rate-'+i,'Expected return',entry(a.rate,100),{suffix:'%'})}<button data-remove-asset="${i}" class="text-button" ${state.assets.length===1?'disabled':''}>Remove asset</button></section>`).join('')}</div>`;}
-function futureEditor(){return `<div class="future-editor">${state.futureChanges.map((e,i)=>`<section class="input-group"><div class="section-head"><h4>Change ${i+1}</h4><label><input type="checkbox" id="future-enabled-${i}" ${e.enabled!==false?'checked':''}> Include</label></div>${select('future-kind-'+i,'Type',{income:'Recurring income',add:'One-time addition',expense:'One-time expense'},e.kind)}${field('future-name-'+i,'Name',safeText(e.name),{type:'text'})}${field('future-amount-'+i,e.kind==='income'?'Annual amount':'Amount',e.amount,{prefix:'$',min:0})}<div class="two-fields">${field('future-start-'+i,state.timeEntry==='age'?'Starting age':'Starts in years',e.start+(state.timeEntry==='age'?state.age:0),{min:0})}${e.kind==='income'?field('future-end-'+i,state.timeEntry==='age'?'Ending age (optional)':'Ends in years (optional)',e.end==null?'':e.end+(state.timeEntry==='age'?state.age:0),{min:0}):''}</div>${select('future-adjust-'+i,'Dollar amounts',{yes:'Keep purchasing power (rise with inflation)',no:'Fixed future-dollar payments'},e.adjust!==false?'yes':'no')}<button data-remove-future="${i}" class="text-button">Remove change</button></section>`).join('')}</div>`;}
+function futureEditor(){return `<div class="future-editor">${state.futureChanges.map((e,i)=>`<section class="input-group"><div class="section-head"><h4 id="future-heading-${i}">${safeText(e.name?.trim()||({income:'Recurring income',add:'One-time addition',expense:'One-time expense'}[e.kind]))}</h4><label><input type="checkbox" id="future-enabled-${i}" ${e.enabled!==false?'checked':''}> Include</label></div>${select('future-kind-'+i,'Type',{income:'Recurring income',add:'One-time addition',expense:'One-time expense'},e.kind)}${field('future-name-'+i,'Name',safeText(e.name),{type:'text'})}${field('future-amount-'+i,e.kind==='income'?'Annual amount':'Amount',e.amount,{prefix:'$',min:0})}<div class="two-fields">${field('future-start-'+i,state.timeEntry==='age'?'Starting age':'Starts in years',e.start+(state.timeEntry==='age'?state.age:0),{min:0})}${e.kind==='income'?field('future-end-'+i,state.timeEntry==='age'?'Ending age (optional)':'Ends in years (optional)',e.end==null?'':e.end+(state.timeEntry==='age'?state.age:0),{min:0}):''}</div>${select('future-adjust-'+i,'Dollar amounts',{yes:'Keep purchasing power (rise with inflation)',no:'Fixed future-dollar payments'},e.adjust!==false?'yes':'no')}<button data-remove-future="${i}" class="text-button">Remove change</button></section>`).join('')}</div>`;}
 function bindPlanningEditors(){
  const refresh=()=>{persist();rebuildInputs();update();};
  $('#asset-add').onclick=()=>{state.assets.push({type:'bonds',name:'Bonds',amount:0,rate:.04});refresh();};
@@ -365,7 +353,7 @@ function bindPlanningEditors(){
  }});
  $('#future-add').onclick=()=>{state.futureChanges.push({kind:'income',name:'',amount:0,start:Math.max(0,67-state.age),end:null,adjust:true,enabled:true});refresh();};
  $$('[data-remove-future]').forEach(b=>b.onclick=()=>{state.futureChanges.splice(+b.dataset.removeFuture,1);refresh();});
- state.futureChanges.forEach((e,i)=>{for(const key of ['kind','name','amount','start','end','adjust','enabled']){const el=$('#future-'+key+'-'+i);if(!el)continue;el.oninput=()=>{e[key]=key==='enabled'?el.checked:key==='adjust'?el.value==='yes':['kind','name'].includes(key)?el.value:el.value===''?null:readNumber(el.value)-(['start','end'].includes(key)&&state.timeEntry==='age'?state.age:0);persist();if(key==='kind')refresh();};el.onblur=()=>update();}});
+ state.futureChanges.forEach((e,i)=>{for(const key of ['kind','name','amount','start','end','adjust','enabled']){const el=$('#future-'+key+'-'+i);if(!el)continue;el.oninput=()=>{e[key]=key==='enabled'?el.checked:key==='adjust'?el.value==='yes':['kind','name'].includes(key)?el.value:el.value===''?null:readNumber(el.value)-(['start','end'].includes(key)&&state.timeEntry==='age'?state.age:0);persist();if(key==='name')$('#future-heading-'+i).textContent=e.name.trim()||({income:'Recurring income',add:'One-time addition',expense:'One-time expense'}[e.kind]);if(key==='kind')refresh();};el.onblur=()=>update();}});
 }
 function renderCoast(){
  const p=baselinePlan(state);$('#error').hidden=true;
