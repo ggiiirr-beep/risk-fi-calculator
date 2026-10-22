@@ -213,3 +213,10 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Risk FI compares withdrawals, investments, returns and deadlines with its existing withdrawal basis. Gap FI compares phase lengths/amounts and solves one selected phase. Traditional FI compares contribution/date/return assumptions. Coast FI compares retirement horizons, contributions, and chosen contribution stop dates.
 - Results use a common configurable chart horizon and dollar display. Infeasible scenarios are identified separately. Projections continue scenario policies without an automatic post-FI retirement switch, disclosed beside the chart.
 - Verification: new engine tests cover source immutability, solved-phase isolation, all Coast questions, percentage policies, invalid data, scheduled cash income and nominal chart values. Static build and syntax checks; browser preview remains blocked by the previously reported browser security restriction.
+
+## Compare paths tab (20261021-6)
+- Added Compare paths before Risk-based guardrails in both main navigation and the bottom of Your numbers.
+- Compares Risk FI, Gap FI, Coast FI and Traditional FI on one question: FI arrival. Starting assets, return assumptions, inflation, future changes and the target remain shared. Path-specific cash/withdrawal/contribution policies are retained.
+- Temporary editable rule cards start from the calculator settings (using solved withdrawal/contribution amounts where available). Reset reloads the rules; Your numbers remains connected.
+- Results show FI date/age, regular contributions and actual portfolio withdrawals through each path’s own arrival, plus a common chart horizon and dollar display. Contributions exclude scheduled additions and surplus income; withdrawals include one-time expenses. Post-FI chart continuation is explicitly not a retirement model.
+- Tests cover equivalent paths, common starting amounts, partial-year totals, source isolation, future changes and infeasibility. Syntax/build verification; browser preview remains unavailable under the previously reported browser restriction.

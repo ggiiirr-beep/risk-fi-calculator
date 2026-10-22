@@ -1,15 +1,16 @@
+import {comparePaths} from './path-comparison.js';
 import {comparisonQuestions as universalQuestions,runScenario,comparisonRows} from './scenario-comparison.js';
 import {planTimeline,fundingChart} from './plan-visuals.js';
 import {assetRows,assetTotals,syncAssets} from './plan-assets.js';
 import {solveCoast} from './coast-fi.js';
-import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261021-5';
-import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261021-5';
-import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261021-5';
-import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261021-5';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261021-5';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261021-5';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261021-5';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261021-5';
+import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261021-6';
+import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261021-6';
+import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261021-6';
+import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261021-6';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261021-6';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261021-6';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261021-6';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261021-6';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -20,6 +21,7 @@ const dateAfter=(years,start=today)=>new Date(new Date(start+'T12:00:00Z').getTi
 const dateLabel=(years,start=today)=>dateAfter(years,start).toLocaleDateString('en-US',{month:'short',year:'numeric',timeZone:'UTC'});
 const yearsBetween=(a,b)=>(new Date(b+'T12:00:00Z')-new Date(a+'T12:00:00Z'))/yearMS;
 let state={...defaults},unknown='spending',tab='numbers',nominal=false,baseline=null,worker=null,riskTimer=null,riskOutput=null,checkValues={};
+let pathDraft=null,pathHorizon=30;
 let compareSource='plan',compareDraft=null,compareDrafts={};
 let returnComparisonRate=null,comparisonQuestions={},targetHorizons=null;
 let coast={mode:'amount',years:30,contribution:40000};
@@ -93,7 +95,7 @@ function timingNotice(p,q){const eventual=outcome(p);const funded=q.unfunded<.01
 }
 let charts=[],assetChartView='all';
 function chart(id,rows,series,{percentAxis=false,marker=null,point=null,start=today,boundaries=[]}={}){
- const age=state.timeEntry==='age'&&Number.isFinite(state.age)&&['plan','gap','traditional','coast','compare','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
+ const age=state.timeEntry==='age'&&Number.isFinite(state.age)&&['plan','gap','traditional','coast','paths','compare','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
  charts.push({id,rows,series,percentAxis,marker,point,start,age,boundaries});
  return `<div class="chart" id="${id}" aria-label="${id.replaceAll('-',' ')}"><svg role="img" aria-label="Interactive ${id.replaceAll('-',' ')}" viewBox="0 0 820 280"></svg><div class="chart-tip" hidden></div></div><div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.label}</span>`).join('')}</div><p class="chart-caption">Hover, tap, or focus the chart and use the arrow keys to inspect a year.</p>`;
 }
@@ -231,6 +233,7 @@ function update(){renderSectionTools();renderToolSetup();if(!['guardrails','posi
  });$('#error').hidden=true;mountGuardrails($('#view'),{mode:'compare',usePlan:()=>guardrailPlanInputs(baselinePlan(state))});return;}
  if(state.timeEntry==='age'&&(!Number.isFinite(state.age)||state.age<0||state.age>120)&&tab==='plan')throw Error('Enter a current age between 0 and 120.');
  if(tab==='numbers'){$('#error').hidden=true;$('#view').innerHTML='';syncSolved();return;}
+ if(tab==='paths'){renderPathComparison();return;}
  if(tab==='compare'){renderUniversalComparison();return;}
  if(tab==='gap'){renderGap();return;}
 
@@ -409,4 +412,31 @@ function universalResults(){
  const value=r=>r.kind==='time'?(r.plan.timeEntry==='age'?'Age '+num(r.plan.age+r.value,2):num(r.value,2)+' years')+' · '+dateLabel(r.value):r.kind==='realReturn'?percent(nominalReturn(r.value,r.plan.inflation))+' before inflation':money(r.value)+' in today’s dollars';
  const valid=results.some(r=>!r.error),rows=valid?comparisonRows(results,d.horizon,nominal):[];
  $('#uc-results').innerHTML=`<div class="compare-cards">${results.map((r,i)=>`<section class="metric"><h3>Scenario ${String.fromCharCode(65+i)}</h3>${r.error?`<p>${safeText(r.error)}</p>`:`<strong class="value">${value(r)}</strong>${(r.projection.unfunded>0.01||r.projection.shortfall!=null)?'<p class="notice">A funding shortfall occurs within the chart horizon.</p>':''}`}</section>`).join('')}</div>${valid?chart('scenario-comparison',rows,[...results.flatMap((r,i)=>r.error?[]:[{key:'s'+i,label:'Scenario '+String.fromCharCode(65+i),color:['var(--purple)','var(--red)','#438b85'][i]}]),{key:'target',label:'FI target',color:'var(--muted)',dash:true}]):''}<p class="chart-caption">Same question and starting assumptions; only the entries above differ. Constant-return projections, not probabilities. The chart keeps each scenario’s rules through the displayed horizon; no automatic retirement withdrawal switch. Missing or unfunded projections are not shown as successful plans.</p>`;drawCharts();
+}
+
+function pathDefaults(){
+ let r=state;try{r=solve(state,unknown).plan||state;}catch{}
+ let coastAt=0;try{if(coast.mode==='time')coastAt=solveCoast(baselinePlan(state),coast).value;}catch{}
+ let tr={...traditional},periods=structuredClone(gapPeriods);
+ try{if(tr.mode==='contribution')tr.contribution=contributionNeeded(baselinePlan(state),tr).contribution;}catch{}
+ try{if(gapSettings.mode!=='time')periods[gapSettings.index].amount=solveGapAmount({...baselinePlan(state),...gapSettings,adjustWithdrawals:gapSettings.adjust},periods,gapSettings).amount;}catch{}
+ return {risk:{spending:r.spending,withdrawalMode:r.withdrawalMode,withdrawalRate:r.withdrawalRate,adjustWithdrawals:r.adjustWithdrawals,cashStrategy:r.cashStrategy,cashMinimum:r.cashMinimum},gap:structuredClone(gapSettings),periods,coast:{contribution:coast.contribution,coastAt},traditional:tr};
+}
+function renderPathComparison(){
+ pathDraft??=pathDefaults();const d=pathDraft,p=baselinePlan(state),age=state.timeEntry==='age';$('#error').hidden=true;
+ const f=(path,label,value,opts={})=>field('path-'+path,label,value,opts);
+ $('#view').innerHTML=`<section class="panel content-panel"><h2>Which path gets you to FI?</h2><p>Same starting assets, returns, inflation, future changes and FI target. Compare the withdrawals and contributions along each path.</p><div class="metrics">${metric('Starting assets',money(p.portfolio+p.cash))}${metric('FI target · today',money(fiTarget(p)))}${metric('Investment return / inflation',percent(p.nominal)+' / '+percent(p.inflation))}</div><div class="path-cards">
+ <section class="summary-group"><h3>Risk FI</h3>${d.risk.withdrawalMode==='dollars'?f('risk.spending','Annual withdrawals',d.risk.spending,{prefix:'$'}):f('risk.withdrawalRate',d.risk.withdrawalMode==='annual'?'Each year’s investment withdrawal rate':'Starting investment withdrawal rate',entry(d.risk.withdrawalRate,100),{suffix:'%'})}<p class="hint">Uses the Risk FI withdrawal and cash rules.</p></section>
+ <section class="summary-group"><h3>Gap FI</h3>${d.periods.map((r,i)=>`<div class="compare-period"><h4>Period ${i+1} · ${{withdraw:'Withdraw',contribute:'Contribute',even:'Break even'}[r.action]}</h4>${r.action!=='even'?f('periods.'+i+'.amount','Annual amount',r.amount,{prefix:'$'}):''}${r.years===null?'<p>Until FI</p>':f('periods.'+i+'.years','Years',r.years,{min:1,step:1})}</div>`).join('')}</section>
+ <section class="summary-group"><h3>Coast FI</h3>${f('coast.contribution','Annual contributions before coasting',d.coast.contribution,{prefix:'$'})}${f('coast.coastAt',age?'Stop contributions at age':'Stop contributions in years',d.coast.coastAt+(age?state.age:0),{min:0})}<p class="hint">No regular withdrawals. Contributions rise with inflation and stop at the coast date.</p></section>
+ <section class="summary-group"><h3>Traditional FI</h3>${f('traditional.contribution','Annual contributions',d.traditional.contribution,{prefix:'$'})}<p class="hint">${d.traditional.adjust?'Contributions rise with inflation.':'Contributions stay fixed in future dollars.'}</p></section></div><button id="paths-reset">Reset rules from calculators</button><p class="hint">Rule edits here are temporary. Your shared numbers remain connected. Change period types or withdrawal policies in their calculator, then reset here.</p></section><h2 class="result-divider">Path comparison results</h2><section class="panel content-panel">${dollarControls()}${f('horizon','Years to show',pathHorizon,{min:1,max:100,step:1})}<div id="paths-results"></div></section>`;
+ $('#paths-reset').onclick=()=>{pathDraft=null;renderPathComparison();};
+ $$('input[id^="path-"]').forEach(el=>el.oninput=()=>{const path=el.id.slice(5),keys=path.split('.');let value=readNumber(el.value);if(path==='horizon')pathHorizon=value;else{if(value!==null){if(path==='risk.withdrawalRate')value/=100;if(path==='coast.coastAt'&&age)value-=state.age;}let obj=d;for(const k of keys.slice(0,-1))obj=obj[k];obj[keys.at(-1)]=value;}pathResults();});
+ $$('[data-dollars]').forEach(b=>b.onclick=()=>{nominal=b.dataset.dollars==='nominal';persist();renderPathComparison();});pathResults();
+}
+function pathResults(){
+ charts=[];const host=$('#paths-results');try{
+ const r=comparePaths(state,pathDraft,pathHorizon),names=['Risk FI','Gap FI','Coast FI','Traditional FI'],colours=['var(--purple)','var(--red)','#438b85','#667bb0'];
+ host.innerHTML=`<div class="table-scroll"><table><thead><tr><th>Path</th><th>FI date / age</th><th>Regular contributions to FI</th><th>Portfolio withdrawals to FI</th></tr></thead><tbody>${r.map((v,i)=>`<tr><th>${names[i]}</th>${v.error?`<td colspan="3">${safeText(v.error)}</td>`:`<td>${dateLabel(v.value)} · ${state.timeEntry==='age'?'Age '+num(state.age+v.value,2):num(v.value,2)+' years'}</td><td>${money(v.contributions)}</td><td>${money(v.withdrawals)}</td>`}</tr>`).join('')}</tbody></table></div><p class="hint">Totals through each path’s own FI date, in today’s dollars. Regular contributions exclude future-income surpluses and one-time additions; these still affect balances. Portfolio withdrawals include one-time expenses.</p>${r.some(v=>!v.error)?chart('paths-assets',comparisonRows(r,pathHorizon,nominal),[...r.flatMap((v,i)=>v.error?[]:[{key:'s'+i,label:names[i],color:colours[i]}]),{key:'target',label:'FI target',color:'var(--muted)',dash:true}]):''}<p class="chart-caption">${nominal?'Future':'Today’s'} dollars. Constant-return projections, not success probabilities. Risk FI uses annual cash flows; the other paths use monthly cash flows. The chart continues each path’s rules after FI for comparison; it does not switch to retirement withdrawals.</p>`;drawCharts();
+ }catch(e){host.textContent=e.message;}
 }
