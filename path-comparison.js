@@ -4,10 +4,10 @@ import {coastProjection} from './coast-fi.js';
 import {traditionalProjection} from './traditional-fi.js';
 import {futureFlows} from './future-changes.js';
 import {baselinePlan} from './plan-settings.js';
-export function comparePaths(input,settings,horizon=30){
+export function comparePaths(input,settings,horizon=30,keys=['plan','gap','coast','traditional']){
  const state=structuredClone(input),s=structuredClone(settings),base=baselinePlan(state);
  if(!Number.isInteger(horizon)||horizon<1||horizon>100)throw Error('Use a chart horizon from 1 to 100 years.');
- return ['plan','gap','coast','traditional'].map(key=>{try{
+ return keys.map(key=>{try{
   let p={...base},arrival=null,projection,through;
   if(key==='plan'){
    p={...state,...s.risk};p=resolveWithdrawals(p);const solved=solve(p,'time');if(solved.error)throw Error(solved.error);arrival=solved.value;

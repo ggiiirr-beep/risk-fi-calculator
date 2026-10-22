@@ -3,14 +3,14 @@ import {comparisonQuestions as universalQuestions,runScenario,comparisonRows} fr
 import {planTimeline,fundingChart} from './plan-visuals.js';
 import {assetRows,assetTotals,syncAssets} from './plan-assets.js';
 import {solveCoast} from './coast-fi.js';
-import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261021-6';
-import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261021-6';
-import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261021-6';
-import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261021-6';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261021-6';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261021-6';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261021-6';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261021-6';
+import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261021-7';
+import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261021-7';
+import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261021-7';
+import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261021-7';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261021-7';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261021-7';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261021-7';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261021-7';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -21,7 +21,8 @@ const dateAfter=(years,start=today)=>new Date(new Date(start+'T12:00:00Z').getTi
 const dateLabel=(years,start=today)=>dateAfter(years,start).toLocaleDateString('en-US',{month:'short',year:'numeric',timeZone:'UTC'});
 const yearsBetween=(a,b)=>(new Date(b+'T12:00:00Z')-new Date(a+'T12:00:00Z'))/yearMS;
 let state={...defaults},unknown='spending',tab='numbers',nominal=false,baseline=null,worker=null,riskTimer=null,riskOutput=null,checkValues={};
-let pathDraft=null,pathHorizon=30;
+let pathDraft=null,pathHorizon=30,pathSelection=['plan','gap'];
+const pathNames={plan:'Risk FI',gap:'Gap FI',coast:'Coast FI',traditional:'Traditional FI'};
 let compareSource='plan',compareDraft=null,compareDrafts={};
 let returnComparisonRate=null,comparisonQuestions={},targetHorizons=null;
 let coast={mode:'amount',years:30,contribution:40000};
@@ -425,18 +426,17 @@ function pathDefaults(){
 function renderPathComparison(){
  pathDraft??=pathDefaults();const d=pathDraft,p=baselinePlan(state),age=state.timeEntry==='age';$('#error').hidden=true;
  const f=(path,label,value,opts={})=>field('path-'+path,label,value,opts);
+ const cards={plan:`<section class="summary-group"><h3>Risk FI</h3>${d.risk.withdrawalMode==='dollars'?f('risk.spending','Annual withdrawals',d.risk.spending,{prefix:'$'}):f('risk.withdrawalRate',d.risk.withdrawalMode==='annual'?'Each year’s investment withdrawal rate':'Starting investment withdrawal rate',entry(d.risk.withdrawalRate,100),{suffix:'%'})}<p class="hint">Uses the Risk FI withdrawal and cash rules.</p></section>`,gap:`<section class="summary-group"><h3>Gap FI</h3>${d.periods.map((r,i)=>`<div class="compare-period"><h4>Period ${i+1} · ${{withdraw:'Withdraw',contribute:'Contribute',even:'Break even'}[r.action]}</h4>${r.action!=='even'?f('periods.'+i+'.amount','Annual amount',r.amount,{prefix:'$'}):''}${r.years===null?'<p>Until FI</p>':f('periods.'+i+'.years','Years',r.years,{min:1,step:1})}</div>`).join('')}</section>`,coast:`<section class="summary-group"><h3>Coast FI</h3>${f('coast.contribution','Annual contributions before coasting',d.coast.contribution,{prefix:'$'})}${f('coast.coastAt',age?'Stop contributions at age':'Stop contributions in years',d.coast.coastAt+(age?state.age:0),{min:0})}<p class="hint">No regular withdrawals. Contributions rise with inflation and stop at the coast date.</p></section>`,traditional:`<section class="summary-group"><h3>Traditional FI</h3>${f('traditional.contribution','Annual contributions',d.traditional.contribution,{prefix:'$'})}<p class="hint">${d.traditional.adjust?'Contributions rise with inflation.':'Contributions stay fixed in future dollars.'}</p></section>`};
  $('#view').innerHTML=`<section class="panel content-panel"><h2>Which path gets you to FI?</h2><p>Same starting assets, returns, inflation, future changes and FI target. Compare the withdrawals and contributions along each path.</p><div class="metrics">${metric('Starting assets',money(p.portfolio+p.cash))}${metric('FI target · today',money(fiTarget(p)))}${metric('Investment return / inflation',percent(p.nominal)+' / '+percent(p.inflation))}</div><div class="path-cards">
- <section class="summary-group"><h3>Risk FI</h3>${d.risk.withdrawalMode==='dollars'?f('risk.spending','Annual withdrawals',d.risk.spending,{prefix:'$'}):f('risk.withdrawalRate',d.risk.withdrawalMode==='annual'?'Each year’s investment withdrawal rate':'Starting investment withdrawal rate',entry(d.risk.withdrawalRate,100),{suffix:'%'})}<p class="hint">Uses the Risk FI withdrawal and cash rules.</p></section>
- <section class="summary-group"><h3>Gap FI</h3>${d.periods.map((r,i)=>`<div class="compare-period"><h4>Period ${i+1} · ${{withdraw:'Withdraw',contribute:'Contribute',even:'Break even'}[r.action]}</h4>${r.action!=='even'?f('periods.'+i+'.amount','Annual amount',r.amount,{prefix:'$'}):''}${r.years===null?'<p>Until FI</p>':f('periods.'+i+'.years','Years',r.years,{min:1,step:1})}</div>`).join('')}</section>
- <section class="summary-group"><h3>Coast FI</h3>${f('coast.contribution','Annual contributions before coasting',d.coast.contribution,{prefix:'$'})}${f('coast.coastAt',age?'Stop contributions at age':'Stop contributions in years',d.coast.coastAt+(age?state.age:0),{min:0})}<p class="hint">No regular withdrawals. Contributions rise with inflation and stop at the coast date.</p></section>
- <section class="summary-group"><h3>Traditional FI</h3>${f('traditional.contribution','Annual contributions',d.traditional.contribution,{prefix:'$'})}<p class="hint">${d.traditional.adjust?'Contributions rise with inflation.':'Contributions stay fixed in future dollars.'}</p></section></div><button id="paths-reset">Reset rules from calculators</button><p class="hint">Rule edits here are temporary. Your shared numbers remain connected. Change period types or withdrawal policies in their calculator, then reset here.</p></section><h2 class="result-divider">Path comparison results</h2><section class="panel content-panel">${dollarControls()}${f('horizon','Years to show',pathHorizon,{min:1,max:100,step:1})}<div id="paths-results"></div></section>`;
+${pathSelection.map((key,i)=>`<div><label for="path-choice-${i}">Path ${i+1}</label><select id="path-choice-${i}" data-path-choice="${i}">${Object.entries(pathNames).map(([k,name])=>`<option value="${k}" ${k===key?'selected':''} ${k===pathSelection[1-i]?'disabled':''}>${name}</option>`).join('')}</select>${cards[key]}</div>`).join('')}</div><button id="paths-reset">Reset rules from calculators</button><p class="hint">Rule edits here are temporary. Your shared numbers remain connected. Change period types or withdrawal policies in their calculator, then reset here.</p></section><h2 class="result-divider">Path comparison results</h2><section class="panel content-panel">${dollarControls()}${f('horizon','Years to show',pathHorizon,{min:1,max:100,step:1})}<div id="paths-results"></div></section>`;
+ $$('[data-path-choice]').forEach(el=>el.onchange=()=>{pathSelection[Number(el.dataset.pathChoice)]=el.value;renderPathComparison();});
  $('#paths-reset').onclick=()=>{pathDraft=null;renderPathComparison();};
  $$('input[id^="path-"]').forEach(el=>el.oninput=()=>{const path=el.id.slice(5),keys=path.split('.');let value=readNumber(el.value);if(path==='horizon')pathHorizon=value;else{if(value!==null){if(path==='risk.withdrawalRate')value/=100;if(path==='coast.coastAt'&&age)value-=state.age;}let obj=d;for(const k of keys.slice(0,-1))obj=obj[k];obj[keys.at(-1)]=value;}pathResults();});
  $$('[data-dollars]').forEach(b=>b.onclick=()=>{nominal=b.dataset.dollars==='nominal';persist();renderPathComparison();});pathResults();
 }
 function pathResults(){
  charts=[];const host=$('#paths-results');try{
- const r=comparePaths(state,pathDraft,pathHorizon),names=['Risk FI','Gap FI','Coast FI','Traditional FI'],colours=['var(--purple)','var(--red)','#438b85','#667bb0'];
+ const r=comparePaths(state,pathDraft,pathHorizon,pathSelection),names=pathSelection.map(key=>pathNames[key]),colours=['var(--purple)','var(--red)'];
  host.innerHTML=`<div class="table-scroll"><table><thead><tr><th>Path</th><th>FI date / age</th><th>Regular contributions to FI</th><th>Portfolio withdrawals to FI</th></tr></thead><tbody>${r.map((v,i)=>`<tr><th>${names[i]}</th>${v.error?`<td colspan="3">${safeText(v.error)}</td>`:`<td>${dateLabel(v.value)} · ${state.timeEntry==='age'?'Age '+num(state.age+v.value,2):num(v.value,2)+' years'}</td><td>${money(v.contributions)}</td><td>${money(v.withdrawals)}</td>`}</tr>`).join('')}</tbody></table></div><p class="hint">Totals through each path’s own FI date, in today’s dollars. Regular contributions exclude future-income surpluses and one-time additions; these still affect balances. Portfolio withdrawals include one-time expenses.</p>${r.some(v=>!v.error)?chart('paths-assets',comparisonRows(r,pathHorizon,nominal),[...r.flatMap((v,i)=>v.error?[]:[{key:'s'+i,label:names[i],color:colours[i]}]),{key:'target',label:'FI target',color:'var(--muted)',dash:true}]):''}<p class="chart-caption">${nominal?'Future':'Today’s'} dollars. Constant-return projections, not success probabilities. Risk FI uses annual cash flows; the other paths use monthly cash flows. The chart continues each path’s rules after FI for comparison; it does not switch to retirement withdrawals.</p>`;drawCharts();
  }catch(e){host.textContent=e.message;}
 }

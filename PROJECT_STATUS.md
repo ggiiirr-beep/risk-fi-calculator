@@ -220,3 +220,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Temporary editable rule cards start from the calculator settings (using solved withdrawal/contribution amounts where available). Reset reloads the rules; Your numbers remains connected.
 - Results show FI date/age, regular contributions and actual portfolio withdrawals through each path’s own arrival, plus a common chart horizon and dollar display. Contributions exclude scheduled additions and surplus income; withdrawals include one-time expenses. Post-FI chart continuation is explicitly not a retirement model.
 - Tests cover equivalent paths, common starting amounts, partial-year totals, source isolation, future changes and infeasibility. Syntax/build verification; browser preview remains unavailable under the previously reported browser restriction.
+
+## Two-path selection (20261021-7)
+- Compare paths now has two calculator dropdowns, defaulting to Risk FI and Gap FI. Each excludes the other selected calculator. Only the chosen pair's editable rules, results and chart series appear; switching preserves temporary rule drafts.
+- Projection engine evaluates only the selected paths, in selection order. Shared baseline and financial calculations unchanged.
+- Focused comparison regression tests, syntax and static build passed. Visual browser verification remains blocked by the previously reported browser restriction.
