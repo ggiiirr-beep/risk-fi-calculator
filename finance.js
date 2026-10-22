@@ -68,7 +68,7 @@ export function project(p,{years=p.years,returns,guards=null,transitionAt=null}=
   investment=Math.max(0,investment);cash=Math.max(0,cash);unfunded+=shortfall;
   depleted ||= investment<=1e-7 && (beginning>0||investmentWithdrawal>0||shortfall>0);
   if(firstFI===null&&fiAssets(p,investment,cash)>=target-.00001)firstFI=year;
-  rows.push({year,phase:traditional?'Traditional FI':'Risk FI',annualSpending,withdrawalRate:beginning+beginCash>0?annualSpending/(beginning+beginCash):null,beginning,beginCash,investmentReturn,cashInterest,investmentWithdrawal,cashWithdrawal,investment,cash,total:investment+cash,spending,income,unfunded:shortfall,actualRate:beginning>0?investmentWithdrawal/dt/beginning:null,spendingRate:investment>0?annualSpending/investment:null,progress:fiAssets(p,investment,cash)/target,target});
+  rows.push({year,phase:traditional?'Traditional FI':'Risk FI',annualSpending,withdrawalRate:beginning+beginCash>0?annualSpending/(beginning+beginCash):null,beginning,beginCash,investmentReturn,cashInterest,investmentWithdrawal,cashWithdrawal,investment,cash,total:investment+cash,spending,income,expense:flows.expense,addition:flows.addition,surplus,unfunded:shortfall,actualRate:beginning>0?investmentWithdrawal/dt/beginning:null,spendingRate:investment>0?annualSpending/investment:null,progress:fiAssets(p,investment,cash)/target,target});
   start=year;
  }
  return {rows,end:rows.at(-1),target,unfunded,depleted,firstFI};

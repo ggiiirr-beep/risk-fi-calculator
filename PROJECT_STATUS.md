@@ -199,3 +199,10 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Future-change cards use their entered name, updating while typing; blank names use Recurring income, One-time addition, or One-time expense.
 - UI-only change; syntax/static build and static navigation/order/binding checks pass. Local browser preview was blocked by browser security, so visual/mobile verification was not completed for this revision. Financial engines unchanged.
 - Repeated the five calculator/guardrail options at the bottom of Your numbers, in matching order.
+
+## Explanatory visuals (20261021-4)
+- Plan timelines show withdrawal/contribution/coast phases, future event starts/ends and first FI arrival, with shared age/year labels. Included in Risk FI, Gap FI, Coast FI and Traditional FI results.
+- Funding bars separate net portfolio withdrawals, income used, surplus deposited into cash, and unfunded amounts. They follow the dollar display; monthly income attribution is accumulated before annual aggregation so late income cannot hide earlier withdrawals. Empty funding charts are omitted.
+- Individual guardrail paths now show aligned withdrawal and asset charts, reset markers and plain-language probability/dollar explanations for each adjustment. Removed the duplicate annual decision table.
+- FI arrival histograms count first funded annual target crossings across every outer scenario, including already-at-FI and never-reached categories. Explicitly separate first arrival from deadline success. Retirement mode does not show an FI-arrival distribution.
+- Regression checks cover income accounting, nominal display, safe timeline labels and first-touch versus deadline failure. Build and syntax validation; browser verification remains unavailable because the local preview was blocked by browser security.
