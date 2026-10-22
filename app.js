@@ -1,14 +1,15 @@
+import {comparisonQuestions as universalQuestions,runScenario,comparisonRows} from './scenario-comparison.js';
 import {planTimeline,fundingChart} from './plan-visuals.js';
 import {assetRows,assetTotals,syncAssets} from './plan-assets.js';
 import {solveCoast} from './coast-fi.js';
-import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261021-4';
-import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261021-4';
-import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261021-4';
-import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261021-4';
-import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261021-4';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261021-4';
-import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261021-4';
-import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261021-4';
+import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261021-5';
+import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261021-5';
+import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261021-5';
+import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261021-5';
+import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261021-5';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261021-5';
+import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261021-5';
+import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261021-5';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
@@ -19,6 +20,7 @@ const dateAfter=(years,start=today)=>new Date(new Date(start+'T12:00:00Z').getTi
 const dateLabel=(years,start=today)=>dateAfter(years,start).toLocaleDateString('en-US',{month:'short',year:'numeric',timeZone:'UTC'});
 const yearsBetween=(a,b)=>(new Date(b+'T12:00:00Z')-new Date(a+'T12:00:00Z'))/yearMS;
 let state={...defaults},unknown='spending',tab='numbers',nominal=false,baseline=null,worker=null,riskTimer=null,riskOutput=null,checkValues={};
+let compareSource='plan',compareDraft=null,compareDrafts={};
 let returnComparisonRate=null,comparisonQuestions={},targetHorizons=null;
 let coast={mode:'amount',years:30,contribution:40000};
 let gapPeriods=gapDefaults(),gapSettings={mode:'time',index:0,years:15,adjust:true,cashStrategy:'reserve',cashMinimum:0},traditional={mode:'time',contribution:40000,years:15,adjust:true};
@@ -91,7 +93,7 @@ function timingNotice(p,q){const eventual=outcome(p);const funded=q.unfunded<.01
 }
 let charts=[],assetChartView='all';
 function chart(id,rows,series,{percentAxis=false,marker=null,point=null,start=today,boundaries=[]}={}){
- const age=state.timeEntry==='age'&&Number.isFinite(state.age)&&['plan','gap','traditional','coast','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
+ const age=state.timeEntry==='age'&&Number.isFinite(state.age)&&['plan','gap','traditional','coast','compare','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
  charts.push({id,rows,series,percentAxis,marker,point,start,age,boundaries});
  return `<div class="chart" id="${id}" aria-label="${id.replaceAll('-',' ')}"><svg role="img" aria-label="Interactive ${id.replaceAll('-',' ')}" viewBox="0 0 820 280"></svg><div class="chart-tip" hidden></div></div><div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.label}</span>`).join('')}</div><p class="chart-caption">Hover, tap, or focus the chart and use the arrow keys to inspect a year.</p>`;
 }
@@ -101,7 +103,7 @@ function drawCharts(){for(const c of charts){const wrap=$('#'+c.id);if(!wrap)con
  const x=t=>L+t/maxX*(W-L-R),y=v=>H-B-v/maxY*(H-T-B);
  let html='';for(let i=0;i<=4;i++){const n=maxY*i/4;html+=`<line class="grid" x1="${L}" y1="${y(n)}" x2="${W-R}" y2="${y(n)}"/><text x="${L-12}" y="${y(n)+4}" text-anchor="end">${c.percentAxis?(n*100).toFixed(1)+'%':short(n)}</text>`;}
  for(let i=0;i<=5;i++){const t=maxX*i/5;html+=`<text x="${x(t)}" y="${H-9}" text-anchor="middle">${c.age!==null?'Age '+num(c.age+t):t===0?(c.start===today?'Today':'Start'):num(t)+'y'}</text>`;}
- c.series.forEach((s,i)=>{const d=c.rows.map((r,k)=>(k?'L':'M')+x(r.year)+','+y(val(r,s.key))).join(' ');if(i===0&&!c.percentAxis)html+=`<path d="${d} L${x(c.rows.at(-1).year)},${H-B} L${L},${H-B} Z" fill="${s.color}" opacity=".06"/>`;html+=`<path class="line" d="${d}" stroke="${s.color}" ${s.dash?'stroke-dasharray="7 6"':''}/>`;});
+ c.series.forEach((s,i)=>{const points=c.rows.filter(r=>Number.isFinite(r[s.key]));if(!points.length)return;const d=points.map((r,k)=>(k?'L':'M')+x(r.year)+','+y(val(r,s.key))).join(' ');if(i===0&&!c.percentAxis)html+=`<path d="${d} L${x(points.at(-1).year)},${H-B} L${L},${H-B} Z" fill="${s.color}" opacity=".06"/>`;html+=`<path class="line" d="${d}" stroke="${s.color}" ${s.dash?'stroke-dasharray="7 6"':''}/>`;});
  for(const boundary of c.boundaries||[])if(boundary<maxX)html+=`<line x1="${x(boundary)}" x2="${x(boundary)}" y1="${T}" y2="${H-B}" stroke="var(--muted)" stroke-dasharray="2 6" opacity=".5"/>`;
  if(c.marker!==null&&c.marker<=maxX){html+=`<line x1="${x(c.marker)}" x2="${x(c.marker)}" y1="${T}" y2="${H-B}" stroke="var(--purple)" stroke-dasharray="3 5"/><text x="${Math.max(L+45,Math.min(W-55,x(c.marker)))}" y="13" text-anchor="middle">FI reached</text>`;}
  if(c.point)html+=`<circle cx="${x(c.point.year)}" cy="${y(c.point.value)}" r="6" fill="var(--red)" stroke="var(--surface)" stroke-width="3"/>`;
@@ -229,6 +231,7 @@ function update(){renderSectionTools();renderToolSetup();if(!['guardrails','posi
  });$('#error').hidden=true;mountGuardrails($('#view'),{mode:'compare',usePlan:()=>guardrailPlanInputs(baselinePlan(state))});return;}
  if(state.timeEntry==='age'&&(!Number.isFinite(state.age)||state.age<0||state.age>120)&&tab==='plan')throw Error('Enter a current age between 0 and 120.');
  if(tab==='numbers'){$('#error').hidden=true;$('#view').innerHTML='';syncSolved();return;}
+ if(tab==='compare'){renderUniversalComparison();return;}
  if(tab==='gap'){renderGap();return;}
 
  if(tab==='coast'){renderCoast();return;}
@@ -241,8 +244,8 @@ function update(){renderSectionTools();renderToolSetup();if(!['guardrails','posi
  }catch(e){$('#error').hidden=false;$('#error').textContent=e.message;$('#view').innerHTML='<div class="panel content-panel"><h2>Check your inputs</h2><p>Check the missing or invalid values in Your numbers.</p><button id="fix-numbers">Edit your numbers</button></div>';$('#fix-numbers').onclick=()=>navigate('numbers');}}
 function saveBaseline(){baseline={start:today,plan:{...resolved}};checkValues={};persist();toast('Baseline saved in this browser.');if(tab==='checkin')update();}
 $('#theme').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('riskfi-theme',t);}catch{}};
-function navigate(next){tab=next;const main=['scenarios','withdrawals','dates','risk'].includes(tab)?'plan':tab==='checkin'?'position':tab;$$('.tabs [data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===main));update();}
-function renderSectionTools(){const host=$('#section-tools');host.innerHTML=['plan','scenarios','withdrawals','dates','risk'].includes(tab)?`<button data-tab="plan">Plan calculator</button><button data-tab="withdrawals">Compare withdrawal scenarios</button><button data-tab="scenarios">Compare return scenarios</button><button data-tab="dates">Compare target dates</button>`:['position','checkin'].includes(tab)?`<button data-tab="position">Withdrawal check</button><button data-tab="checkin">Compare with saved plan</button>`:'';host.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===tab);b.onclick=()=>navigate(b.dataset.tab);});}
+function navigate(next){tab=next;const main=tab==='compare'?compareSource:['scenarios','withdrawals','dates','risk'].includes(tab)?'plan':tab==='checkin'?'position':tab;$$('.tabs [data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===main));update();}
+function renderSectionTools(){const host=$('#section-tools'),source=tab==='compare'?compareSource:tab;host.innerHTML=['plan','gap','coast','traditional'].includes(source)?`<button id="compare-back" class="${tab!=='compare'?'active':''}">Calculator</button><button id="compare-open" class="${tab==='compare'?'active':''}">Compare scenarios</button>`:'';if($('#compare-back'))$('#compare-back').onclick=()=>navigate(source);if($('#compare-open'))$('#compare-open').onclick=()=>{compareSource=source;compareDraft=compareDrafts[source]||null;navigate('compare');};}
 $$('nav [data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
 $('#reset').onclick=()=>{state=simplifyPlan({...defaults,separateFiWithdrawals:true});state.assets=assetRows(state);state.futureChanges=[];unknown='spending';riskOutput=null;update();rebuildInputs();persist();toast('Assumptions reset. Your saved baseline is preserved.');};
 
@@ -373,3 +376,37 @@ function coastResults(p){charts=[];try{
  $('#coast-results').insertAdjacentHTML('beforeend',planTimeline(p,[...(coast.mode==='time'?[{action:'contribute',label:'Contribute',years:solved.value}]:[]),{action:'even',label:'Coast',years:null}],q.rows.at(-1).year,q.reached)+fundingChart(p,q.rows,nominal));
  $$('[data-dollars]').forEach(b=>b.onclick=()=>{nominal=b.dataset.dollars==='nominal';persist();coastResults(p);});drawCharts();
  }catch(e){$('#coast-results').innerHTML='<section class="panel content-panel" role="alert"></section>';$('#coast-results section').textContent=e.message;}}
+
+function freshComparison(){
+ let p=compareSource==='plan'?structuredClone(state):structuredClone(baselinePlan(state));
+ if(compareSource==='plan'){try{p=solve(p,unknown).plan||p;}catch{}p=resolveWithdrawals(p);p.nominal=nominalReturn(expectedReturn(p),p.inflation);p.returnMode='nominal';}
+ const settings=structuredClone(compareSource==='gap'?gapSettings:compareSource==='coast'?{...coast,coastAt:0}:compareSource==='traditional'?traditional:{});
+ let question=compareSource==='plan'?(universalQuestions.plan[unknown]?unknown:'time'):settings.mode||'time';
+ return {question,count:3,horizon:Math.max(30,Math.ceil(settings.years||p.years||0)),scenarios:Array.from({length:3},()=>({plan:structuredClone(p),settings:structuredClone(settings),periods:structuredClone(gapPeriods)}))};
+}
+function renderUniversalComparison(){
+ compareDraft??=freshComparison();compareDrafts[compareSource]=compareDraft;const d=compareDraft,source=compareSource,names={plan:'Risk FI',gap:'Gap FI',coast:'Coast FI',traditional:'Traditional FI'};
+ $('#error').hidden=true;
+ const input=(i,path,label,value,opts={})=>field('uc-'+i+'-'+path,label,value,opts);
+ const cards=d.scenarios.slice(0,d.count).map((c,i)=>{const p=c.plan,t=c.settings,q=d.question,age=p.timeEntry==='age';return `<section class="summary-group"><h3>Scenario ${String.fromCharCode(65+i)}</h3>
+ ${input(i,'plan.nominal','Return before inflation',entry(p.nominal,100),{suffix:'%',disabled:source==='plan'&&q==='return'})}
+ ${source==='plan'?(p.withdrawalMode==='dollars'?input(i,'plan.spending','Annual withdrawals',p.spending,{prefix:'$',disabled:q==='spending'}):input(i,'plan.withdrawalRate',p.withdrawalMode==='annual'?'Each year’s investment withdrawal rate':'Starting investment withdrawal rate',entry(p.withdrawalRate,100),{suffix:'%',disabled:q==='spending'}))+input(i,'plan.portfolio','Starting investments',p.portfolio,{prefix:'$',disabled:q==='portfolio'})+input(i,'plan.years',age?'Target FI age':'Years to FI',p.years+(age?p.age:0),{disabled:q==='time'}):''}
+ ${source==='traditional'?input(i,'settings.contribution','Annual contributions',t.contribution,{prefix:'$',disabled:q==='contribution'})+(q==='contribution'?input(i,'settings.years',age?'Target FI age':'Years to FI',t.years+(age?p.age:0),{min:1,step:1}):''):''}
+ ${source==='coast'?(q!=='retirement'&&q!=='arrival'?input(i,'settings.years',age?'Retirement age':'Years until retirement',t.years+(age?p.age:0),{min:1,step:1}):'')+(['time','arrival'].includes(q)?input(i,'settings.contribution','Annual contributions',t.contribution,{prefix:'$'}):'')+(q==='arrival'?input(i,'settings.coastAt',age?'Stop contributions at age':'Stop contributions in years',(t.coastAt||0)+(age?p.age:0),{min:0}):''):''}
+ ${source==='gap'?(q!=='time'?input(i,'settings.years',age?'Target FI age':'Years to FI',t.years+(age?p.age:0),{min:1,step:1})+select('uc-'+i+'-period','Solve amount in period',Object.fromEntries(c.periods.map((r,j)=>[j,r]).filter(([,r])=>r.action===q).map(([j])=>[j,'Period '+(j+1)])),t.index):'')+c.periods.map((r,j)=>`<div class="compare-period"><h4>Period ${j+1} · ${{withdraw:'Withdraw',contribute:'Contribute',even:'Break even'}[r.action]}</h4>${r.action!=='even'?input(i,'periods.'+j+'.amount','Annual amount',r.amount,{prefix:'$',disabled:q===r.action&&t.index===j}):''}${r.years===null?'<p class="hint">Until FI</p>':input(i,'periods.'+j+'.years','Years',r.years,{min:1,max:99,step:1})}</div>`).join(''):''}
+ </section>`;}).join('');
+ $('#view').innerHTML=`<section class="panel content-panel"><h2>${names[source]} · Compare scenarios</h2><p>Scenarios are copies of your calculator inputs. Temporary edits stay here. Reset to load updated calculator inputs.</p>${select('uc-question','Solve for',universalQuestions[source],d.question)}${select('uc-count','Scenarios',{2:'Two',3:'Three'},d.count)}<div class="compare-cards">${cards}</div><button id="uc-reset">Reset from current calculator</button><p class="hint">Starting investments: ${money(d.scenarios[0].plan.portfolio)}${source==='plan'?' (editable above)':''}. Shared: ${money(d.scenarios[0].plan.cash)} cash, ${money(fiTarget(d.scenarios[0].plan))} FI target in today’s dollars, ${percent(d.scenarios[0].plan.inflation)} inflation, and your future changes. ${source==='plan'?'Your withdrawal basis and inflation setting stay fixed. Calculated withdrawal amounts show the first year’s dollars.':''} Return edits shift your investment asset returns together.</p></section><h2 class="result-divider">Comparison results</h2><section class="panel content-panel">${dollarControls()}${field('uc-horizon','Years to show',d.horizon,{min:1,max:100,step:1})}<div id="uc-results"></div></section>`;
+ $('#uc-question').onchange=e=>{d.question=e.target.value;if(source==='gap'&&d.question!=='time')d.scenarios.forEach(c=>c.settings.index=c.periods.findIndex(r=>r.action===d.question));renderUniversalComparison();};
+ $('#uc-count').onchange=e=>{d.count=+e.target.value;renderUniversalComparison();};
+ $('#uc-reset').onclick=()=>{compareDraft=null;renderUniversalComparison();};
+ $$('[id^="uc-"]').filter(el=>el.tagName==='INPUT'&&el.id!=='uc-horizon').forEach(el=>el.oninput=()=>{const [,i,path]=el.id.split('-'),c=d.scenarios[+i],keys=path.split('.');let value=readNumber(el.value);if(value!==null){if(['plan.nominal','plan.withdrawalRate'].includes(path))value/=100;if(['plan.years','settings.years','settings.coastAt'].includes(path)&&c.plan.timeEntry==='age')value-=c.plan.age;}let obj=c;for(const key of keys.slice(0,-1))obj=obj[key];obj[keys.at(-1)]=value;universalResults();});
+ d.scenarios.forEach((c,i)=>{const el=$('#uc-'+i+'-period');if(el)el.onchange=()=>{c.settings.index=+el.value;renderUniversalComparison();};});
+ $('#uc-horizon').oninput=e=>{d.horizon=readNumber(e.target.value);universalResults();};
+ $$('[data-dollars]').forEach(b=>b.onclick=()=>{nominal=b.dataset.dollars==='nominal';persist();renderUniversalComparison();});universalResults();
+}
+function universalResults(){
+ charts=[];const d=compareDraft;const results=d.scenarios.slice(0,d.count).map(c=>runScenario(compareSource,d.question,c,d.horizon));
+ const value=r=>r.kind==='time'?(r.plan.timeEntry==='age'?'Age '+num(r.plan.age+r.value,2):num(r.value,2)+' years')+' · '+dateLabel(r.value):r.kind==='realReturn'?percent(nominalReturn(r.value,r.plan.inflation))+' before inflation':money(r.value)+' in today’s dollars';
+ const valid=results.some(r=>!r.error),rows=valid?comparisonRows(results,d.horizon,nominal):[];
+ $('#uc-results').innerHTML=`<div class="compare-cards">${results.map((r,i)=>`<section class="metric"><h3>Scenario ${String.fromCharCode(65+i)}</h3>${r.error?`<p>${safeText(r.error)}</p>`:`<strong class="value">${value(r)}</strong>${(r.projection.unfunded>0.01||r.projection.shortfall!=null)?'<p class="notice">A funding shortfall occurs within the chart horizon.</p>':''}`}</section>`).join('')}</div>${valid?chart('scenario-comparison',rows,[...results.flatMap((r,i)=>r.error?[]:[{key:'s'+i,label:'Scenario '+String.fromCharCode(65+i),color:['var(--purple)','var(--red)','#438b85'][i]}]),{key:'target',label:'FI target',color:'var(--muted)',dash:true}]):''}<p class="chart-caption">Same question and starting assumptions; only the entries above differ. Constant-return projections, not probabilities. The chart keeps each scenario’s rules through the displayed horizon; no automatic retirement withdrawal switch. Missing or unfunded projections are not shown as successful plans.</p>`;drawCharts();
+}
