@@ -305,3 +305,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - GitHub Pages custom domain is frompaycheckstopurpose.com; root CNAME was created by GitHub and is now included in static builds. Namecheap apex A records use all four GitHub Pages addresses; www CNAME points to ggiiirr-beep.github.io. Existing email records retained. DNS is propagating; certificate issuance and Enforce HTTPS remain pending at this checkpoint.
 - Tool icons no longer shrink, selected labels keep the same font weight, and labels have a shared two-line space. Navigation wraps into four columns earlier; narrow labels and the calculator heading can wrap instead of overflowing. Saved inputs and calculation engines unchanged.
 - Verified JavaScript syntax, production build (including CNAME), navigation event bindings and diff checks. Local visual QA remains unavailable under the previously reported browser restriction; no viewport measurement claimed.
+
+## Podcast listening badges (20261023-17)
+- Added white Apple Podcasts and Spotify badge-style links under the hero introduction and below Latest episodes, retaining RSS. Spotify now links directly to the verified show (2EsazXY4qtqBNuet7M5Igl), rather than its creator-hosted page.
+- Accessible link names, inline vector marks, visible focus outlines and responsive wrapping; no extra image requests or dependencies. Draft prose unchanged.
+- Production build and diff checks pass. Visual browser verification remains unavailable under the earlier local-preview restriction.
