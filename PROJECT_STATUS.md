@@ -241,3 +241,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Character reference saved (October 23, 2026)
 - Saved the owner's supplied character sheet intact at design/character/blue-reference.jpg, with a durable identity/variation guide in design/character/README.md. Future character illustrations use this reference; creative pose and styling changes are authorized.
 - Reference/documentation-only update; current homepage image unchanged. Verified the copied reference matches the source byte-for-byte and checked the staged diff.
+
+## Edge-to-edge homepage banner (20261023-3)
+- Removed the homepage main-width constraint and hero corner radius so the banner background spans the full available screen width. Kept episodes and calculator callout within centered readable widths and retained mobile side padding for content.
+- Static build/diff checks passed. Visual browser verification remains unavailable under the previously reported restriction.
