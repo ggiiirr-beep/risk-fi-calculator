@@ -273,3 +273,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Dark blue hero gradient (20261023-9)
 - Hero banner now fades horizontally from deep navy on the left to light blue on the right. Copy is white/light blue, the emphasized title and listening button use gold, and focus outlines remain visible.
 - Static build and diff checks passed. Navigation and other page sections unchanged; browser visual verification remains unavailable.
+
+## Gradient location correction (20261023-10)
+- User clarified the gradient belongs on the navigation bar. Restored the original turquoise hero and applied a deep-blue-to-light-blue horizontal gradient to the shared header on both pages.
+- White podcast branding and light navigation buttons preserve readable contrast without changing navigation geometry. Build and diff checks passed; browser visual verification remains unavailable.
