@@ -310,3 +310,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Added white Apple Podcasts and Spotify badge-style links under the hero introduction and below Latest episodes, retaining RSS. Spotify now links directly to the verified show (2EsazXY4qtqBNuet7M5Igl), rather than its creator-hosted page.
 - Accessible link names, inline vector marks, visible focus outlines and responsive wrapping; no extra image requests or dependencies. Draft prose unchanged.
 - Production build and diff checks pass. Visual browser verification remains unavailable under the earlier local-preview restriction.
+
+## Instagram badge (20261023-18)
+- Added a matching Follow on Instagram badge beside the listening badges in both homepage locations, using the existing podcast profile URL. Reuses responsive badge styles and accessible naming.
+- Static build and diff checks passed; verified both badge placements and destination. No calculator changes.
