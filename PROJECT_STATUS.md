@@ -225,3 +225,10 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Compare paths now has two calculator dropdowns, defaulting to Risk FI and Gap FI. Each excludes the other selected calculator. Only the chosen pair's editable rules, results and chart series appear; switching preserves temporary rule drafts.
 - Projection engine evaluates only the selected paths, in selection order. Shared baseline and financial calculations unchanged.
 - Focused comparison regression tests, syntax and static build passed. Visual browser verification remains blocked by the previously reported browser restriction.
+
+## Podcast homepage and Fi tool navigation (20261023-1)
+- The GitHub Pages root now opens From Paychecks to Purpose. The existing calculator is calculator.html on the same origin, retaining browser-saved numbers. Home / Fi Calculator navigation is visible on both pages; methodology returns to the calculator.
+- Homepage uses turquoise/blue/gold, a generated transparent illustration based on the supplied cover, and literal **** markers around draft introduction text. Real podcast/host names, episode titles and functional labels are not draft prose.
+- Latest six episodes load from the verified public Anchor RSS feed with CORS support. Native audio players are click-to-play and only one plays at a time. A dated local snapshot is shown with an explicit notice if the live request fails. No proxy, account, tracking integration or scheduled job added.
+- Calculator tools have consistent SVG app-style icon buttons and individual accent colors on neutral surfaces; mobile grid wraps. Financial calculations and storage keys unchanged.
+- Full existing tests, syntax/build and local-link/asset checks run for this revision. Visual browser QA remains blocked by the previously reported browser security restriction; no visual/mobile acceptance claimed.
