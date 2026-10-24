@@ -322,3 +322,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Podcast brand icon tile (20261023-20)
 - Shared header mountain/sun mark now sits on a rounded teal-blue background with an inset, subtle border and shadow. Keeps its existing 48px footprint and navigation positions on both pages.
 - Production build and diff checks passed.
+
+## Temporarily offline — owner request (October 23, 2026)
+- Unpublished the site and set GitHub Pages source branch to None. GitHub confirms Pages is disabled; ordinary code pushes must not republish it. Do not re-enable publication until explicitly requested.
+- Domain registration, DNS and source code retained. HTTPS certificate had become valid and enforcement was enabled before taking the site offline. Restore main/root and confirm domain/HTTPS settings when authorized to republish.
+- Immediate public checks still returned cached pages; edge-cache expiration is pending. Repository visibility was not changed.
