@@ -19,4 +19,4 @@ Use a single appropriate pose in a website section. The mountain/sun motif is a 
 
 Attach blue-reference.jpg as the character/identity reference. Specify the desired pose and placement separately, and preserve the core features above. For standalone website figures, request a genuinely transparent background and no text. Save each new illustration separately; preserve this reference and prior approved assets.
 
-This is a saved visual reference and art direction, not a trained AI model. The current homepage illustration predates this sheet and has not been replaced by this reference-only update.
+This is a saved visual reference and art direction, not a trained AI model. The current homepage uses assets/podcast-hero-blue.png, generated using this reference. The earlier illustration is retained separately.

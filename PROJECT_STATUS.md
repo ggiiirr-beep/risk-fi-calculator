@@ -245,3 +245,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Edge-to-edge homepage banner (20261023-3)
 - Removed the homepage main-width constraint and hero corner radius so the banner background spans the full available screen width. Kept episodes and calculator callout within centered readable widths and retained mobile side padding for content.
 - Static build/diff checks passed. Visual browser verification remains unavailable under the previously reported restriction.
+
+## Character artwork and podcast favicon (20261023-4)
+- Replaced the displayed hero asset with podcast-hero-blue.png using the saved character identity reference; preserved the previous image and source sheet. Inspected the generated image and verified its dimensions.
+- Replaced the R favicon with the podcast mountain/sun mark on turquoise. Versioned icon links on Home, Fi Calculator and methodology to refresh cached icons.
+- Static build, asset/link and SVG parsing checks passed; browser layout verification remains unavailable under the earlier restriction.
