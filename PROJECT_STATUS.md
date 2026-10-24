@@ -277,3 +277,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Gradient location correction (20261023-10)
 - User clarified the gradient belongs on the navigation bar. Restored the original turquoise hero and applied a deep-blue-to-light-blue horizontal gradient to the shared header on both pages.
 - White podcast branding and light navigation buttons preserve readable contrast without changing navigation geometry. Build and diff checks passed; browser visual verification remains unavailable.
+
+## Artwork placement and logo size (20261023-11)
+- Lowered the combined hero artwork by 22% of its own height so the skirt hem is below the banner crop at each breakpoint.
+- Enlarged the shared top-bar mountain/sun logo from 48px to 80px; mobile brand row reserves its height, keeping navigation consistent across pages.
+- Static build and diff checks passed. Browser visual verification remains unavailable under the earlier restriction.
