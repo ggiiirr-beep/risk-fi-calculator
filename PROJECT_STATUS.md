@@ -300,3 +300,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Shared header reduced to 60px on desktop and tighter mobile rows; navigation remains consistent across pages.
 - Episode section tightened with smaller padding/headings/cards and two-line linked titles. Removed duplicate Episode page links; retained native audio, horizontal scrolling and all-episodes access. Intended approximately half the former vertical footprint; no browser measurement claimed.
 - Inspected generated assets and verified dimensions/alpha, syntax, static build, local asset references and diff checks. Browser visual verification remains unavailable under the earlier restriction.
+
+## Custom domain and stable tool navigation (20261023-16)
+- GitHub Pages custom domain is frompaycheckstopurpose.com; root CNAME was created by GitHub and is now included in static builds. Namecheap apex A records use all four GitHub Pages addresses; www CNAME points to ggiiirr-beep.github.io. Existing email records retained. DNS is propagating; certificate issuance and Enforce HTTPS remain pending at this checkpoint.
+- Tool icons no longer shrink, selected labels keep the same font weight, and labels have a shared two-line space. Navigation wraps into four columns earlier; narrow labels and the calculator heading can wrap instead of overflowing. Saved inputs and calculation engines unchanged.
+- Verified JavaScript syntax, production build (including CNAME), navigation event bindings and diff checks. Local visual QA remains unavailable under the previously reported browser restriction; no viewport measurement claimed.
