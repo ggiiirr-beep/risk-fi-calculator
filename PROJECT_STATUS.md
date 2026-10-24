@@ -318,3 +318,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Banner badge removal and Instagram styling (20261023-19)
 - Restored the banner to its introduction, Listen to episodes button and Fi Calculator link; platform badges remain only under Latest Episodes.
 - Updated Instagram's badge mark with its multicolor gradient and more balanced camera proportions. Static build, placement assertions and diff checks passed.
+
+## Podcast brand icon tile (20261023-20)
+- Shared header mountain/sun mark now sits on a rounded teal-blue background with an inset, subtle border and shadow. Keeps its existing 48px footprint and navigation positions on both pages.
+- Production build and diff checks passed.
