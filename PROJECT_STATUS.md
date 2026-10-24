@@ -290,3 +290,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Slimmer shared navigation (20261023-13)
 - Reduced desktop header padding to 8px vertically and logo to 64px, giving an 80px top bar instead of 128px. Mobile row gaps/padding also reduced; button sizes and consistent cross-page positions retained.
 - Static build and diff checks passed. Browser visual verification remains unavailable.
+
+## Header logo alignment (20261023-14)
+- Optically centered the mountain/sun mark vertically and shifted it 8px right within the existing header layout. Navigation columns and header height unchanged.
+- Static build and diff checks passed; browser visual verification remains unavailable.
