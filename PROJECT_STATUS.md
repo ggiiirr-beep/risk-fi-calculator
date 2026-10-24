@@ -269,3 +269,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Added an About the podcast section with two clearly marked **** placeholder paragraphs.
 - Latest episodes now occupies one horizontal row, with native touch/trackpad scrolling, snap alignment, keyboard arrows when focused, and previous/next buttons that disable at the boundaries. Keeps all six episodes and their audio players; reduced-motion preference respected.
 - Syntax, production build and markup/control checks passed. Browser visual verification remains unavailable under the previously reported restriction.
+
+## Dark blue hero gradient (20261023-9)
+- Hero banner now fades horizontally from deep navy on the left to light blue on the right. Copy is white/light blue, the emphasized title and listening button use gold, and focus outlines remain visible.
+- Static build and diff checks passed. Navigation and other page sections unchanged; browser visual verification remains unavailable.
