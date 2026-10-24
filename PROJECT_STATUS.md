@@ -314,3 +314,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Instagram badge (20261023-18)
 - Added a matching Follow on Instagram badge beside the listening badges in both homepage locations, using the existing podcast profile URL. Reuses responsive badge styles and accessible naming.
 - Static build and diff checks passed; verified both badge placements and destination. No calculator changes.
+
+## Banner badge removal and Instagram styling (20261023-19)
+- Restored the banner to its introduction, Listen to episodes button and Fi Calculator link; platform badges remain only under Latest Episodes.
+- Updated Instagram's badge mark with its multicolor gradient and more balanced camera proportions. Static build, placement assertions and diff checks passed.
