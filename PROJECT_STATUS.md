@@ -232,3 +232,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Latest six episodes load from the verified public Anchor RSS feed with CORS support. Native audio players are click-to-play and only one plays at a time. A dated local snapshot is shown with an explicit notice if the live request fails. No proxy, account, tracking integration or scheduled job added.
 - Calculator tools have consistent SVG app-style icon buttons and individual accent colors on neutral surfaces; mobile grid wraps. Financial calculations and storage keys unchanged.
 - Full existing tests, syntax/build and local-link/asset checks run for this revision. Visual browser QA remains blocked by the previously reported browser security restriction; no visual/mobile acceptance claimed.
+
+## Podcast banner refinement (20261023-2)
+- Shortened the homepage hero into a horizontal banner with a smaller heading and right-aligned artwork, including a compact side-by-side phone layout. Removed the redundant bottom title strip.
+- Changed the podcast page background to pale blue, retaining light episode cards and the turquoise hero. Calculator appearance unaffected.
+- Static build and diff checks passed. Browser visual verification remains blocked by the previously reported restriction.
