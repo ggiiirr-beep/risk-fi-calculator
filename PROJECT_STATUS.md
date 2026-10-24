@@ -260,3 +260,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Reinforced the parent podcast identity with a linked From Paychecks to Purpose / Fi Calculator context line and the podcast blue page background around neutral calculator cards. Dark-mode content retains a dark blue background.
 - Shared masthead now explicitly loads the same font weights and fixes its font/color-scheme settings; stable scrollbar space avoids page-width shifts. Header markup remains identical except the current-page marker.
 - Build and shared-header checks passed. Browser visual verification remains unavailable; no claim of a reproduced visual mismatch.
+
+## Stable navigation positions (20261023-7)
+- Shared top bar now uses explicit grid columns and fixed-height navigation buttons. Desktop reserves the same navigation width on both pages; mobile uses the same two equal columns and header rows. Active-page styling only changes background, never geometry.
+- Build and identical-header/source checks passed. Browser visual verification remains unavailable under the earlier restriction.
