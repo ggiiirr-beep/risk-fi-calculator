@@ -255,3 +255,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Home and Fi Calculator now use identical podcast branding/navigation markup and one shared header stylesheet, differing only in the active-page indicator. Calculator theme/saved-state controls moved into the calculator title area.
 - Added a blue calculator icon with a gold rising line, shown in the shared Fi Calculator navigation link and calculator title. Retained the podcast favicon and individual tool icons.
 - Verified matching header markup, one theme-control ID, SVG validity, local built references and production build. Browser visual verification remains unavailable under the earlier restriction.
+
+## Podcast identity within the calculator (20261023-6)
+- Reinforced the parent podcast identity with a linked From Paychecks to Purpose / Fi Calculator context line and the podcast blue page background around neutral calculator cards. Dark-mode content retains a dark blue background.
+- Shared masthead now explicitly loads the same font weights and fixes its font/color-scheme settings; stable scrollbar space avoids page-width shifts. Header markup remains identical except the current-page marker.
+- Build and shared-header checks passed. Browser visual verification remains unavailable; no claim of a reproduced visual mismatch.
