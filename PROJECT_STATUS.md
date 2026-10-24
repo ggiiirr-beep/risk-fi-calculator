@@ -294,3 +294,9 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Header logo alignment (20261023-14)
 - Optically centered the mountain/sun mark vertically and shifted it 8px right within the existing header layout. Navigation columns and header height unchanged.
 - Static build and diff checks passed; browser visual verification remains unavailable.
+
+## Independent banner layers and compact homepage (20261023-15)
+- Split the woman and mountain/sun into independent transparent assets. Mountain is vertically centered in the right side of the banner; woman retains her lower cropped placement. Reversed the mistaken top-bar logo nudge.
+- Shared header reduced to 60px on desktop and tighter mobile rows; navigation remains consistent across pages.
+- Episode section tightened with smaller padding/headings/cards and two-line linked titles. Removed duplicate Episode page links; retained native audio, horizontal scrolling and all-episodes access. Intended approximately half the former vertical footprint; no browser measurement claimed.
+- Inspected generated assets and verified dimensions/alpha, syntax, static build, local asset references and diff checks. Browser visual verification remains unavailable under the earlier restriction.
