@@ -286,3 +286,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Navigation gradient adjustment (20261023-12)
 - Darkened the shared header gradient's right endpoint from pale cyan to medium blue (#397caf). Layout unchanged.
 - Static build and diff checks passed.
+
+## Slimmer shared navigation (20261023-13)
+- Reduced desktop header padding to 8px vertically and logo to 64px, giving an 80px top bar instead of 128px. Mobile row gaps/padding also reduced; button sizes and consistent cross-page positions retained.
+- Static build and diff checks passed. Browser visual verification remains unavailable.
