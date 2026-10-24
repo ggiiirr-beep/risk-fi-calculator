@@ -250,3 +250,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Replaced the displayed hero asset with podcast-hero-blue.png using the saved character identity reference; preserved the previous image and source sheet. Inspected the generated image and verified its dimensions.
 - Replaced the R favicon with the podcast mountain/sun mark on turquoise. Versioned icon links on Home, Fi Calculator and methodology to refresh cached icons.
 - Static build, asset/link and SVG parsing checks passed; browser layout verification remains unavailable under the earlier restriction.
+
+## Consistent website header (20261023-5)
+- Home and Fi Calculator now use identical podcast branding/navigation markup and one shared header stylesheet, differing only in the active-page indicator. Calculator theme/saved-state controls moved into the calculator title area.
+- Added a blue calculator icon with a gold rising line, shown in the shared Fi Calculator navigation link and calculator title. Retained the podcast favicon and individual tool icons.
+- Verified matching header markup, one theme-control ID, SVG validity, local built references and production build. Browser visual verification remains unavailable under the earlier restriction.
