@@ -264,3 +264,8 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Stable navigation positions (20261023-7)
 - Shared top bar now uses explicit grid columns and fixed-height navigation buttons. Desktop reserves the same navigation width on both pages; mobile uses the same two equal columns and header rows. Active-page styling only changes background, never geometry.
 - Build and identical-header/source checks passed. Browser visual verification remains unavailable under the earlier restriction.
+
+## About placeholder and compact episodes (20261023-8)
+- Added an About the podcast section with two clearly marked **** placeholder paragraphs.
+- Latest episodes now occupies one horizontal row, with native touch/trackpad scrolling, snap alignment, keyboard arrows when focused, and previous/next buttons that disable at the boundaries. Keeps all six episodes and their audio players; reduced-motion preference respected.
+- Syntax, production build and markup/control checks passed. Browser visual verification remains unavailable under the previously reported restriction.
