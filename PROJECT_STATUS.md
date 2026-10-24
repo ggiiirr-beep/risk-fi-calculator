@@ -237,3 +237,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Shortened the homepage hero into a horizontal banner with a smaller heading and right-aligned artwork, including a compact side-by-side phone layout. Removed the redundant bottom title strip.
 - Changed the podcast page background to pale blue, retaining light episode cards and the turquoise hero. Calculator appearance unaffected.
 - Static build and diff checks passed. Browser visual verification remains blocked by the previously reported restriction.
+
+## Character reference saved (October 23, 2026)
+- Saved the owner's supplied character sheet intact at design/character/blue-reference.jpg, with a durable identity/variation guide in design/character/README.md. Future character illustrations use this reference; creative pose and styling changes are authorized.
+- Reference/documentation-only update; current homepage image unchanged. Verified the copied reference matches the source byte-for-byte and checked the staged diff.
