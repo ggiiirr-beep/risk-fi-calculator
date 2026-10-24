@@ -282,3 +282,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Lowered the combined hero artwork by 22% of its own height so the skirt hem is below the banner crop at each breakpoint.
 - Enlarged the shared top-bar mountain/sun logo from 48px to 80px; mobile brand row reserves its height, keeping navigation consistent across pages.
 - Static build and diff checks passed. Browser visual verification remains unavailable under the earlier restriction.
+
+## Navigation gradient adjustment (20261023-12)
+- Darkened the shared header gradient's right endpoint from pale cyan to medium blue (#397caf). Layout unchanged.
+- Static build and diff checks passed.
