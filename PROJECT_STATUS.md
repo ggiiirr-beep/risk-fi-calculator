@@ -327,3 +327,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Unpublished the site and set GitHub Pages source branch to None. GitHub confirms Pages is disabled; ordinary code pushes must not republish it. Do not re-enable publication until explicitly requested.
 - Domain registration, DNS and source code retained. HTTPS certificate had become valid and enforcement was enabled before taking the site offline. Restore main/root and confirm domain/HTTPS settings when authorized to republish.
 - Immediate public checks still returned cached pages; edge-cache expiration is pending. Repository visibility was not changed.
+
+## Podcast introduction copy (October 31, 2026)
+- Replaced the hero introduction placeholder with the owner's supplied welcome sentence, without draft markers. Other copy placeholders retained. GitHub Pages remains disabled; local preview only.
+- Static build and diff checks passed.
