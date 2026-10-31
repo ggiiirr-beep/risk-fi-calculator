@@ -331,3 +331,7 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Podcast introduction copy (October 31, 2026)
 - Replaced the hero introduction placeholder with the owner's supplied welcome sentence, without draft markers. Other copy placeholders retained. GitHub Pages remains disabled; local preview only.
 - Static build and diff checks passed.
+
+## Publication restored (October 31, 2026)
+- Owner explicitly requested republication. Re-enabled GitHub Pages from main / root, retained frompaycheckstopurpose.com and enabled Enforce HTTPS. This supersedes the October 23 offline instruction.
+- Initial deployment is building; public verification will follow. Includes the latest owner-supplied introduction copy.
