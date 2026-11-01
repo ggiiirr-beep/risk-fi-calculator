@@ -13,5 +13,6 @@ footer{flex-wrap:wrap}footer .footer-listen{padding:0;gap:10px}footer .listen-ba
 /* Keep the full introduction readable alongside the feature portrait. */
 .about-copy{min-width:0;overflow-wrap:anywhere}.blue-introduction p{font-size:1.0625rem;line-height:1.65;max-width:640px}.blue-portrait{align-self:start}
 
-/* Frame the cropped illustration with a deliberate bottom edge. */
-.blue-portrait{border-bottom:3px solid #4387a4}
+/* Soften the portrait’s lower edge into white. */
+.blue-portrait{border-bottom:0}
+.blue-portrait::after{content:"";position:absolute;inset:auto 0 0;height:120px;background:linear-gradient(to bottom,rgba(255,255,255,0),#fff);pointer-events:none}
