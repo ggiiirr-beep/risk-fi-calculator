@@ -12,3 +12,6 @@ footer{flex-wrap:wrap}footer .footer-listen{padding:0;gap:10px}footer .listen-ba
 
 /* Keep the full introduction readable alongside the feature portrait. */
 .about-copy{min-width:0;overflow-wrap:anywhere}.blue-introduction p{font-size:1.0625rem;line-height:1.65;max-width:640px}.blue-portrait{align-self:start}
+
+/* Frame the cropped illustration with a deliberate bottom edge. */
+.blue-portrait{border-bottom:3px solid #4387a4}
