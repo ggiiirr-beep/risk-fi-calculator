@@ -14,3 +14,34 @@ footer{flex-wrap:wrap}footer .footer-listen{padding:0;gap:10px}footer .listen-ba
 .about-copy{min-width:0;overflow-wrap:anywhere}.blue-introduction p{font-size:1.0625rem;line-height:1.65;max-width:640px}.blue-portrait{align-self:start}
 
 .podcast-cover{display:block;width:100%;max-width:420px;height:auto;margin-top:28px;border-radius:16px}@media(max-width:600px){.podcast-cover{max-width:320px;margin-top:24px}}
+
+/* Phone and small-tablet layout: readable copy and proportionate artwork. */
+@media(max-width:800px){
+ .about-section{grid-template-columns:minmax(0,1fr);gap:24px;margin:0 20px 32px;padding:32px 0}
+ .podcast-cover{max-width:360px;margin:24px auto 0}
+ .meet-blue{grid-template-columns:minmax(0,1fr);gap:0;margin:24px 0 40px}
+ .blue-portrait{width:calc(100% - 40px);max-width:380px;margin:24px auto 0;border-radius:22px}
+ .blue-introduction{padding:28px 24px 36px}
+ .blue-introduction h2{font-size:2rem;line-height:1.2;margin-bottom:24px}
+ .blue-introduction p,.about-copy p{font-size:1rem;line-height:1.65}
+}
+@media(max-width:600px){
+ .hero{display:block;min-height:360px;padding:28px 20px}
+ .hero-copy h1{font-size:2rem;max-width:350px;margin-bottom:20px}
+ .hero .eyebrow{font-size:.7rem}
+ .hero .placeholder{font-size:1rem;line-height:1.55;max-width:62%}
+ .hero-actions .button{font-size:.875rem;min-height:44px;padding:12px 14px}
+ .hero-art{width:38%;height:210px;right:0;bottom:0;transform:none;overflow:hidden}
+ .hero-art img{position:absolute;right:0;width:auto;height:100%;max-width:none}
+ .hero-mountain{width:37%;top:auto;bottom:150px;right:2%;transform:none}
+ .about-section h2,.calculator-callout h2{font-size:2rem}
+ .episodes-section h2{font-size:1.5rem}
+ .episode-actions{flex-direction:row;align-items:center;justify-content:space-between;width:100%}
+ .episodes-section .section-heading{flex-wrap:wrap;gap:12px}
+ .scroll-buttons button{width:44px;height:44px}
+ .listen-links{gap:10px}
+ .listen-links .listen-badge{width:100%;min-height:58px}
+ .listen-links .rss-link{padding:8px 0}
+ footer .footer-listen{width:100%}
+ .calculator-callout>div{min-width:0;flex-basis:calc(100% - 80px)}
+}
