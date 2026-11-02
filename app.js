@@ -1,7 +1,7 @@
 import {rampDefaults,rampPeriods,rampIncome,rampCoverage,projectRamp} from './ramp-fi.js?v=20261102-ramp2';
 import {guardrailPaths} from './guardrail-paths.js?v=20261102-ramp2';
 import {comparePaths} from './path-comparison.js?v=20261102-ramp2';
-import {comparisonQuestions as universalQuestions,runScenario,comparisonRows} from './scenario-comparison.js?v=20261102-ramp2';
+import {comparisonQuestions as universalQuestions,runScenario,comparisonRows} from './scenario-comparison.js?v=20261102-rampcompare';
 import {planTimeline,fundingChart} from './plan-visuals.js?v=20261102-ramp2';
 import {assetRows,assetTotals,syncAssets} from './plan-assets.js?v=20261102-ramp2';
 import {solveCoast} from './coast-fi.js?v=20261102-ramp2';
@@ -257,7 +257,7 @@ function update(){renderSectionTools();renderToolSetup();if(!['guardrails','posi
 function saveBaseline(){baseline={start:today,plan:{...resolved}};checkValues={};persist();toast('Baseline saved in this browser.');if(tab==='checkin')update();}
 $('#theme').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('riskfi-theme',t);}catch{}};
 function navigate(next){tab=next;document.body.dataset.tool=tab==='compare'?compareSource:tab;const main=tab==='compare'?compareSource:['scenarios','withdrawals','dates','risk'].includes(tab)?'plan':tab==='checkin'?'position':tab;$$('.tabs [data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===main));update();}
-function renderSectionTools(){const host=$('#section-tools'),source=tab==='compare'?compareSource:tab;host.innerHTML=['plan','gap','coast','traditional'].includes(source)?`<button id="compare-back" class="${tab!=='compare'?'active':''}">Calculator</button><button id="compare-open" class="${tab==='compare'?'active':''}">Compare scenarios</button>`:'';if($('#compare-back'))$('#compare-back').onclick=()=>navigate(source);if($('#compare-open'))$('#compare-open').onclick=()=>{compareSource=source;compareDraft=compareDrafts[source]||null;navigate('compare');};}
+function renderSectionTools(){const host=$('#section-tools'),source=tab==='compare'?compareSource:tab;host.innerHTML=['plan','gap','ramp','coast','traditional'].includes(source)?`<button id="compare-back" class="${tab!=='compare'?'active':''}">Calculator</button><button id="compare-open" class="${tab==='compare'?'active':''}">Compare scenarios</button>`:'';if($('#compare-back'))$('#compare-back').onclick=()=>navigate(source);if($('#compare-open'))$('#compare-open').onclick=()=>{compareSource=source;compareDraft=compareDrafts[source]||null;navigate('compare');};}
 $$('nav [data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
 $('#reset').onclick=()=>{state=simplifyPlan({...defaults,separateFiWithdrawals:true});state.assets=assetRows(state);state.futureChanges=[];unknown='spending';riskOutput=null;update();rebuildInputs();persist();toast('Assumptions reset. Your saved baseline is preserved.');};
 
@@ -427,17 +427,18 @@ function rampResults(p){charts=[];try{
 function freshComparison(){
  let p=compareSource==='plan'?structuredClone(state):structuredClone(baselinePlan(state));
  if(compareSource==='plan'){try{p=solve(p,unknown).plan||p;}catch{}p=resolveWithdrawals(p);p.nominal=nominalReturn(expectedReturn(p),p.inflation);p.returnMode='nominal';}
- const settings=structuredClone(compareSource==='gap'?gapSettings:compareSource==='coast'?{...coast,coastAt:0}:compareSource==='traditional'?traditional:{});
+ const settings=structuredClone(compareSource==='gap'?gapSettings:compareSource==='coast'?{...coast,coastAt:0}:compareSource==='traditional'?traditional:compareSource==='ramp'?ramp:{});
  let question=compareSource==='plan'?(universalQuestions.plan[unknown]?unknown:'time'):settings.mode||'time';
  return {question,count:3,horizon:Math.max(30,Math.ceil(settings.years||p.years||0)),scenarios:Array.from({length:3},()=>({plan:structuredClone(p),settings:structuredClone(settings),periods:structuredClone(gapPeriods)}))};
 }
 function renderUniversalComparison(){
- compareDraft??=freshComparison();compareDrafts[compareSource]=compareDraft;const d=compareDraft,source=compareSource,names={plan:'Risk Fi',gap:'Gap Fi',coast:'Coast Fi',traditional:'Traditional Fi'};
+ compareDraft??=freshComparison();compareDrafts[compareSource]=compareDraft;const d=compareDraft,source=compareSource,names={plan:'Risk Fi',gap:'Gap Fi',ramp:'Ramp Fi',coast:'Coast Fi',traditional:'Traditional Fi'};
  $('#error').hidden=true;
  const input=(i,path,label,value,opts={})=>field('uc-'+i+'-'+path,label,value,opts);
  const cards=d.scenarios.slice(0,d.count).map((c,i)=>{const p=c.plan,t=c.settings,q=d.question,age=p.timeEntry==='age';return `<section class="summary-group"><h3>Scenario ${String.fromCharCode(65+i)}</h3>
  ${input(i,'plan.nominal','Return before inflation',entry(p.nominal,100),{suffix:'%',disabled:source==='plan'&&q==='return'})}
  ${source==='plan'?(p.withdrawalMode==='dollars'?input(i,'plan.spending','Annual withdrawals',p.spending,{prefix:'$',disabled:q==='spending'}):input(i,'plan.withdrawalRate',p.withdrawalMode==='annual'?'Each year’s investment withdrawal rate':'Starting investment withdrawal rate',entry(p.withdrawalRate,100),{suffix:'%',disabled:q==='spending'}))+input(i,'plan.portfolio','Starting investments',p.portfolio,{prefix:'$',disabled:q==='portfolio'})+input(i,'plan.years',age?'Target FI age':'Years to FI',p.years+(age?p.age:0),{disabled:q==='time'}):''}
+ ${source==='ramp'?input(i,'settings.spending','Annual spending',t.spending,{prefix:'$'})+(t.custom?'':input(i,'settings.startIncome','Starting annual income',t.startIncome,{prefix:'$'})+input(i,'settings.endIncome','Annual income once established',t.endIncome,{prefix:'$'})+input(i,'settings.years','Years to build income',t.years,{min:1,max:50,step:1}))+(t.custom?t.incomes.map((v,j)=>input(i,'settings.incomes.'+j,j===0?'Income at start':'Income at year '+j,v,{prefix:'$'})).join(''):''):''}
  ${source==='traditional'?input(i,'settings.contribution','Annual contributions',t.contribution,{prefix:'$',disabled:q==='contribution'})+(q==='contribution'?input(i,'settings.years',age?'Target FI age':'Years to FI',t.years+(age?p.age:0),{min:1,step:1}):''):''}
  ${source==='coast'?(q!=='retirement'&&q!=='arrival'?input(i,'settings.years',age?'Retirement age':'Years until retirement',t.years+(age?p.age:0),{min:1,step:1}):'')+(['time','arrival'].includes(q)?input(i,'settings.contribution','Annual contributions',t.contribution,{prefix:'$'}):'')+(q==='arrival'?input(i,'settings.coastAt',age?'Stop contributions at age':'Stop contributions in years',(t.coastAt||0)+(age?p.age:0),{min:0}):''):''}
  ${source==='gap'?(q!=='time'?input(i,'settings.years',age?'Target FI age':'Years to FI',t.years+(age?p.age:0),{min:1,step:1})+select('uc-'+i+'-period','Solve amount in period',Object.fromEntries(c.periods.map((r,j)=>[j,r]).filter(([,r])=>r.action===q).map(([j])=>[j,'Period '+(j+1)])),t.index):'')+c.periods.map((r,j)=>`<div class="compare-period"><h4>Period ${j+1} · ${{withdraw:'Withdraw',contribute:'Contribute',even:'Break even',ramp:'Ramp'}[r.action]}</h4>${r.action!=='even'?input(i,'periods.'+j+'.amount',r.action==='ramp'?'Starting net amount (− withdraw, + contribute)':'Annual amount',r.amount,{prefix:'$',disabled:q===r.action&&t.index===j}):''}${r.action==='ramp'?input(i,'periods.'+j+'.endAmount','Ending net amount',r.endAmount,{prefix:'$'}):''}${r.years===null?'<p class="hint">Until FI</p>':input(i,'periods.'+j+'.years','Years',r.years,{min:1,max:99,step:1})}</div>`).join(''):''}

@@ -24,3 +24,9 @@ test('comparison nominal display preserves shared target and scheduled cash flow
  const p={...plan,inflation:.025,futureChanges:[{kind:'income',amount:1000,start:0,adjust:true}]},r=runScenario('traditional','time',{plan:p,settings:{contribution:20000,adjust:true}},10);
  assert.equal(r.error,undefined);assert.ok(r.projection.rows[1].cash>0);const real=comparisonRows([r],10),nominal=comparisonRows([r],10,true);assert.equal(nominal[2].s0,real[2].s0*1.025**2);assert.equal(nominal[2].target,200000*1.025**2);
 });
+test('Ramp comparison varies income growth and keeps calculator settings isolated',()=>{
+ const s={plan:{...defaults,fiBasis:'total'},settings:{spending:60000,startIncome:0,endIncome:80000,years:5,custom:false,cashStrategy:'first'}},before=structuredClone(s);
+ const expected=runScenario('ramp','time',s,30),slower=runScenario('ramp','time',{...s,settings:{...s.settings,years:10}},30),stalled=runScenario('ramp','time',{...s,settings:{...s.settings,endIncome:0}},30);
+ assert.equal(expected.error,undefined);assert.ok(expected.value<slower.value);assert.ok(slower.value<stalled.value);assert.deepEqual(s,before);assert.equal(comparisonRows([expected,slower],30).length,31);
+ assert.ok(runScenario('ramp','time',{...s,settings:{...s.settings,years:null}},30).error);
+});

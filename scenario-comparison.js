@@ -1,8 +1,9 @@
+import {projectRamp} from './ramp-fi.js?v=20261102-ramp2';
 import {solve,project,fiTarget,resolveWithdrawals} from './finance.js?v=20261102-ramp2';
 import {projectGap,solveGapAmount} from './gap-fi.js?v=20261102-ramp2';
 import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261102-ramp2';
 import {solveCoast,coastProjection} from './coast-fi.js?v=20261102-ramp2';
-export const comparisonQuestions={plan:{time:'When will I reach FI?',spending:'Withdrawal amount',portfolio:'Investment needed',return:'Return needed'},gap:{time:'When will I reach FI?',withdraw:'Withdrawal amount',contribute:'Contribution amount'},traditional:{time:'When will I reach FI?',contribution:'Contributions needed'},coast:{amount:'Investments needed to coast now',time:'When can I stop contributing?',retirement:'FI date without contributions',arrival:'FI date with a chosen coast date'}};
+export const comparisonQuestions={ramp:{time:'When will I reach FI?'},plan:{time:'When will I reach FI?',spending:'Withdrawal amount',portfolio:'Investment needed',return:'Return needed'},gap:{time:'When will I reach FI?',withdraw:'Withdrawal amount',contribute:'Contribution amount'},traditional:{time:'When will I reach FI?',contribution:'Contributions needed'},coast:{amount:'Investments needed to coast now',time:'When can I stop contributing?',retirement:'FI date without contributions',arrival:'FI date with a chosen coast date'}};
 export function runScenario(source,question,scenario,horizon=30){
  try{
  const c=structuredClone(scenario);let p=c.plan,settings=c.settings||{},periods=c.periods||[],value,kind='money',projection;
@@ -16,6 +17,8 @@ export function runScenario(source,question,scenario,horizon=30){
   if(question==='time'){const q=projectGap(p,periods);if(q.reached===null||q.shortfall!==null)throw Error(q.shortfall!==null?'Withdrawals cannot be funded before FI.':'FI is not reached within 100 years.');value=q.reached;kind='time';}
   else{const s=solveGapAmount(p,periods,{mode:question,index:settings.index,years:settings.years});value=s.amount;periods[settings.index].amount=value;}
   projection=projectGap(p,periods,{maxYears:horizon,stopAtGoal:false});
+ }else if(source==='ramp'){
+  const q=projectRamp(p,settings);if(q.reached===null||q.shortfall!==null)throw Error(q.shortfall!==null?'Withdrawals cannot be funded before FI.':'FI is not reached within 100 years.');value=q.reached;kind='time';projection=projectRamp(p,settings,{maxYears:horizon,stopAtGoal:false});
  }else if(source==='traditional'){
   let contribution=settings.contribution;
   if(question==='contribution'){const s=contributionNeeded(p,settings);contribution=s.contribution;value=contribution;}
