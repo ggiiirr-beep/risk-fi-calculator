@@ -25,3 +25,9 @@ The homepage now uses blue-character.png and mountain-sun.png as independent tra
 Character prompt: Extract ONLY the woman from this illustration onto a genuinely transparent background. Remove every mountain and sun element completely. Preserve the woman exactly: position, scale, pose, shoulder-length black hair, light-blue skin, gold glasses, mustard sweater, navy skirt. Preserve original square 1254x1254 canvas and her placement on its right side; do not center, enlarge, or crop her differently. No other elements or text.
 
 Mountain prompt: Create the standalone mountain-and-sun motif from this reference. ONLY the mountains and sun, no woman. Flat hard-edged vector-like art: solid golden semicircle arc with triangular rays behind angular navy mountain peaks and flat cobalt triangular highlights. NO GLOW, NO BLUR, NO SHADOW, NO GRADIENT, NO HALO. Transparent background entirely outside the crisp solid shapes, including inside sun opening. Complete motif with small margins, landscape 3:2 composition. No text or other objects.
+
+## Photo-inspired Blue — November 1, 2026
+
+Current website assets: `blue-character-photo.png` (hands together), `blue-welcome-photo.png` (wave), and `podcast-cover-blue-photo.png`. These supersede the earlier character appearances; older files remain as design history. The source photo is not included in the repository.
+
+Created with built-in image generation using the approved photo-inspired character reference. Prompts preserve blue skin, a short side-parted brown bob, pale gold softly rectangular glasses, mustard sweater and long navy skirt. The welcome variant changes only the pose to a wave. The cover replaces the character while preserving the centered title, lower-right host credit and mountain/sun design.

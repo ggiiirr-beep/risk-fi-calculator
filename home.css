@@ -45,3 +45,8 @@ footer{flex-wrap:wrap}footer .footer-listen{padding:0;gap:10px}footer .listen-ba
  footer .footer-listen{width:100%}
  .calculator-callout>div{min-width:0;flex-basis:calc(100% - 80px)}
 }
+
+/* The updated character fills her canvas, unlike the older square cutout. */
+.hero-art{width:25%;max-width:310px;bottom:0;transform:translateY(18%)}
+@media(max-width:900px){.hero-art{width:25%;right:8px}}
+@media(max-width:600px){.hero-art{width:38%;height:210px;right:0;bottom:0;transform:none}.hero-art img{height:100%;width:auto}}
