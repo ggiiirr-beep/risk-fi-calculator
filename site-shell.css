@@ -24,15 +24,6 @@
 body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{border-color:#267f54}
 
 /* Compact, editable Ramp FI scenario cards. */
-.ramp-comparisons{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.ramp-comparisons>.metric{padding:16px;min-width:0}
-.ramp-comparisons .ramp-comparison-fields{margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.ramp-comparisons .field{margin:0;min-width:0}
-.ramp-comparisons .field label{font-size:.76rem;line-height:1.35;margin-bottom:5px}
-.ramp-comparisons input{min-height:40px;padding-top:8px;padding-bottom:8px}
-.ramp-comparisons .field:last-child:nth-child(odd){grid-column:1/-1}
-.ramp-comparisons p.ramp-comparison-result{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--border);font-weight:700;color:var(--ink)}
-@media(max-width:850px){.ramp-comparisons{grid-template-columns:minmax(0,1fr)}}
 
 .ramp-income-editor{margin-top:20px;padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:12px}
 .ramp-income-editor h3{margin-top:0}.ramp-income-editor svg{display:block;width:100%;max-height:200px;margin:12px 0}
