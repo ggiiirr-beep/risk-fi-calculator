@@ -35,3 +35,5 @@ Created with built-in image generation using the approved photo-inspired charact
 
 ## Approved smooth clothing and longer hair — November 1, 2026
 Current assets: `blue-character-smooth.png`, `blue-welcome-smooth.png`, and `podcast-cover-blue-smooth.png`. Blue has a shoulder-length near-black bob without highlights and smooth clothing without knit texture. These supersede the photo-named appearances while preserving their poses. Earlier files are retained as design history.
+
+Current approved appearances use the `-highlights.png` versions of blue-character, blue-welcome, and podcast-cover-blue: near-black shoulder-length hair with subtle muted brown highlights, retaining smooth clothing.
