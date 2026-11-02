@@ -37,3 +37,5 @@ Created with built-in image generation using the approved photo-inspired charact
 Current assets: `blue-character-smooth.png`, `blue-welcome-smooth.png`, and `podcast-cover-blue-smooth.png`. Blue has a shoulder-length near-black bob without highlights and smooth clothing without knit texture. These supersede the photo-named appearances while preserving their poses. Earlier files are retained as design history.
 
 Current approved appearances use the `-highlights.png` versions of blue-character, blue-welcome, and podcast-cover-blue: near-black shoulder-length hair with subtle muted brown highlights, retaining smooth clothing.
+
+Current approved appearances use the `-straight.png` versions of blue-character, blue-welcome, and podcast-cover-blue: straighter even bob ends without outward flare or strong inward curl; glasses adjusted slightly upward from the highlights version. Preserve the subtle highlights and smooth clothing.
