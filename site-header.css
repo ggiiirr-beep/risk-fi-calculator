@@ -9,3 +9,8 @@ body.calculator-page{background:#c6e0f3;min-height:100vh}.podcast-context{font-f
 
 /* Self-contained image keeps the tile gradient consistent across browsers. */
 .podcast-brand .podcast-brand-icon{display:block;width:48px;height:48px;flex-shrink:0;align-self:center}
+/* Keep the Purpose Fi name readable in the shared navigation. */
+.podcast-header nav{grid-template-columns:110px 240px;width:360px}
+.podcast-header nav a{white-space:normal;text-align:center;line-height:1.15}
+.podcast-header nav img{flex-shrink:0}
+@media(max-width:600px){.podcast-header nav{grid-template-columns:minmax(70px,.7fr) minmax(0,1.3fr);width:100%}.podcast-header nav a{font-size:13px;gap:6px;padding:6px 8px}}
