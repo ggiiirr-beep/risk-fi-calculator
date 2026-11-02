@@ -1,7 +1,8 @@
+const calendarYear=y=>new Date(Date.now()+y*365.25*86400000).getUTCFullYear();
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=v=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v);
 const number=v=>Number(v.toFixed(2)).toLocaleString('en-US');
-const when=(p,y)=>p.timeEntry==='age'?'Age '+number(p.age+y):'Year '+number(y);
+const when=(p,y)=>p.timeEntry==='age'?'Age '+number(p.age+y)+' ('+calendarYear(y)+')':'Year '+number(y);
 export function planTimeline(p,phases,end,arrival){
  end=Math.max(0,end);let cursor=0;
  const spans=phases.map(phase=>{const start=cursor;cursor=Math.min(end,cursor+(phase.years??end));return {...phase,start,end:cursor};}).filter(x=>x.end>x.start);
