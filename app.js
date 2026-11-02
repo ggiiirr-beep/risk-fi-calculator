@@ -458,6 +458,16 @@ function bindRampIncomeEditor(settings,scope,onChange,onResults){
  }
 }
 
+function bindRampYears(input,settings,scope,onChange,onResults){
+ // Keep the number input mounted while its native stepper is being used.
+ input.onchange=null;input.onblur=null;
+ input.oninput=()=>{const years=readNumber(input.value);if(!Number.isInteger(years)||years<1||years>50){input.setCustomValidity('Enter a duration from 1 to 50 whole years.');return;}
+ input.setCustomValidity('');settings.years=years;steadyRamp(settings);onChange();
+ const editor=$('#'+scope+'-income-preview')?.closest('.ramp-income-editor');
+ if(editor){editor.outerHTML=rampIncomeEditor(settings,scope);bindRampIncomeEditor(settings,scope,onChange,onResults);}
+ onResults();};
+}
+
 function renderRamp(){
  if(!ramp.custom)steadyRamp(ramp);
  const p=baselinePlan(state);$('#error').hidden=true;
@@ -465,6 +475,7 @@ function renderRamp(){
  bindSharedCards('ramp',p);
  for(const key of ['fiWithdrawals','fiRate'])$('#ramp-'+key).onchange=e=>{const value=readNumber(e.target.value);if(value===null||value<=0||(key==='fiRate'&&value>100)){e.target.setCustomValidity('Enter a positive value'+(key==='fiRate'?' up to 100%.':'.'));e.target.reportValidity();return;}state[key]=value/(key==='fiRate'?100:1);state.separateFiWithdrawals=true;persist();rebuildInputs();update();};
  for(const key of ['spending','startIncome','endIncome','years','cashStrategy']){const el=$('#ramp-'+key);el.onchange=()=>{ramp[key]=key==='cashStrategy'?el.value:readNumber(el.value);if(['years','startIncome','endIncome'].includes(key))steadyRamp(ramp);persist();renderRamp();};}
+ bindRampYears($('#ramp-years'),ramp,'ramp',persist,()=>rampResults(p));
  $('#ramp-steady-reset').onclick=()=>{steadyRamp(ramp);persist();renderRamp();};
  bindRampIncomeEditor(ramp,'ramp',persist,()=>rampResults(p));rampResults(p);
 }
@@ -509,7 +520,7 @@ function renderUniversalComparison(){
  bindRampIncomeEditor(t,'scenario'+i,()=>{},universalResults);
  $$('[data-edit-scenario]').forEach(b=>b.onclick=()=>{d.active=+b.dataset.editScenario;renderUniversalComparison();});
  $('#scenario-steady-reset').onclick=()=>{steadyRamp(t);renderUniversalComparison();};
- d.scenarios.slice(0,d.count).forEach((c,i)=>{const t=c.settings;for(const key of ['startIncome','endIncome','years']){const el=document.getElementById('uc-'+i+'-settings.'+key);el.oninput=()=>{const value=readNumber(el.value);if(value!==null&&value>=0&&(key!=='years'||(Number.isInteger(value)&&value>=1&&value<=50))){el.setCustomValidity('');t[key]=value;steadyRamp(t);universalResults();}};el.onblur=()=>{const value=readNumber(el.value);if(value===null||value<0||(key==='years'&&(!Number.isInteger(value)||value<1||value>50))){el.setCustomValidity('Enter a valid '+(key==='years'?'duration from 1 to 50 whole years.':'nonnegative amount.'));el.reportValidity();return;}t[key]=value;steadyRamp(t);renderUniversalComparison();};}});
+ d.scenarios.slice(0,d.count).forEach((c,i)=>{const t=c.settings;for(const key of ['startIncome','endIncome','years']){const el=document.getElementById('uc-'+i+'-settings.'+key);el.oninput=()=>{const value=readNumber(el.value);if(value!==null&&value>=0&&(key!=='years'||(Number.isInteger(value)&&value>=1&&value<=50))){el.setCustomValidity('');t[key]=value;steadyRamp(t);universalResults();}};el.onblur=()=>{const value=readNumber(el.value);if(value===null||value<0||(key==='years'&&(!Number.isInteger(value)||value<1||value>50))){el.setCustomValidity('Enter a valid '+(key==='years'?'duration from 1 to 50 whole years.':'nonnegative amount.'));el.reportValidity();return;}t[key]=value;steadyRamp(t);renderUniversalComparison();};}bindRampYears(document.getElementById('uc-'+i+'-settings.years'),t,'scenario'+i,()=>{},universalResults);});
  }
  $('#uc-horizon').oninput=e=>{d.horizon=readNumber(e.target.value);universalResults();};
  $$('[data-dollars]').forEach(b=>b.onclick=()=>{nominal=b.dataset.dollars==='nominal';persist();renderUniversalComparison();});universalResults();
