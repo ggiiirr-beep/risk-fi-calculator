@@ -36,9 +36,9 @@ body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{b
 .ramp-income-row{display:flex;flex-direction:column;flex:1 0 112px;gap:12px;border-bottom:0;padding:12px 4px;min-width:0}
 .ramp-income-row input[type=range]{writing-mode:vertical-lr;direction:rtl;width:32px;height:170px;min-height:170px;accent-color:var(--purple)}
 .ramp-income-row>.field{width:112px;max-width:100%}
-#ramp-income-preview circle:focus{outline:none;stroke:var(--purple);stroke-width:3}
+.ramp-income-preview circle:focus{outline:none;stroke:var(--purple);stroke-width:3}
 @media(max-width:600px){.ramp-income-row{flex-basis:100px}.ramp-income-row input[type=range]{height:140px;min-height:140px}}
-#ramp-income-preview{overflow-x:auto}
+.ramp-income-preview{overflow-x:auto}
 @media(max-width:600px){.ramp-income-editor svg{min-width:600px;max-height:none}.ramp-income-row{flex-basis:128px}.ramp-income-row>.field{width:120px}}
 
 /* Shared calculator hierarchy: compact navigation, natural-height cards, aligned inputs. */
@@ -102,3 +102,14 @@ body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{b
  .calculator-page .gr-market{grid-template-columns:1fr}
  .calculator-page .numbers-next button{flex-basis:90px;min-height:66px}
 }
+
+.compare-cards>.has-income-editor{grid-column:1/-1;min-width:0}
+.compare-cards>.has-income-editor>.field{max-width:320px}
+.calculator-page .gap-period>h3{grid-row:1;grid-column:1/3}
+.calculator-page .gap-period>.text-button{grid-row:1;grid-column:3;align-self:start}
+.calculator-page .gap-period .period-action,.calculator-page .gap-period .period-amount,.calculator-page .gap-period .period-duration{grid-row:2}
+@media(max-width:740px){.calculator-page .gap-period>h3{grid-column:1;grid-row:1;padding-right:100px}.calculator-page .gap-period>.text-button{grid-column:1;grid-row:1}.calculator-page .gap-period .period-action,.calculator-page .gap-period .period-amount,.calculator-page .gap-period .period-duration{grid-row:auto}}
+.compare-cards>.has-income-editor{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.has-income-editor>h3,.has-income-editor>.toggle-row,.has-income-editor>.ramp-income-editor{grid-column:1/-1}
+.has-income-editor>.toggle-row{order:1}.compare-cards>.has-income-editor>.field{order:2;max-width:none;margin:0}.has-income-editor>.ramp-income-editor{order:3;margin-top:0;min-width:0}
+@media(max-width:600px){.compare-cards>.has-income-editor{grid-template-columns:minmax(0,1fr)}}
