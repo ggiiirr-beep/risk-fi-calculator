@@ -259,12 +259,12 @@ function update(){renderSectionTools();renderToolSetup();if(!['guardrails','posi
  }catch(e){$('#error').hidden=false;$('#error').textContent=e.message;$('#view').innerHTML='<div class="panel content-panel"><h2>Check your inputs</h2><p>Check the missing or invalid values in Your numbers.</p><button id="fix-numbers">Edit your numbers</button></div>';$('#fix-numbers').onclick=()=>navigate('numbers');}}
 function saveBaseline(){baseline={start:today,plan:{...resolved}};checkValues={};persist();toast('Baseline saved in this browser.');if(tab==='checkin')update();}
 $('#theme').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{planStorage.setItem('riskfi-theme',t);}catch{}};
-function navigate(next){tab=next;document.body.dataset.tool=tab==='compare'?compareSource:tab;const main=tab==='compare'?compareSource:['scenarios','withdrawals','dates','risk'].includes(tab)?'plan':tab==='checkin'?'position':tab;$$('.tabs [data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===main));update();}
+function navigate(next,saveRoute=true){tab=next;if(saveRoute){const hash='#'+(tab==='compare'?compareSource+'/compare':tab);if(location.hash!==hash)history.pushState(null,'',hash);}document.body.dataset.tool=tab==='compare'?compareSource:tab;const main=tab==='compare'?compareSource:['scenarios','withdrawals','dates','risk'].includes(tab)?'plan':tab==='checkin'?'position':tab;$$('.tabs [data-tab]').forEach(t=>t.classList.toggle('active',t.dataset.tab===main));update();}
 function renderSectionTools(){const host=$('#section-tools'),source=tab==='compare'?compareSource:tab;host.innerHTML=['plan','gap','ramp','coast','traditional'].includes(source)?`<button id="compare-back" class="${tab!=='compare'?'active':''}">Calculator</button><button id="compare-open" class="${tab==='compare'?'active':''}">Compare scenarios</button>`:'';if($('#compare-back'))$('#compare-back').onclick=()=>navigate(source);if($('#compare-open'))$('#compare-open').onclick=()=>{compareSource=source;compareDraft=compareDrafts[source]||null;navigate('compare');};}
 $$('nav [data-tab]').forEach(b=>b.onclick=()=>navigate(b.dataset.tab));
 $('#reset').onclick=()=>{state=simplifyPlan({...defaults,separateFiWithdrawals:true});state.assets=assetRows(state);state.futureChanges=[];unknown='spending';riskOutput=null;update();rebuildInputs();persist();toast('Assumptions reset. Your saved baseline is preserved.');};
 
-update();renderInputs();
+
 
 
 // Optional progressive enhancement. Ordinary browsers need no agent APIs.
@@ -494,3 +494,13 @@ function pathResults(){
 
 window.addEventListener('save-plan-now',persist);
 mountStorageControls();
+
+function restoreSection(){
+ const [section,subsection]=location.hash.slice(1).split('/');
+ const main=['numbers','plan','gap','ramp','coast','traditional','paths','guardrails','method'];
+ if(subsection==='compare'&&['plan','gap','ramp','coast','traditional'].includes(section)){compareSource=section;compareDraft=compareDrafts[section]||null;navigate('compare',false);}
+ else navigate(main.includes(section)?section:'numbers',false);
+}
+window.addEventListener('popstate',restoreSection);
+window.addEventListener('hashchange',restoreSection);
+renderInputs();restoreSection();
