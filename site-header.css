@@ -27,3 +27,8 @@ header.podcast-header{grid-template-columns:minmax(0,1fr) 520px}
 .calculator-page .page-heading{justify-content:flex-end;margin:0 0 12px}
 .calculator-accessible-title{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media(max-width:900px){header.podcast-header{grid-template-columns:minmax(0,1fr);grid-template-rows:48px auto;gap:6px;padding:6px 20px}.podcast-header nav{width:100%;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);height:auto;border-top:1px solid #ffffff40;padding-top:4px;justify-self:stretch}.podcast-header nav a{height:auto;min-height:44px;font-size:13px;padding:6px 8px;gap:6px}}
+
+/* Keep page switches anchored right, including tablet widths. */
+.podcast-header nav{justify-self:end}
+@media(min-width:601px) and (max-width:900px){header.podcast-header{grid-template-columns:minmax(0,1fr) 350px;grid-template-rows:auto;gap:12px;padding:6px 16px}.podcast-header nav{width:350px;border:0;padding:0;justify-self:end}.podcast-header .podcast-brand{gap:8px;font-size:.7rem}}
+@media(max-width:600px){.podcast-header nav{width:min(100%,340px);justify-self:end;border:0;padding-top:0}}
