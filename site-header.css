@@ -20,3 +20,8 @@ img[src*="purpose-fi-sun-compass"]{clip-path:inset(1% round 23%)}
 .calculator-title>img{width:72px;height:72px}
 .podcast-header nav img{width:30px;height:30px}
 @media(max-width:740px){.calculator-title>img{width:56px;height:56px}.calculator-title{min-width:0}.calculator-title h1{overflow-wrap:break-word}}
+
+/* Calculator identity, with the podcast still one click away. */
+header.calculator-header{grid-template-columns:minmax(0,1fr) 520px}
+.calculator-header nav{width:520px;grid-template-columns:270px 240px}
+@media(max-width:900px){header.calculator-header{grid-template-columns:minmax(0,1fr);grid-template-rows:48px auto;gap:6px}.calculator-header nav{width:100%;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);height:auto;border-top:1px solid #ffffff40;padding-top:4px;justify-self:stretch}.calculator-header nav a{height:auto;min-height:44px;font-size:13px;padding:6px 8px;gap:6px}}
