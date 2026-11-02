@@ -9,3 +9,14 @@ test('custom income allows pauses and uneven increases',()=>{const s={...rampDef
 test('ramp validation rejects missing endpoint, unbounded ramp and invalid duration',()=>{assert.throws(()=>projectGap(p,[{action:'ramp',amount:0,endAmount:20000,years:null}]));assert.throws(()=>rampPeriods({...rampDefaults,years:0}));assert.throws(()=>rampPeriods({...rampDefaults,custom:true,incomes:[0]}));});
 test('guardrails apply ramp contributions and withdrawal scaling consistently',()=>{const a={...guardrailDefaults,goal:'fi',fiBasis:'total',years:4,portfolio:1e6,initialCash:0,fiWithdrawals:36800,fiRate:.04,model:'parametric',stockMean:0,stockVol:0,inflation:0,cashReturn:0,reserveYears:0,pathPeriods:rampPeriods({...rampDefaults,years:4}),pathWithdrawalBase:60000,pathAdjust:true,futureChanges:[]};validateGuardrails(a);const model=buildProbabilityModel(a);let investment=1e6;for(let y=0;y<4;y++)investment=scheduledYear(a,investment,0,60000,1,1,false,y).investment;close(investment,920000);assert.equal(model.probability(1e6,0,60000,4),1);assert.equal(model.probability(1e6,0,61000,4),0);assert.deepEqual(pathYear(a,3),{factor:0,contribution:10000});});
 test('Ramp FI is available as a guardrail source without mutating shared plan',()=>{const paths=guardrailPaths(p,[{action:'even',amount:0,years:null}],{mode:'time'},{mode:'amount',years:30},rampDefaults);assert.equal(paths.ramp.label,'Ramp Fi');assert.equal(paths.ramp.periods[0].action,'ramp');});
+
+test('shape preserves endpoints and orders intermediate income and expense coverage',async()=>{
+ const {shapedRampIncomes}=await import('./ramp-fi.js');
+ const curves=[-1,0,1].map(shape=>shapedRampIncomes(0,80000,10,shape));
+ for(const curve of curves){assert.equal(curve.length,11);assert.equal(curve[0],0);assert.equal(curve[10],80000);assert.ok(curve.every((v,i)=>i===0||v>=curve[i-1]));}
+ assert.equal(curves[1][5],40000);assert.ok(curves[0][5]>curves[1][5]);assert.ok(curves[2][5]<curves[1][5]);
+ const coverage=curves.map(incomes=>rampCoverage({...rampDefaults,years:10,custom:true,incomes}));assert.ok(coverage[0]<coverage[1]&&coverage[1]<coverage[2]);
+ assert.deepEqual(shapedRampIncomes(10000,80000,1,1),[10000,80000]);
+ assert.equal(shapedRampIncomes(10000,10000,50,-1).every(v=>v===10000),true);
+ assert.throws(()=>shapedRampIncomes(0,80000,0,0));
+});

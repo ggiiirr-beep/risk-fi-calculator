@@ -168,3 +168,10 @@ body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{b
 .ramp-income-row .input-wrap input{padding-left:23px;padding-right:5px}
 .ramp-income-row .input-wrap .prefix{left:8px}
 .content-panel .ramp-income-editor h3{margin:0 0 4px}
+
+.ramp-shape-control{max-width:420px;margin:8px 0 4px}
+.ramp-shape-control label{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;font-weight:600}
+.ramp-shape-control output{color:var(--muted);font-weight:400}
+.ramp-shape-control input[type=range]{display:block;width:100%;margin:6px 0;height:20px}
+.ramp-shape-labels{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+.ramp-shape-control small{display:block;font-size:.7rem;color:var(--muted);margin-top:4px}

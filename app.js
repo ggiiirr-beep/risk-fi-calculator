@@ -1,5 +1,5 @@
 import {planStorage,mountStorageControls} from './privacy-storage.js?v=20261102-privacy';
-import {rampDefaults,rampPeriods,rampIncome,rampCoverage,projectRamp} from './ramp-fi.js?v=20261102-ramp2';
+import {rampDefaults,shapedRampIncomes,rampPeriods,rampIncome,rampCoverage,projectRamp} from './ramp-fi.js?v=20261102-shape';
 import {guardrailPaths} from './guardrail-paths.js?v=20261102-ramp2';
 import {comparePaths} from './path-comparison.js?v=20261102-ramp2';
 import {comparisonQuestions as universalQuestions,runScenario,comparisonRows} from './scenario-comparison.js?v=20261102-rampcompare';
@@ -433,7 +433,9 @@ function coastResults(p){charts=[];try{
  bindProjectionView('coast');$$('[data-dollars]').forEach(b=>b.onclick=()=>{nominal=b.dataset.dollars==='nominal';persist();coastResults(p);});drawCharts();
  }catch(e){$('#coast-results').innerHTML='<section class="panel content-panel" role="alert"></section>';$('#coast-results section').textContent=e.message;}}
 
-function steadyRamp(settings){if(!Number.isInteger(settings.years)||settings.years<1||settings.years>50)return false;settings.incomes=Array.from({length:settings.years+1},(_,i)=>settings.startIncome+(settings.endIncome-settings.startIncome)*i/settings.years);settings.custom=false;return true;}
+function steadyRamp(settings,shape=settings.shape||0){if(!Number.isInteger(settings.years)||settings.years<1||settings.years>50||![settings.startIncome,settings.endIncome].every(v=>Number.isFinite(v)&&v>=0))return false;settings.shape=shape;settings.incomes=shapedRampIncomes(settings.startIncome,settings.endIncome,settings.years,shape);settings.custom=shape!==0;settings.yearEdits=false;return true;}
+function rampShapeLabel(settings){return settings.yearEdits?'Custom yearly amounts':settings.shape<0?'Faster start':settings.shape>0?'Slower start':'Steady';}
+
 function rampIncomeLimit(settings=ramp){return Math.ceil(Math.max(100000,settings.spending*2,...settings.incomes.filter(Number.isFinite).map(v=>v*1.25))/10000)*10000;}
 function rampIncomePreview(settings=ramp,scope='ramp'){
  const host=$('#'+scope+'-income-preview');if(!host)return;
@@ -441,11 +443,15 @@ function rampIncomePreview(settings=ramp,scope='ramp'){
  const x=i=>L+i/Math.max(1,vals.length-1)*(W-L-R),y=v=>H-B-v/max*(H-T-B),points=vals.map((v,i)=>x(i)+','+y(v)).join(' ');
  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="group" aria-label="Annual income by year. Drag dots up or down to edit."><line x1="${L}" x2="${W-R}" y1="${y(settings.spending)}" y2="${y(settings.spending)}" stroke="var(--muted)" stroke-dasharray="5 4"/><text x="${L}" y="${Math.max(12,y(settings.spending)-6)}" fill="var(--muted)" font-size="12">Spending ${money(settings.spending)}/year</text><polyline points="${points}" fill="none" stroke="var(--purple)" stroke-width="3"/>${vals.map((v,i)=>`<circle data-income-point="${i}" tabindex="0" role="slider" aria-label="${i===0?'Starting':'Year '+i} annual income graph point" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${v}" aria-valuetext="${money(v)} per year" cx="${x(i)}" cy="${y(v)}" r="6" fill="var(--purple)" stroke="transparent" stroke-width="20" style="cursor:ns-resize;touch-action:none"><title>${i===0?'Start':'Year '+i}: ${money(v)}/year</title></circle>${`<text x="${x(i)}" y="${H-7}" text-anchor="middle" fill="var(--muted)" font-size="12">${i===0?'Start':'Y'+i}</text>`}`).join('')}</svg>`;
 }
-function rampIncomeEditor(settings=ramp,scope='ramp'){return `<section class="ramp-income-editor"><h3>Your income by year</h3><div class="ramp-income-scroll"><div class="ramp-income-track" style="--year-count:${settings.incomes.length};min-width:${settings.incomes.length*110}px"><div class="ramp-income-preview" id="${scope}-income-preview"></div><div class="ramp-income-rows">${settings.incomes.map((v,i)=>`<div class="ramp-income-row"><label for="${scope}-slider-${i}">${i===0?'Start':'Year '+i}</label><input id="${scope}-slider-${i}" type="range" aria-orientation="vertical" min="0" max="${rampIncomeLimit(settings)}" step="500" value="${v}" aria-label="${i===0?'Starting':'Year '+i} annual income slider" aria-valuetext="${money(v)} per year">${field(scope+'-income-'+i,i===0?'Starting income':'Year '+i+' income',v,{prefix:'$',min:0})}</div>`).join('')}</div></div></div></section>`;}
+function rampIncomeEditor(settings=ramp,scope='ramp'){return `<section class="ramp-income-editor"><h3>Your income by year</h3><div class="ramp-shape-control"><label for="${scope}-shape">Ramp shape <output id="${scope}-shape-label">${rampShapeLabel(settings)}</output></label><input id="${scope}-shape" type="range" min="-1" max="1" step="0.05" value="${settings.shape||0}" aria-label="Ramp shape" aria-valuetext="${rampShapeLabel(settings)}" aria-describedby="${scope}-shape-note"><div class="ramp-shape-labels"><span>Faster start</span><span>Steady</span><span>Slower start</span></div><small id="${scope}-shape-note">Changing shape replaces individual year edits.</small></div><div class="ramp-income-scroll"><div class="ramp-income-track" style="--year-count:${settings.incomes.length};min-width:${settings.incomes.length*110}px"><div class="ramp-income-preview" id="${scope}-income-preview"></div><div class="ramp-income-rows">${settings.incomes.map((v,i)=>`<div class="ramp-income-row"><label for="${scope}-slider-${i}">${i===0?'Start':'Year '+i}</label><input id="${scope}-slider-${i}" type="range" aria-orientation="vertical" min="0" max="${rampIncomeLimit(settings)}" step="1" value="${v}" aria-label="${i===0?'Starting':'Year '+i} annual income slider" aria-valuetext="${money(v)} per year">${field(scope+'-income-'+i,i===0?'Starting income':'Year '+i+' income',v,{prefix:'$',min:0})}</div>`).join('')}</div></div></div></section>`;}
 
 function bindRampIncomeEditor(settings,scope,onChange,onResults){
- let incomeTimer;const refreshIncome=()=>{settings.custom=true;onChange();rampIncomePreview(settings,scope);clearTimeout(incomeTimer);incomeTimer=setTimeout(onResults,120);};
+ let incomeTimer;const refreshIncome=()=>{settings.custom=true;settings.yearEdits=true;$('#'+scope+'-shape-label').textContent=rampShapeLabel(settings);onChange();rampIncomePreview(settings,scope);clearTimeout(incomeTimer);incomeTimer=setTimeout(onResults,120);};
  settings.incomes.forEach((v,i)=>{const el=$('#'+scope+'-income-'+i),slider=$('#'+scope+'-slider-'+i);if(!el||!slider)return;slider.oninput=()=>{settings.incomes[i]=Number(slider.value);el.value=formatAmount(settings.incomes[i]);slider.setAttribute('aria-valuetext',money(settings.incomes[i])+' per year');refreshIncome();};el.oninput=()=>{settings.incomes[i]=readNumber(el.value);$$('[id^="'+scope+'-slider-"]').forEach(range=>range.max=rampIncomeLimit(settings));slider.value=settings.incomes[i]??0;slider.setAttribute('aria-valuetext',money(settings.incomes[i])+' per year');refreshIncome();};});rampIncomePreview(settings,scope);
+ const shape=$('#'+scope+'-shape');
+ shape.oninput=()=>{if(!steadyRamp(settings,Number(shape.value)))return;onChange();
+ settings.incomes.forEach((v,i)=>{const slider=$('#'+scope+'-slider-'+i),amount=$('#'+scope+'-income-'+i);slider.max=rampIncomeLimit(settings);slider.value=v;slider.setAttribute('aria-valuetext',money(v)+' per year');amount.value=formatAmount(v);});
+ shape.setAttribute('aria-valuetext',rampShapeLabel(settings));$('#'+scope+'-shape-label').textContent=rampShapeLabel(settings);rampIncomePreview(settings,scope);clearTimeout(incomeTimer);incomeTimer=setTimeout(onResults,120);};
  const preview=$('#'+scope+'-income-preview');
  if(preview){
   const observer=new ResizeObserver(()=>{if(preview.isConnected)rampIncomePreview(settings,scope);else observer.disconnect();});observer.observe(preview);
@@ -476,7 +482,7 @@ function renderRamp(){
  for(const key of ['fiWithdrawals','fiRate'])$('#ramp-'+key).onchange=e=>{const value=readNumber(e.target.value);if(value===null||value<=0||(key==='fiRate'&&value>100)){e.target.setCustomValidity('Enter a positive value'+(key==='fiRate'?' up to 100%.':'.'));e.target.reportValidity();return;}state[key]=value/(key==='fiRate'?100:1);state.separateFiWithdrawals=true;persist();rebuildInputs();update();};
  for(const key of ['spending','startIncome','endIncome','years','cashStrategy']){const el=$('#ramp-'+key);el.onchange=()=>{ramp[key]=key==='cashStrategy'?el.value:readNumber(el.value);if(['years','startIncome','endIncome'].includes(key))steadyRamp(ramp);persist();renderRamp();};}
  bindRampYears($('#ramp-years'),ramp,'ramp',persist,()=>rampResults(p));
- $('#ramp-steady-reset').onclick=()=>{steadyRamp(ramp);persist();renderRamp();};
+ $('#ramp-steady-reset').onclick=()=>{steadyRamp(ramp,0);persist();renderRamp();};
  bindRampIncomeEditor(ramp,'ramp',persist,()=>rampResults(p));rampResults(p);
 }
 function rampResults(p){charts=[];try{
@@ -519,7 +525,7 @@ function renderUniversalComparison(){
  const i=d.active,t=d.scenarios[i].settings;
  bindRampIncomeEditor(t,'scenario'+i,()=>{},universalResults);
  $$('[data-edit-scenario]').forEach(b=>b.onclick=()=>{d.active=+b.dataset.editScenario;renderUniversalComparison();});
- $('#scenario-steady-reset').onclick=()=>{steadyRamp(t);renderUniversalComparison();};
+ $('#scenario-steady-reset').onclick=()=>{steadyRamp(t,0);renderUniversalComparison();};
  d.scenarios.slice(0,d.count).forEach((c,i)=>{const t=c.settings;for(const key of ['startIncome','endIncome','years']){const el=document.getElementById('uc-'+i+'-settings.'+key);el.oninput=()=>{const value=readNumber(el.value);if(value!==null&&value>=0&&(key!=='years'||(Number.isInteger(value)&&value>=1&&value<=50))){el.setCustomValidity('');t[key]=value;steadyRamp(t);universalResults();}};el.onblur=()=>{const value=readNumber(el.value);if(value===null||value<0||(key==='years'&&(!Number.isInteger(value)||value<1||value>50))){el.setCustomValidity('Enter a valid '+(key==='years'?'duration from 1 to 50 whole years.':'nonnegative amount.'));el.reportValidity();return;}t[key]=value;steadyRamp(t);renderUniversalComparison();};}bindRampYears(document.getElementById('uc-'+i+'-settings.years'),t,'scenario'+i,()=>{},universalResults);});
  }
  $('#uc-horizon').oninput=e=>{d.horizon=readNumber(e.target.value);universalResults();};

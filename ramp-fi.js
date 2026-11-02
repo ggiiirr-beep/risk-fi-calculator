@@ -11,3 +11,10 @@ export function rampPeriods(settings){
 export function rampIncome(settings,year){const periods=rampPeriods(settings);let start=0;for(const p of periods){if(p.action!=='ramp')break;if(year<=start+p.years)return settings.spending+p.amount+(p.endAmount-p.amount)*Math.max(0,year-start)/p.years;start+=p.years;}return periods.at(-2).endAmount+settings.spending;}
 export function rampCoverage(settings){const periods=rampPeriods(settings);let start=0;for(const p of periods){if(p.action!=='ramp')break;if(p.amount>=0)return start;if(p.endAmount>=0)return start-p.amount*p.years/(p.endAmount-p.amount);start+=p.years;}return null;}
 export function projectRamp(plan,settings,options={}){return projectGap({...plan,adjustWithdrawals:true,cashStrategy:settings.cashStrategy||'first'},rampPeriods(settings),options);}
+
+// Shape is a bounded power curve sampled at each annual endpoint.
+export function shapedRampIncomes(start,end,years,shape=0){
+ if(!Number.isInteger(years)||years<1||years>50||![start,end,shape].every(Number.isFinite)||start<0||end<0||Math.abs(shape)>1)throw Error('Invalid ramp shape inputs.');
+ const exponent=4**shape;
+ return Array.from({length:years+1},(_,i)=>i===0?start:i===years?end:Math.round(start+(end-start)*(i/years)**exponent));
+}
