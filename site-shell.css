@@ -156,3 +156,15 @@ body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{b
 .ramp-scenario-card{padding:14px}
 .ramp-scenario-card h3{margin:0 0 10px}
 .ramp-scenario-card .field{margin-bottom:10px}
+
+/* Compact height; every year remains in one aligned horizontal scroller. */
+.ramp-income-editor svg{height:110px}
+.ramp-income-row input[type=range]{height:60px;min-height:60px}
+.ramp-income-row{gap:4px;padding-bottom:2px}
+.ramp-income-scroll{scrollbar-width:auto;scrollbar-color:var(--muted) var(--surface2)}
+.ramp-income-scroll::-webkit-scrollbar{height:10px}
+.ramp-income-scroll::-webkit-scrollbar-track{background:var(--surface2)}
+.ramp-income-scroll::-webkit-scrollbar-thumb{background:var(--muted);border-radius:5px}
+.ramp-income-row .input-wrap input{padding-left:23px;padding-right:5px}
+.ramp-income-row .input-wrap .prefix{left:8px}
+.content-panel .ramp-income-editor h3{margin:0 0 4px}
