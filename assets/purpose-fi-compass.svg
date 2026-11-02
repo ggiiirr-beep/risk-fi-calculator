@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs><linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#328ba9"/><stop offset=".55" stop-color="#185a82"/><stop offset="1" stop-color="#102e51"/></linearGradient><linearGradient id="rim" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#bcecf1"/><stop offset="1" stop-color="#5da9c2"/></linearGradient><linearGradient id="path" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#e6a51b"/><stop offset="1" stop-color="#ffe39b"/></linearGradient></defs>
+<rect x="1" y="3" width="62" height="60" rx="16" fill="#0a2844"/><rect x="1" y="1" width="62" height="60" rx="16" fill="url(#tile)"/><rect x="2" y="2" width="60" height="58" rx="15" fill="none" stroke="#fff" stroke-opacity=".22"/>
+<circle cx="32" cy="31" r="21" fill="#0c3557" fill-opacity=".55" stroke="url(#rim)" stroke-width="2"/>
+<path d="M32 12v4m19 15h-4M32 50v-4M13 31h4" stroke="#d5f1f3" stroke-width="2" stroke-linecap="round"/>
+<path d="M22 46c-1-9 8-8 8-15 0-5 5-7 10-12" fill="none" stroke="#081f36" stroke-opacity=".5" stroke-width="5" stroke-linecap="round" transform="translate(0 2)"/>
+<path d="M22 44c-1-9 8-8 8-15 0-4 5-6 10-10" fill="none" stroke="url(#path)" stroke-width="4" stroke-linecap="round"/>
+<path d="m33 18 11-3-3 11-2-6Z" fill="#ffdb73" stroke="#ffdb73" stroke-linejoin="round"/>
+</svg>
