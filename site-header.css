@@ -21,7 +21,9 @@ img[src*="purpose-fi-sun-compass"]{clip-path:inset(1% round 23%)}
 .podcast-header nav img{width:30px;height:30px}
 @media(max-width:740px){.calculator-title>img{width:56px;height:56px}.calculator-title{min-width:0}.calculator-title h1{overflow-wrap:break-word}}
 
-/* Calculator identity, with the podcast still one click away. */
-header.calculator-header{grid-template-columns:minmax(0,1fr) 520px}
-.calculator-header nav{width:520px;grid-template-columns:270px 240px}
-@media(max-width:900px){header.calculator-header{grid-template-columns:minmax(0,1fr);grid-template-rows:48px auto;gap:6px}.calculator-header nav{width:100%;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);height:auto;border-top:1px solid #ffffff40;padding-top:4px;justify-self:stretch}.calculator-header nav a{height:auto;min-height:44px;font-size:13px;padding:6px 8px;gap:6px}}
+/* Calculator identity and one link back to the podcast. */
+header.calculator-header{grid-template-columns:minmax(0,1fr) 270px}
+.calculator-header nav{width:270px;grid-template-columns:minmax(0,1fr)}
+.calculator-page .page-heading{justify-content:flex-end;margin:0 0 12px}
+.calculator-accessible-title{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:600px){header.calculator-header{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto;gap:12px;padding:8px 12px}.calculator-header .podcast-brand{gap:8px;font-size:.7rem}.calculator-header nav{width:100%;height:auto;border:0;padding:0}.calculator-header nav a{height:auto;min-height:44px;font-size:12px;padding:6px 8px;gap:6px}}
