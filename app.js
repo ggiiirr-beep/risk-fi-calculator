@@ -1,3 +1,4 @@
+import {guardrailPaths} from './guardrail-paths.js';
 import {comparePaths} from './path-comparison.js';
 import {comparisonQuestions as universalQuestions,runScenario,comparisonRows} from './scenario-comparison.js';
 import {planTimeline,fundingChart} from './plan-visuals.js';
@@ -8,7 +9,7 @@ import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261102-asse
 import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261023-1';
 import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261023-1';
 import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261023-1';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261102-assets-lifetime';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261102-paths';
 import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261023-1';
 import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261023-1';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -230,7 +231,7 @@ function bindView(){
 }
 function update(){renderSectionTools();renderToolSetup();if(!['guardrails','position'].includes(tab))leaveGuardrails();$('.workspace').dataset.view=tab;charts=[];worker?.terminate();clearTimeout(riskTimer);try{
  if(['guardrails','position'].includes(tab)){
- const shared=guardrailPlanInputs(baselinePlan(state));
+ const shared={...guardrailPlanInputs(baselinePlan(state)),paths:guardrailPaths(baselinePlan(state),gapPeriods,gapSettings,coast)};
  connectGuardrailPlan(shared,()=>navigate('numbers'),nominal,value=>{nominal=value;persist();},(key,value)=>{
  const edited=editConnectedPlan(baselinePlan(state),key,value);
  for(const k of ['portfolio','cash','fiWithdrawals','fiRate','nominal','inflation','cashNominal'])state[k]=edited[k];syncAssets(state);
