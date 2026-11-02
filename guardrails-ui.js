@@ -133,7 +133,7 @@ function drawResults(){
 }
 const chartTimeModes={};
 function plot(selector,series,{label,format=money,xFormat=number,xLabel='Year',yMax=null}={}){
- const originalOptions={label,format,xFormat,xLabel,yMax},timeline=['Year','Years elapsed'].includes(xLabel),timeMode=chartTimeModes[selector]??assumptions.sourceTimeEntry;
+ const originalOptions={label,format,xFormat,xLabel,yMax},timeline=['Year','Years elapsed'].includes(xLabel),timeMode=chartTimeModes[selector]??(Number.isFinite(assumptions.sourceAge)?'age':'years');
  if(timeline&&timeMode==='age'&&Number.isFinite(assumptions.sourceAge)){xFormat=v=>number(assumptions.sourceAge+v);xLabel='Age';}
  const host=root.querySelector(selector),W=Math.max(300,Math.min(820,host.clientWidth||820)),H=310,L=85,R=20,T=20,B=48,points=series.flatMap(s=>s.points),minX=Math.min(...points.map(p=>p.x)),maxX=Math.max(minX+1e-9,...points.map(p=>p.x)),maxY=yMax??Math.max(1e-9,...points.map(p=>p.high??p.y))*1.08;
  const x=v=>L+(v-minX)/(maxX-minX)*(W-L-R),y=v=>H-B-v/maxY*(H-T-B);

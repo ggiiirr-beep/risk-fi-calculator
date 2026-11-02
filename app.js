@@ -97,7 +97,7 @@ function timingNotice(p,q){const eventual=outcome(p);const funded=q.unfunded<.01
 let charts=[],assetChartView='all';
 const chartTimeModes={};
 function chart(id,rows,series,{percentAxis=false,marker=null,point=null,start=today,boundaries=[]}={}){
- const age=(chartTimeModes[id]??state.timeEntry)==='age'&&Number.isFinite(state.age)&&['plan','gap','traditional','coast','paths','compare','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
+ const age=(chartTimeModes[id]??(Number.isFinite(state.age)?'age':'years'))==='age'&&Number.isFinite(state.age)&&['plan','gap','traditional','coast','paths','compare','scenarios','withdrawals','dates'].includes(tab)?state.age:null;
  charts.push({id,rows,series,percentAxis,marker,point,start,age,boundaries});
  return `<div class="chart-timeline" role="group" aria-label="Chart timeline"><span>Timeline</span>${['years','age'].map(mode=>`<button type="button" data-chart-time="${mode}" data-chart-id="${id}" aria-pressed="${(age!==null?'age':'years')===mode}" ${mode==='age'&&!Number.isFinite(state.age)?'disabled':''}>${mode==='age'?'Age':'Years from now'}</button>`).join('')}</div><div class="chart" id="${id}" aria-label="${id.replaceAll('-',' ')}"><svg role="img" aria-label="Interactive ${id.replaceAll('-',' ')}" viewBox="0 0 820 280"></svg><div class="chart-tip" hidden></div></div><div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.label}</span>`).join('')}</div><p class="chart-caption">Hover, tap, or focus the chart and use the arrow keys to inspect a year.</p>`;
 }
