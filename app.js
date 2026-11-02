@@ -58,7 +58,7 @@ function futureAssumptionRows(p){
 }
 function summaryGroup(title,rows){return `<section class="summary-group"><h4>${title}</h4><dl>${rows.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl></section>`;}
 function renderInputs(){
- const p=state;$('#inputs').innerHTML=`<div class="wide section-framing"><p>Your shared starting point. All amounts are in today’s dollars.</p></div>
+ const p=state;$('#inputs').innerHTML=`<div class="wide section-framing"><p>Your shared numbers between all your calculators. All amounts are in today’s dollars.</p></div>
  <section class="input-group numbers-assets"><h3>Your assets</h3>${assetEditor()}<button id="asset-add">Add asset</button><p class="hint">Returns before inflation. Cash is separate; other assets share withdrawals and contributions proportionally.</p></section>
  <div class="numbers-basics"><section class="input-group"><h3>Your FI goal</h3>${field('fiWithdrawals','Annual withdrawals at Traditional Fi',entry(p.fiWithdrawals),{prefix:'$',min:1})}${field('fiRate','FI withdrawal rate',entry(p.fiRate,100),{suffix:'%',min:.01,max:100})}<div class="metric"><div class="label">Traditional Fi target · today’s dollars</div><div class="value" id="fi-target-preview"></div></div></section>
  <section class="input-group"><h3>Age &amp; inflation</h3><div class="two-fields">${field('age','Current age',p.age,{min:0,max:120})}${field('inflation','Annual inflation',entry(p.inflation,100),{suffix:'%'})}</div><small class="hint" id="real-summary"></small></section></div>
