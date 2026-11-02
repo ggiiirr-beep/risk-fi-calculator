@@ -31,3 +31,7 @@ Mountain prompt: Create the standalone mountain-and-sun motif from this referenc
 Current website assets: `blue-character-photo.png` (hands together), `blue-welcome-photo.png` (wave), and `podcast-cover-blue-photo.png`. These supersede the earlier character appearances; older files remain as design history. The source photo is not included in the repository.
 
 Created with built-in image generation using the approved photo-inspired character reference. Prompts preserve blue skin, a short side-parted brown bob, pale gold softly rectangular glasses, mustard sweater and long navy skirt. The welcome variant changes only the pose to a wave. The cover replaces the character while preserving the centered title, lower-right host credit and mountain/sun design.
+
+
+## Approved smooth clothing and longer hair — November 1, 2026
+Current assets: `blue-character-smooth.png`, `blue-welcome-smooth.png`, and `podcast-cover-blue-smooth.png`. Blue has a shoulder-length near-black bob without highlights and smooth clothing without knit texture. These supersede the photo-named appearances while preserving their poses. Earlier files are retained as design history.
