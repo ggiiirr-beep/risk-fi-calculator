@@ -40,3 +40,65 @@ body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{b
 @media(max-width:600px){.ramp-income-row{flex-basis:100px}.ramp-income-row input[type=range]{height:140px;min-height:140px}}
 #ramp-income-preview{overflow-x:auto}
 @media(max-width:600px){.ramp-income-editor svg{min-width:600px;max-height:none}.ramp-income-row{flex-basis:128px}.ramp-income-row>.field{width:120px}}
+
+/* Shared calculator hierarchy: compact navigation, natural-height cards, aligned inputs. */
+.calculator-page main{padding-top:20px}
+.calculator-page .page-heading{margin-bottom:18px;gap:12px}
+.calculator-page .tabs{gap:8px;margin-bottom:18px}
+.calculator-page .tabs button,.calculator-page .numbers-next button{padding:9px 6px;gap:5px;min-height:80px}
+.calculator-page .tabs .tool-icon,.calculator-page .numbers-next .tool-icon{width:32px;height:32px;border-radius:9px}
+.calculator-page .tool-icon svg{width:24px;height:24px}
+.calculator-page .section-tools{margin:0 0 16px;gap:8px}
+.calculator-page .input-panel,.calculator-page .content-panel,.calculator-page .chart-panel{padding:20px}
+.calculator-page .field{margin-bottom:14px}
+.calculator-page .summary-grid,.calculator-page .summary-groups{align-items:start;gap:14px}
+.calculator-page .summary-group{padding:16px}
+.calculator-page .summary-group h3,.calculator-page .input-group h3{margin:0 0 12px}
+.calculator-page .content-panel>h3{margin-top:18px}
+.calculator-page .shared-details{margin:12px 0;padding:10px 14px}
+.calculator-page .answer{padding:22px}
+.calculator-page .answer h2{font-size:clamp(1.7rem,3vw,2.5rem)}
+.calculator-page .metric{padding:14px 16px}
+.calculator-page .result-divider{margin:20px 0 12px;padding-top:14px}
+.calculator-page .chart-timeline{margin:8px 0 12px}
+.calculator-page .input-panel #inputs{gap:14px;align-items:start}
+.calculator-page #inputs>.numbers-assets{grid-column:1;align-self:start}
+.calculator-page #inputs>.numbers-basics{grid-column:2;display:grid;gap:14px;min-width:0}
+.calculator-page #inputs .input-group{padding:18px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);align-self:start;min-width:0}
+.calculator-page #inputs>.numbers-future{grid-column:1/-1}
+.calculator-page #inputs .section-framing p{margin:0 0 4px}
+.calculator-page .numbers-next{margin-top:16px}
+.calculator-page .asset-row{gap:12px;padding-bottom:12px}
+.calculator-page .solved-note{padding:10px 0;margin:0 0 12px}
+.calculator-page .gap-periods{grid-template-columns:1fr;gap:12px;margin:14px 0}
+.calculator-page .gap-period{display:grid;grid-template-columns:minmax(160px,1.2fr) minmax(140px,1fr) minmax(160px,1fr);gap:12px 18px;padding:16px}
+.calculator-page .gap-period>h3{grid-column:1/-1;margin:0}
+.calculator-page .gap-period>div{min-width:0}
+.calculator-page .gap-period .field,.calculator-page .gap-period .segmented{margin-bottom:8px}
+.calculator-page .gap-period>.text-button{grid-column:1/-1;justify-self:end;margin:0;padding:5px 8px}
+.calculator-page .gr-input-box{padding:16px;margin:14px 0}
+.calculator-page .gr-market{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;align-items:start}
+.calculator-page .gr-market>h3,.calculator-page .gr-market>p{grid-column:1/-1;margin:0}
+.calculator-page .gr-market>.gr-grid{display:block}
+.calculator-page .gr-market .field{margin:0}
+.calculator-page .gr-strategy{padding:16px}
+.calculator-page .gr-run{margin:16px 0}
+@media(max-width:740px){
+ .calculator-page main{padding:14px 12px}
+ .calculator-page .page-heading{display:flex;align-items:center;margin-bottom:12px}
+ .calculator-page .page-heading h1{font-size:1.6rem}
+ .calculator-page .page-heading p{margin:4px 0}
+ .calculator-page .file-actions{margin-top:0}
+ .calculator-page .tabs{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .calculator-page .tabs button{min-height:66px;padding:6px 4px;font-size:.72rem;gap:4px}
+ .calculator-page .tabs .tool-icon{width:26px;height:26px;border-radius:7px}
+ .calculator-page .tabs .tool-icon svg{width:20px;height:20px}
+ .calculator-page .tabs .help-link{grid-column:auto;min-width:0}
+ .calculator-page .tool-label{min-height:2.4em}
+ .calculator-page .input-panel,.calculator-page .content-panel,.calculator-page .chart-panel{padding:16px}
+ .calculator-page .input-panel #inputs{grid-template-columns:1fr}
+ .calculator-page #inputs>.numbers-assets,.calculator-page #inputs>.numbers-basics,.calculator-page #inputs>.numbers-future{grid-column:1}
+ .calculator-page .gap-period{grid-template-columns:1fr;padding:14px;gap:8px}
+ .calculator-page .gr-market{grid-template-columns:1fr}
+ .calculator-page .numbers-next button{flex-basis:90px;min-height:66px}
+}
