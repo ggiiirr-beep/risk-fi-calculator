@@ -3,26 +3,14 @@
 .audio-privacy-note{display:block;font-size:12px;line-height:1.4;margin:6px 0}.episode audio[hidden]{display:none}
 .episode>button{border:1px solid #81a7bb;border-radius:24px;background:#eef5f8;color:#123344;font-family:inherit;font-size:14px;font-weight:600;line-height:1.2;min-height:44px;padding:10px 18px;cursor:pointer;text-align:left}.episode>button::before{content:'▶';margin-right:10px}.episode>button:hover{background:#d9edf6}.episode>button:focus-visible{outline:3px solid #135c87;outline-offset:3px}
 
-/* Keep storage preferences beside the calculator heading, above every tool. */
-.calculator-utilities{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-left:auto;max-width:100%;min-width:0}
+.calculator-utilities{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-left:auto;max-width:100%;min-width:0}
 .calculator-utilities .local-badge{display:none}
-.calculator-utilities .storage-controls{margin:0;padding:10px 12px;max-width:490px;gap:6px 12px;font-size:13px}
-.calculator-utilities .storage-controls label{flex:1;min-width:0}
-.calculator-utilities .storage-controls input{flex-shrink:0;margin:0}
-.calculator-utilities .storage-controls button{padding:6px 9px;font-size:12px;white-space:nowrap}
-.page-heading .storage-controls p{font-size:12px;line-height:1.4}
-@media(max-width:740px){.calculator-utilities{margin-top:14px;width:100%;align-items:flex-start}.calculator-utilities .storage-controls{flex:1;max-width:none}.calculator-utilities .storage-controls label{flex-basis:100%}.calculator-utilities .icon-button{flex-shrink:0}}
-
-.storage-menu{position:relative}
-.storage-menu>summary{display:flex;align-items:center;gap:8px;list-style:none;cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;min-height:42px}
-.storage-menu>summary::-webkit-details-marker{display:none}
-.storage-menu[open]>summary{box-shadow:0 0 0 2px var(--purple)}
-.storage-chevron{margin-left:8px}
-.calculator-utilities .storage-menu .storage-controls{position:absolute;right:0;top:calc(100% + 10px);z-index:30;width:320px;max-width:calc(100vw - 40px);padding:18px;background:var(--surface);border:1px solid var(--border);box-shadow:0 12px 32px #12334426;display:flex;gap:14px}
-.calculator-utilities .storage-menu .storage-controls label{flex-basis:100%;justify-content:space-between;flex-direction:row-reverse;font-weight:600;line-height:1.5}
-.calculator-utilities .storage-menu input{appearance:none;width:36px;height:22px;border:0;border-radius:20px;background:var(--muted);position:relative;cursor:pointer}
-.storage-menu input:before{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;background:white;border-radius:50%;transition:transform .15s}
-.calculator-utilities .storage-menu input:checked{background:var(--purple)}
-.storage-menu input:checked:before{transform:translateX(14px)}
-.calculator-utilities .storage-menu button{order:2;width:100%;padding:10px;border-color:var(--border);background:var(--surface2)}
-@media(max-width:740px){.calculator-utilities{align-items:center}.storage-menu .storage-controls{right:0}.calculator-utilities .storage-menu .storage-controls{max-width:calc(100vw - 74px)}}
+.calculator-utilities .storage-inline{margin:0;padding:0;border:0;gap:10px;font-size:13px;flex-wrap:wrap}
+.storage-inline label{display:flex;align-items:center;gap:8px;font-weight:600;white-space:nowrap;min-height:40px}
+.storage-inline input{appearance:none;width:36px;height:22px;flex-shrink:0;border:0;border-radius:20px;background:var(--muted);position:relative;cursor:pointer;margin:0}
+.storage-inline input:before{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;background:white;border-radius:50%;transition:transform .15s}
+.storage-inline input:checked{background:var(--purple)}
+.storage-inline input:checked:before{transform:translateX(14px)}
+.storage-inline button{padding:9px 12px;font-size:12px;min-height:40px;white-space:nowrap}
+.storage-inline .storage-status{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:740px){.calculator-utilities{margin-top:12px;width:100%;justify-content:flex-start;gap:8px}.calculator-utilities .storage-inline{flex:1;gap:6px 10px}.calculator-utilities .icon-button{flex-shrink:0}}
