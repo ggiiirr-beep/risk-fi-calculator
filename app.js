@@ -9,7 +9,7 @@ import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261102-asse
 import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261023-1';
 import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261023-1';
 import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261023-1';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261102-paths';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261102-paths-2';
 import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261023-1';
 import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261023-1';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
