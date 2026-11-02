@@ -6,3 +6,6 @@ body.calculator-page{background:#c6e0f3;min-height:100vh}.podcast-context{font-f
 
 /* Shared podcast mark includes its own rounded gradient tile. */
 .podcast-brand svg{padding:0;background:none;border:0;box-shadow:none}
+
+/* Self-contained image keeps the tile gradient consistent across browsers. */
+.podcast-brand .podcast-brand-icon{display:block;width:48px;height:48px;flex-shrink:0;align-self:center}
