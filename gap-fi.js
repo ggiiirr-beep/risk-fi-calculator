@@ -1,3 +1,4 @@
+import {periodFlows,validatePeriod} from './period-flows.js';
 import {createLedger,ledgerTotal,growLedger,changeLedger} from './plan-assets.js';
 import {validateChanges,futureFlows} from './future-changes.js';
 import {cashAmount,expectedReturn,realReturn,fiTarget} from './finance.js';
@@ -8,7 +9,7 @@ export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true,retirement
  if(!periods.length||periods.at(-1).years!==null)throw Error('End your timeline with an Until FI period.');
  let duration=0;
  for(const [i,p] of periods.entries()){
-  if(!['withdraw','even','contribute'].includes(p.action)||!Number.isFinite(p.amount)||p.amount<0)throw Error('Enter a nonnegative annual amount for each period.');
+  validatePeriod(p);
   if(p.years===null){if(i!==periods.length-1)throw Error('Until FI must be the last period.');}
   else {if(!Number.isInteger(p.years)||p.years<1||p.years>100)throw Error('Period lengths must be whole years from 1 to 100.');duration+=p.years;}
  }
@@ -25,11 +26,11 @@ export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true,retirement
   growLedger(ledger,plan.inflation,1/12);const flows=futureFlows(plan.futureChanges,start,year,plan.inflation);changeLedger(ledger,flows.addition);
   investment=ledgerTotal(ledger);cash=ledgerTotal(ledger,true);
   const retired=retirementAt!==null&&start+1e-9>=retirementAt;
-  const action=retired?'withdraw':p.action;
-  const amount=retired?target*plan.fiRate/12:(start>=(plan.coastAt??Infinity)?0:p.amount)/12/(plan.adjustWithdrawals===false?Math.pow(1+plan.inflation,year):1);
-  if(action==='contribute'){changeLedger(ledger,amount);investment=ledgerTotal(ledger);contributions+=amount;nominalContributions+=amount*Math.pow(1+plan.inflation,year);}
+  const offset=index===0?0:boundaries[index-1],phase=p.action==='ramp'?periodFlows(p,start-offset,year-offset):{withdrawal:p.action==='withdraw'?p.amount/12:0,contribution:p.action==='contribute'?p.amount/12:0},price=plan.adjustWithdrawals===false?Math.pow(1+plan.inflation,year):1;
+  const contribution=retired||start>=(plan.coastAt??Infinity)?0:phase.contribution/price;
+  if(contribution>0){changeLedger(ledger,contribution);investment=ledgerTotal(ledger);contributions+=contribution;nominalContributions+=contribution*Math.pow(1+plan.inflation,year);}
   periodIncome+=flows.income;periodExpense+=flows.expense;
-  const requested=action==='withdraw'?amount:0,net=Math.max(0,requested-flows.income)+flows.expense;
+  const requested=retired?target*plan.fiRate/12:phase.withdrawal/price,net=Math.max(0,requested-flows.income)+flows.expense;
   periodRequested+=requested;periodIncomeUsed+=Math.min(requested,flows.income);const surplus=Math.max(0,flows.income-requested);periodSurplus+=surplus;const flowPrice=(1+plan.inflation)**year;nominalIncomeUsed+=Math.min(requested,flows.income)*flowPrice;nominalSurplus+=surplus*flowPrice;nominalRequested+=requested*flowPrice;nominalExpense+=flows.expense*flowPrice;changeLedger(ledger,surplus,true);cash=ledgerTotal(ledger,true);
   if(net>0){
    let need=net;

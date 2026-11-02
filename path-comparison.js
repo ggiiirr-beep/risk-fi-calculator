@@ -1,3 +1,4 @@
+import {projectRamp} from './ramp-fi.js';
 import {project,solve,resolveWithdrawals,fiTarget} from './finance.js';
 import {projectGap} from './gap-fi.js';
 import {coastProjection} from './coast-fi.js';
@@ -12,6 +13,7 @@ export function comparePaths(input,settings,horizon=30,keys=['plan','gap','coast
   if(key==='plan'){
    p={...state,...s.risk};p=resolveWithdrawals(p);const solved=solve(p,'time');if(solved.error)throw Error(solved.error);arrival=solved.value;
    projection=project(p,{years:horizon});through=project(p,{years:arrival});
+  }else if(key==='ramp'){through=projectRamp(p,s.ramp);arrival=through.reached;projection=projectRamp(p,s.ramp,{maxYears:horizon,stopAtGoal:false});
   }else if(key==='gap'){
    p={...base,...s.gap,adjustWithdrawals:s.gap.adjust};through=projectGap(p,s.periods);arrival=through.reached;projection=projectGap(p,s.periods,{maxYears:horizon,stopAtGoal:false});
   }else if(key==='traditional'){

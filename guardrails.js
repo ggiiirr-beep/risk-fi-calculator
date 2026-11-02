@@ -1,3 +1,4 @@
+import {validatePeriod} from './period-flows.js';
 import {pathYear,hasFutureWithdrawals} from './guardrail-paths.js';
 import {bondYears} from './bond-history.js';
 import {validateChanges,futureFlows} from './future-changes.js';
@@ -22,7 +23,7 @@ export function feasibility(model,investment,cash,planned,years,floor,target){
 }
 export function validateGuardrails(a,strategies=defaultStrategies){
  validateChanges(a.futureChanges);
- if(a.pathPeriods){if(a.goal!=='fi'||!a.pathPeriods.length||a.pathPeriods.at(-1).years!==null)throw Error('A path must end with an Until FI period.');for(const [i,p] of a.pathPeriods.entries())if(!['withdraw','contribute','even'].includes(p.action)||!Number.isFinite(p.amount)||p.amount<0||(p.years===null?i!==a.pathPeriods.length-1:!Number.isFinite(p.years)||p.years<=0))throw Error('Check path periods and amounts.');if(!Number.isFinite(a.pathWithdrawalBase)||a.pathWithdrawalBase<=0)throw Error('Invalid path withdrawal scale.');}
+ if(a.pathPeriods){if(a.goal!=='fi'||!a.pathPeriods.length||a.pathPeriods.at(-1).years!==null)throw Error('A path must end with an Until FI period.');for(const [i,p] of a.pathPeriods.entries())if(!['withdraw','contribute','even','ramp'].includes(p.action)||!Number.isFinite(p.amount)||(p.action!=='ramp'&&p.amount<0)||(p.years===null?i!==a.pathPeriods.length-1:!Number.isFinite(p.years)||p.years<=0))throw Error('Check path periods and amounts.');for(const p of a.pathPeriods)validatePeriod(p);if(!Number.isFinite(a.pathWithdrawalBase)||a.pathWithdrawalBase<=0)throw Error('Invalid path withdrawal scale.');}
  if(!Number.isFinite(a.bondWeight??0)||(a.bondWeight??0)<0||(a.bondWeight??0)>1)throw Error('Bond allocation must be between 0% and 100%.');
  for(const k of ['portfolio','years','stockMean','stockVol','inflation','cashReturn','reserveYears','floor','count','innerCount','seed'])if(!Number.isFinite(a[k]))throw Error('Enter a number for '+k+'.');
  if(!Number.isFinite(a.endingBalance??0)||(a.endingBalance??0)<0||(a.endingBalance??0)>1e12)throw Error('Ending balance must be between $0 and $1 trillion, in today’s dollars.');
