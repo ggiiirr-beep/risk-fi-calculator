@@ -53,3 +53,7 @@ footer{flex-wrap:wrap}footer .footer-listen{padding:0;gap:10px}footer .listen-ba
 
 /* Give the callout title the full line on narrow phones. */
 @media(max-width:380px){.calculator-callout{flex-direction:column;align-items:flex-start}.calculator-callout>div{flex-basis:auto;width:100%}.calculator-callout>.calculator-callout-icon{width:48px;height:48px}.calculator-callout>.button{width:100%}}
+
+/* Let the mountain artwork fill the open center of the hero. */
+@media(min-width:601px){.hero-mountain{width:54%;max-width:660px;right:max(4%,calc((100% - 1180px)/2));top:52%}}
+@media(max-width:600px){.hero-mountain{width:43%;right:2%}}
