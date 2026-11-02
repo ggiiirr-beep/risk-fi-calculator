@@ -91,3 +91,9 @@ The current-position withdrawal check is removed from the interface (20261014-8)
 
 ### Two-step guardrails (20261014-25)
 Starting withdrawals are solved from confidence targets, preserving entered assets and cash. Unattainable targets remain explicit. Simulations start at those calculated amounts and summarize observed success, withdrawals, cut likelihood/severity and zero-withdrawal periods, with fixed/zero references on the same paths. Custom historical volatility is a calibrated positive-gross-return transformation, not unchanged historical data. All data is U.S. stock/inflation history; model probabilities are not guarantees.
+
+### Calculator routes
+
+Calculator pages live under `purpose-fi/`, including `your-numbers/`, `risk-fi/`, `gap-fi/`, `ramp-fi/`, `coast-fi/`, `traditional-fi/`, `compare-paths/` and `help/`. Legacy calculator.html hash links are upgraded in the browser. Risk-Based Guardrails is unlisted at `purpose-fi/risk-based-guardrails/`; its implementation is retained.
+
+After editing calculator.html, run `node scripts/generate-routes.mjs` (also run by `npm run build`) and commit the generated route shells. GitHub Pages serves these files from the repository root, so direct visits and refreshes do not depend on server rewrites.
