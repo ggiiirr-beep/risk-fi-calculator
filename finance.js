@@ -1,5 +1,5 @@
-import {createLedger,ledgerTotal,growLedger,changeLedger} from './plan-assets.js';
-import {validateChanges,futureFlows,changeBoundaries} from './future-changes.js';
+import {createLedger,ledgerTotal,growLedger,changeLedger} from './plan-assets.js?v=20261102-ramp2';
+import {validateChanges,futureFlows,changeBoundaries} from './future-changes.js?v=20261102-ramp2';
 /** All engine amounts are real, today's dollars. Rates are decimal annual rates. */
 export const defaults = {portfolio:1000000,spending:60000,withdrawalMode:'dollars',withdrawalRate:.06,separateFiWithdrawals:false,fiWithdrawals:60000,nominal:.09,inflation:.025,real:.06341463414634152,returnMode:'nominal',fiRate:.04,targetOverride:false,target:1500000,years:10,age:35,cash:100000,cashYears:1.6666666667,cashMode:'dollars',cashNominal:.035,cashStrategy:'reserve',cashMinimum:0,income:0,incomeStart:0,incomeEnd:10,timing:'end',poor:.02,strong:.09};
 export const realReturn = (nominal,inflation)=>(1+nominal)/(1+inflation)-1;

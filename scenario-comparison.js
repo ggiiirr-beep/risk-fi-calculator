@@ -1,7 +1,7 @@
-import {solve,project,fiTarget,resolveWithdrawals} from './finance.js';
-import {projectGap,solveGapAmount} from './gap-fi.js';
-import {traditionalProjection,contributionNeeded} from './traditional-fi.js';
-import {solveCoast,coastProjection} from './coast-fi.js';
+import {solve,project,fiTarget,resolveWithdrawals} from './finance.js?v=20261102-ramp2';
+import {projectGap,solveGapAmount} from './gap-fi.js?v=20261102-ramp2';
+import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261102-ramp2';
+import {solveCoast,coastProjection} from './coast-fi.js?v=20261102-ramp2';
 export const comparisonQuestions={plan:{time:'When will I reach FI?',spending:'Withdrawal amount',portfolio:'Investment needed',return:'Return needed'},gap:{time:'When will I reach FI?',withdraw:'Withdrawal amount',contribute:'Contribution amount'},traditional:{time:'When will I reach FI?',contribution:'Contributions needed'},coast:{amount:'Investments needed to coast now',time:'When can I stop contributing?',retirement:'FI date without contributions',arrival:'FI date with a chosen coast date'}};
 export function runScenario(source,question,scenario,horizon=30){
  try{

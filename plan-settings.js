@@ -1,4 +1,4 @@
-import {nominalReturn} from './finance.js';
+import {nominalReturn} from './finance.js?v=20261102-ramp2';
 // Retire hidden settings without changing a saved return or custom FI balance.
 export function simplifyPlan(plan){
  return {...plan,fiBasis:'total',adjustWithdrawals:plan.adjustWithdrawals!==false,afterFIYears:plan.afterFIYears??30,timeEntry:plan.timeEntry==='age'?'age':'years',

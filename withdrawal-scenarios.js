@@ -1,4 +1,4 @@
-import {cashAmount,traditionalWithdrawals,resolveWithdrawals,project,solve} from './finance.js';
+import {cashAmount,traditionalWithdrawals,resolveWithdrawals,project,solve} from './finance.js?v=20261102-ramp2';
 /** Change only Risk FI withdrawals; retain the actual starting cash and FI goal. */
 export function compareWithdrawals(plan,values,question='time'){
  const percentage=plan.withdrawalMode!=='dollars';

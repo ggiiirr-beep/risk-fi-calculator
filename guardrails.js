@@ -1,9 +1,9 @@
-import {validatePeriod} from './period-flows.js';
-import {pathYear,hasFutureWithdrawals} from './guardrail-paths.js';
-import {bondYears} from './bond-history.js';
-import {validateChanges,futureFlows} from './future-changes.js';
-import {historicalYears,historySource} from './guardrail-history.js';
-import {seededRandom} from './finance.js';
+import {validatePeriod} from './period-flows.js?v=20261102-ramp2';
+import {pathYear,hasFutureWithdrawals} from './guardrail-paths.js?v=20261102-ramp2';
+import {bondYears} from './bond-history.js?v=20261102-ramp2';
+import {validateChanges,futureFlows} from './future-changes.js?v=20261102-ramp2';
+import {historicalYears,historySource} from './guardrail-history.js?v=20261102-ramp2';
+import {seededRandom} from './finance.js?v=20261102-ramp2';
 
 export const guardrailDefaults={portfolio:1000000,goal:'fi',fiBasis:'investment',endingBalance:0,blockYears:1,adjustWithdrawals:true,initialMode:'target',initialCash:null,initialWithdrawal:null,years:15,fiYears:15,retirementYears:50,fiWithdrawals:100000,fiRate:.04,stockMean:.11,stockVol:.18,inflation:.025,cashReturn:.035,reserveYears:2,floor:0,count:10000,innerCount:1024,seed:7301,model:'bootstrap',compareNoCash:false,checkInvestment:900000,checkCash:100000,checkSpending:40000,checkElapsed:0,checkInflationTotal:null,checkDollarBasis:'current'};
 export const guardrailFiTarget=a=>a.fiWithdrawals/a.fiRate;

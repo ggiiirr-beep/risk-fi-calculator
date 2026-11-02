@@ -1,10 +1,10 @@
-import {projectRamp} from './ramp-fi.js';
-import {project,solve,resolveWithdrawals,fiTarget} from './finance.js';
-import {projectGap} from './gap-fi.js';
-import {coastProjection} from './coast-fi.js';
-import {traditionalProjection} from './traditional-fi.js';
-import {futureFlows} from './future-changes.js';
-import {baselinePlan} from './plan-settings.js';
+import {projectRamp} from './ramp-fi.js?v=20261102-ramp2';
+import {project,solve,resolveWithdrawals,fiTarget} from './finance.js?v=20261102-ramp2';
+import {projectGap} from './gap-fi.js?v=20261102-ramp2';
+import {coastProjection} from './coast-fi.js?v=20261102-ramp2';
+import {traditionalProjection} from './traditional-fi.js?v=20261102-ramp2';
+import {futureFlows} from './future-changes.js?v=20261102-ramp2';
+import {baselinePlan} from './plan-settings.js?v=20261102-ramp2';
 export function comparePaths(input,settings,horizon=30,keys=['plan','gap','coast','traditional']){
  const state=structuredClone(input),s=structuredClone(settings),base=baselinePlan(state);
  if(!Number.isInteger(horizon)||horizon<1||horizon>100)throw Error('Use a chart horizon from 1 to 100 years.');

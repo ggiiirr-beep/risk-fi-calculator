@@ -1,7 +1,7 @@
-import {periodFlows,validatePeriod} from './period-flows.js';
-import {createLedger,ledgerTotal,growLedger,changeLedger} from './plan-assets.js';
-import {validateChanges,futureFlows} from './future-changes.js';
-import {cashAmount,expectedReturn,realReturn,fiTarget} from './finance.js';
+import {periodFlows,validatePeriod} from './period-flows.js?v=20261102-ramp2';
+import {createLedger,ledgerTotal,growLedger,changeLedger} from './plan-assets.js?v=20261102-ramp2';
+import {validateChanges,futureFlows} from './future-changes.js?v=20261102-ramp2';
+import {cashAmount,expectedReturn,realReturn,fiTarget} from './finance.js?v=20261102-ramp2';
 export const gapDefaults=()=>[{action:'withdraw',amount:60000,years:2},{action:'even',amount:0,years:2},{action:'contribute',amount:40000,years:null}];
 /** Monthly end-of-period flows; all balances and flows in today's dollars. */
 export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true,retirementAt=null}={}){

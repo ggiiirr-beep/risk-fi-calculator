@@ -1,7 +1,7 @@
-import {rampPeriods} from './ramp-fi.js';
-import {periodFlows} from './period-flows.js';
-import {projectGap,solveGapAmount} from './gap-fi.js';
-import {solveCoast} from './coast-fi.js';
+import {rampPeriods} from './ramp-fi.js?v=20261102-ramp2';
+import {periodFlows} from './period-flows.js?v=20261102-ramp2';
+import {projectGap,solveGapAmount} from './gap-fi.js?v=20261102-ramp2';
+import {solveCoast} from './coast-fi.js?v=20261102-ramp2';
 /** Snapshot each path without changing the shared starting balances. */
 export function guardrailPaths(plan,gapPeriods,gapSettings,coast,ramp){
  const paths={risk:{label:'Risk Fi',periods:null,years:plan.years},traditional:{label:'Traditional Fi',periods:null}};

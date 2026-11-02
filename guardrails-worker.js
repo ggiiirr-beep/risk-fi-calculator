@@ -1,2 +1,2 @@
-import {runPathAlternatives,runStartingWithdrawals,runGuardrailComparison,runCurrentGuardrailCheck,runScheduleComparison} from './guardrails.js?v=20261102-ramp';
+import {runPathAlternatives,runStartingWithdrawals,runGuardrailComparison,runCurrentGuardrailCheck,runScheduleComparison} from './guardrails.js?v=20261102-ramp2';
 self.onmessage=e=>{try{const result=(e.data.mode==='alternatives'?runPathAlternatives:e.data.mode==='starting'?runStartingWithdrawals:e.data.mode==='check'?runCurrentGuardrailCheck:e.data.mode==='schedules'?runScheduleComparison:runGuardrailComparison)(e.data.assumptions,e.data.strategies,{progress:progress=>self.postMessage({progress})});self.postMessage({result});}catch(error){self.postMessage({error:error.message});}};
