@@ -3,7 +3,7 @@ import {rampDefaults,rampPeriods,rampIncome,rampCoverage,projectRamp} from './ra
 import {guardrailPaths} from './guardrail-paths.js?v=20261102-ramp2';
 import {comparePaths} from './path-comparison.js?v=20261102-ramp2';
 import {comparisonQuestions as universalQuestions,runScenario,comparisonRows} from './scenario-comparison.js?v=20261102-rampcompare';
-import {planTimeline,fundingChart} from './plan-visuals.js?v=20261102-ageyear';
+import {planTimeline,fundingChart} from './plan-visuals.js?v=20261102-ageuntil';
 import {assetRows,assetTotals,syncAssets} from './plan-assets.js?v=20261102-ramp2';
 import {solveCoast} from './coast-fi.js?v=20261102-ramp2';
 import {traditionalProjection,contributionNeeded} from './traditional-fi.js?v=20261102-ramp2';
@@ -11,13 +11,13 @@ import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261102-ramp
 import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261102-ramp2';
 import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261102-ramp2';
 import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261102-ramp2';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261102-ageyear';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261102-ageuntil';
 import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261102-ramp2';
 import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261102-ramp2';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
-const ageAt=(age,years,digits=1,start=today)=>num(age+years,digits)+' ('+dateAfter(years,start).getUTCFullYear()+')';
+const ageAt=(age,years,digits=1,start=today)=>num(age+years,digits)+' ('+(years===0?'now':'in '+num(years,2)+' years')+')';
 const milestoneTime=(p,years)=>Number.isFinite(p.age)?'Age '+ageAt(p.age,years,1):'In '+num(years,2)+' years';
 const percent=v=>Number.isFinite(v)?(v*100).toFixed(2)+'%':'—';
 const num=(v,d=1)=>Number.isFinite(v)?v.toLocaleString('en-US',{maximumFractionDigits:d}):'—';
@@ -118,7 +118,7 @@ function drawCharts(){for(const c of charts){const wrap=$('#'+c.id);if(!wrap)con
  const maxY=Math.max(c.percentAxis?.01:1,...c.rows.flatMap(r=>c.series.map(s=>val(r,s.key))),c.point?.value||0)*1.12;
  const x=t=>L+t/maxX*(W-L-R),y=v=>H-B-v/maxY*(H-T-B);
  let html='';for(let i=0;i<=4;i++){const n=maxY*i/4;html+=`<line class="grid" x1="${L}" y1="${y(n)}" x2="${W-R}" y2="${y(n)}"/><text x="${L-12}" y="${y(n)+4}" text-anchor="end">${c.percentAxis?(n*100).toFixed(1)+'%':short(n)}</text>`;}
- for(let i=0;i<=5;i++){const t=maxX*i/5;html+=`<text x="${x(t)}" y="${c.age!==null?H-15:H-9}" text-anchor="middle">${c.age!==null?'Age '+num(c.age+t)+`</text><text x="${x(t)}" y="${H-1}" text-anchor="middle">(${dateAfter(t,c.start).getUTCFullYear()})`:t===0?(c.start===today?'Today':'Start'):num(t)+'y'}</text>`;}
+ for(let i=0;i<=5;i++){const t=maxX*i/5;html+=`<text x="${x(t)}" y="${c.age!==null?H-15:H-9}" text-anchor="middle">${c.age!==null?'Age '+num(c.age+t)+`</text><text x="${x(t)}" y="${H-1}" text-anchor="middle">(${t===0?'now':'in '+num(t)+'y'})`:t===0?(c.start===today?'Today':'Start'):num(t)+'y'}</text>`;}
  if(c.id==='ramp-income'){const top=c.rows.map((r,i)=>(i?'L':'M')+x(r.year)+','+y(r.spending)).join(' '),bottom=[...c.rows].reverse().map(r=>'L'+x(r.year)+','+y(Math.min(r.income,r.spending))).join(' ');html+=`<path d="${top} ${bottom} Z" fill="var(--red)" opacity=".13"/>`;}
  c.series.forEach((s,i)=>{const points=c.rows.filter(r=>Number.isFinite(r[s.key]));if(!points.length)return;const d=points.map((r,k)=>(k?'L':'M')+x(r.year)+','+y(val(r,s.key))).join(' ');if(i===0&&!c.percentAxis&&c.id!=='ramp-income')html+=`<path d="${d} L${x(points.at(-1).year)},${H-B} L${L},${H-B} Z" fill="${s.color}" opacity=".06"/>`;html+=`<path class="line" d="${d}" stroke="${s.color}" ${s.dash?'stroke-dasharray="7 6"':''}/>`;});
  for(const boundary of c.boundaries||[])if(boundary<maxX)html+=`<line x1="${x(boundary)}" x2="${x(boundary)}" y1="${T}" y2="${H-B}" stroke="var(--muted)" stroke-dasharray="2 6" opacity=".5"/>`;
@@ -146,7 +146,7 @@ function planView(p,q,sol){
  if(unknown==='projection'){value=q.end.total>=q.target-.01&&q.unfunded<.01?'On track for your date':'Not on track for your date';sub=`Total assets at your desired date: ${amount(q.end.total)}, against a ${amount(q.target)} target.`;}
  else if(unknown==='spending'){value=p.withdrawalMode==='dollars'?money(p.spending):percent(p.withdrawalRate);unit=p.withdrawalMode==='dollars'?'per year, in today’s dollars':p.withdrawalMode==='annual'?'of each year’s investments':'of starting investments';sub=`Initial annual withdrawal basis: ${money(p.spending)} in today’s dollars. ${p.adjustWithdrawals?'Dollar withdrawals rise with inflation.':'Dollar withdrawals stay fixed in future dollars.'}`;}
  else if(unknown==='portfolio'){value=money(p.portfolio);unit='invested today';sub=`Plus ${money(cashAmount(p))} cash. Both count toward FI.`;}
- else if(unknown==='time'){value=p.timeEntry==='age'?ageAt(p.age,p.years,1):num(p.years,2);unit=p.timeEntry==='age'?'age · calendar year':'years';sub=dateLabel(p.years);}
+ else if(unknown==='time'){value=p.timeEntry==='age'?ageAt(p.age,p.years,1):num(p.years,2);unit=p.timeEntry==='age'?'age · time from now':'years';sub=dateLabel(p.years);}
  else {value=percent(nominalReturn(expectedReturn(p),p.inflation));unit='return before inflation';sub=`${percent(expectedReturn(p))} after inflation. A required assumption, not a forecast.`;}
  return `${dollarControls()}<div class="answer"><p class="eyebrow">${labels[unknown]||'Your plan'}</p><h2>${value} <small>${unit}</small></h2><p class="sub">${sub}</p></div>${timingNotice(p,q)}
  <div class="metrics">${metric('Traditional Fi target',amount(q.target,at),`${money(q.target)} today = ${money(toNominal(q.target,p.inflation,at))} in ${dateLabel(at)}. Investments + cash.`)}${metric('Total assets at desired date',amount(q.end.total),dateLabel(p.years))}${metric('Annual withdrawals at FI',amount(traditionalWithdrawals(p),at),`${money(traditionalWithdrawals(p))} in today’s purchasing power; starts when FI is reached.`)}</div>

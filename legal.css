@@ -12,3 +12,17 @@
 .calculator-utilities .storage-controls button{padding:6px 9px;font-size:12px;white-space:nowrap}
 .page-heading .storage-controls p{font-size:12px;line-height:1.4}
 @media(max-width:740px){.calculator-utilities{margin-top:14px;width:100%;align-items:flex-start}.calculator-utilities .storage-controls{flex:1;max-width:none}.calculator-utilities .storage-controls label{flex-basis:100%}.calculator-utilities .icon-button{flex-shrink:0}}
+
+.storage-menu{position:relative}
+.storage-menu>summary{display:flex;align-items:center;gap:8px;list-style:none;cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:600;min-height:42px}
+.storage-menu>summary::-webkit-details-marker{display:none}
+.storage-menu[open]>summary{box-shadow:0 0 0 2px var(--purple)}
+.storage-chevron{margin-left:8px}
+.calculator-utilities .storage-menu .storage-controls{position:absolute;right:0;top:calc(100% + 10px);z-index:30;width:320px;max-width:calc(100vw - 40px);padding:18px;background:var(--surface);border:1px solid var(--border);box-shadow:0 12px 32px #12334426;display:flex;gap:14px}
+.calculator-utilities .storage-menu .storage-controls label{flex-basis:100%;justify-content:space-between;flex-direction:row-reverse;font-weight:600;line-height:1.5}
+.calculator-utilities .storage-menu input{appearance:none;width:36px;height:22px;border:0;border-radius:20px;background:var(--muted);position:relative;cursor:pointer}
+.storage-menu input:before{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;background:white;border-radius:50%;transition:transform .15s}
+.calculator-utilities .storage-menu input:checked{background:var(--purple)}
+.storage-menu input:checked:before{transform:translateX(14px)}
+.calculator-utilities .storage-menu button{order:2;width:100%;padding:10px;border-color:var(--border);background:var(--surface2)}
+@media(max-width:740px){.calculator-utilities{align-items:center}.storage-menu .storage-controls{right:0}.calculator-utilities .storage-menu .storage-controls{max-width:calc(100vw - 74px)}}
