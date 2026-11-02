@@ -33,3 +33,10 @@ body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{b
 .ramp-comparisons .field:last-child:nth-child(odd){grid-column:1/-1}
 .ramp-comparisons p.ramp-comparison-result{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--border);font-weight:700;color:var(--ink)}
 @media(max-width:850px){.ramp-comparisons{grid-template-columns:minmax(0,1fr)}}
+
+.ramp-income-editor{margin-top:20px;padding:18px;background:var(--surface2);border:1px solid var(--border);border-radius:12px}
+.ramp-income-editor h3{margin-top:0}.ramp-income-editor svg{display:block;width:100%;max-height:200px;margin:12px 0}
+.ramp-income-row{display:grid;grid-template-columns:64px minmax(0,1fr) 150px;gap:16px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.ramp-income-row>.field{margin:0}.ramp-income-row>.field>label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.ramp-income-row input[type=range]{margin:0;min-height:32px;cursor:pointer}
+@media(max-width:600px){.ramp-income-editor{padding:12px}.ramp-income-row{grid-template-columns:45px minmax(0,1fr) 108px;gap:8px}.ramp-income-row>label{font-size:.8rem}.ramp-income-row input{font-size:16px}}
