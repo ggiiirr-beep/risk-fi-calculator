@@ -11,3 +11,10 @@
 .shared-cards .connected-cards>.field label{min-height:0;margin-bottom:8px}
 .shared-cards .connected-cards>.metric{margin:0 0 16px}
 @media(max-width:380px){.asset-row{grid-template-columns:minmax(0,1fr)}}
+.shared-details{margin:18px 0;border:1px solid var(--border);border-radius:10px;padding:12px 16px;background:var(--surface2)}
+.shared-details>summary{cursor:pointer;font-size:.9rem;font-weight:600;color:var(--ink)}
+.shared-details[open]>summary{margin-bottom:16px}
+.chart-timeline{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:12px 0 18px;font-size:.8rem}
+.chart-timeline>span{margin-right:6px;color:var(--muted)}
+.chart-timeline button{font-size:.78rem;padding:7px 10px;min-height:36px}
+.chart-timeline button[aria-pressed=true]{border-color:var(--purple);color:var(--purple);background:var(--surface2)}
