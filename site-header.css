@@ -14,3 +14,9 @@ body.calculator-page{background:#c6e0f3;min-height:100vh}.podcast-context{font-f
 .podcast-header nav a{white-space:normal;text-align:center;line-height:1.15}
 .podcast-header nav img{flex-shrink:0}
 @media(max-width:600px){.podcast-header nav{grid-template-columns:minmax(70px,.7fr) minmax(0,1.3fr);width:100%}.podcast-header nav a{font-size:13px;gap:6px;padding:6px 8px}}
+
+/* Keep the generated tile's white outer corners out of the page. */
+img[src*="purpose-fi-sun-compass"]{clip-path:inset(1% round 23%)}
+.calculator-title>img{width:72px;height:72px}
+.podcast-header nav img{width:30px;height:30px}
+@media(max-width:740px){.calculator-title>img{width:56px;height:56px}.calculator-title{min-width:0}.calculator-title h1{overflow-wrap:break-word}}
