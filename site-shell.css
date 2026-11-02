@@ -125,3 +125,5 @@ body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{b
 .calculator-page .tabs .help-link{align-self:center}
 @media(max-width:740px){.calculator-page .tabs button:not(.help-link),.calculator-page .numbers-next button{min-height:88px;padding:7px 3px;gap:7px}.calculator-page .tabs .tool-icon,.calculator-page .numbers-next .tool-icon{width:42px;height:42px;border-radius:12px}.calculator-page .tabs .tool-icon svg,.calculator-page .numbers-next .tool-icon svg{width:28px;height:28px}.calculator-page .tool-label{font-size:.73rem}}
 @media(prefers-reduced-motion:reduce){.calculator-page .tool-icon{transition:none!important}.calculator-page .tabs button:hover .tool-icon,.calculator-page .numbers-next button:hover .tool-icon{transform:none}}
+
+.scenario-editor-tabs{margin:12px 0}.has-income-editor>#scenario-steady-reset{order:4;grid-column:1/-1;justify-self:start}
