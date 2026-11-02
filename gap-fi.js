@@ -3,7 +3,7 @@ import {validateChanges,futureFlows} from './future-changes.js';
 import {cashAmount,expectedReturn,realReturn,fiTarget} from './finance.js';
 export const gapDefaults=()=>[{action:'withdraw',amount:60000,years:2},{action:'even',amount:0,years:2},{action:'contribute',amount:40000,years:null}];
 /** Monthly end-of-period flows; all balances and flows in today's dollars. */
-export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true}={}){
+export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true,retirementAt=null}={}){
  validateChanges(plan.futureChanges);
  if(!periods.length||periods.at(-1).years!==null)throw Error('End your timeline with an Until FI period.');
  let duration=0;
@@ -24,10 +24,12 @@ export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true}={}){
   const start=(month-1)/12,year=month/12,index=boundaries.findIndex(end=>start<end),p=periods[index];
   growLedger(ledger,plan.inflation,1/12);const flows=futureFlows(plan.futureChanges,start,year,plan.inflation);changeLedger(ledger,flows.addition);
   investment=ledgerTotal(ledger);cash=ledgerTotal(ledger,true);
-  const amount=(start>=(plan.coastAt??Infinity)?0:p.amount)/12/(plan.adjustWithdrawals===false?Math.pow(1+plan.inflation,year):1);
-  if(p.action==='contribute'){changeLedger(ledger,amount);investment=ledgerTotal(ledger);contributions+=amount;nominalContributions+=amount*Math.pow(1+plan.inflation,year);}
+  const retired=retirementAt!==null&&start+1e-9>=retirementAt;
+  const action=retired?'withdraw':p.action;
+  const amount=retired?target*plan.fiRate/12:(start>=(plan.coastAt??Infinity)?0:p.amount)/12/(plan.adjustWithdrawals===false?Math.pow(1+plan.inflation,year):1);
+  if(action==='contribute'){changeLedger(ledger,amount);investment=ledgerTotal(ledger);contributions+=amount;nominalContributions+=amount*Math.pow(1+plan.inflation,year);}
   periodIncome+=flows.income;periodExpense+=flows.expense;
-  const requested=p.action==='withdraw'?amount:0,net=Math.max(0,requested-flows.income)+flows.expense;
+  const requested=action==='withdraw'?amount:0,net=Math.max(0,requested-flows.income)+flows.expense;
   periodRequested+=requested;periodIncomeUsed+=Math.min(requested,flows.income);const surplus=Math.max(0,flows.income-requested);periodSurplus+=surplus;const flowPrice=(1+plan.inflation)**year;nominalIncomeUsed+=Math.min(requested,flows.income)*flowPrice;nominalSurplus+=surplus*flowPrice;nominalRequested+=requested*flowPrice;nominalExpense+=flows.expense*flowPrice;changeLedger(ledger,surplus,true);cash=ledgerTotal(ledger,true);
   if(net>0){
    let need=net;
@@ -37,7 +39,7 @@ export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true}={}){
    if(need>1e-7)shortfall=year;
   }
   if(reached===null&&investment+cash>=target-1e-7)reached=year;
-  if(month%12===0||(stopAtGoal&&reached!==null)||shortfall!==null){rows.push({year,investment,cash,total:investment+cash,target,withdrawals,contributions,nominalWithdrawals,nominalContributions,income:periodIncome,incomeUsed:periodIncomeUsed,nominalIncomeUsed,nominalSurplus,nominalRequested,nominalExpense,surplus:periodSurplus,requested:periodRequested,expense:periodExpense,period:index});withdrawals=0;contributions=0;nominalWithdrawals=0;nominalContributions=0;periodIncome=0;periodRequested=0;periodExpense=0;periodIncomeUsed=0;periodSurplus=0;nominalIncomeUsed=0;nominalSurplus=0;nominalRequested=0;nominalExpense=0;}
+  if(month%12===0||(stopAtGoal&&reached!==null)||shortfall!==null){rows.push({year,investment,cash,total:investment+cash,target,withdrawals,contributions,nominalWithdrawals,nominalContributions,income:periodIncome,incomeUsed:periodIncomeUsed,nominalIncomeUsed,nominalSurplus,nominalRequested,nominalExpense,surplus:periodSurplus,requested:periodRequested,expense:periodExpense,period:retired?'retirement':index});withdrawals=0;contributions=0;nominalWithdrawals=0;nominalContributions=0;periodIncome=0;periodRequested=0;periodExpense=0;periodIncomeUsed=0;periodSurplus=0;nominalIncomeUsed=0;nominalSurplus=0;nominalRequested=0;nominalExpense=0;}
   if(shortfall!==null)break;
  }
  return {rows,reached,shortfall,target,boundaries:boundaries.filter(Number.isFinite)};
