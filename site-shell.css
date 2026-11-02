@@ -40,3 +40,12 @@ body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{b
 .ramp-income-row>.field{margin:0}.ramp-income-row>.field>label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .ramp-income-row input[type=range]{margin:0;min-height:32px;cursor:pointer}
 @media(max-width:600px){.ramp-income-editor{padding:12px}.ramp-income-row{grid-template-columns:45px minmax(0,1fr) 108px;gap:8px}.ramp-income-row>label{font-size:.8rem}.ramp-income-row input{font-size:16px}}
+
+.ramp-income-rows{display:flex;gap:12px;overflow-x:auto;padding:8px 2px 12px}
+.ramp-income-row{display:flex;flex-direction:column;flex:1 0 112px;gap:12px;border-bottom:0;padding:12px 4px;min-width:0}
+.ramp-income-row input[type=range]{writing-mode:vertical-lr;direction:rtl;width:32px;height:170px;min-height:170px;accent-color:var(--purple)}
+.ramp-income-row>.field{width:112px;max-width:100%}
+#ramp-income-preview circle:focus{outline:none;stroke:var(--purple);stroke-width:3}
+@media(max-width:600px){.ramp-income-row{flex-basis:100px}.ramp-income-row input[type=range]{height:140px;min-height:140px}}
+#ramp-income-preview{overflow-x:auto}
+@media(max-width:600px){.ramp-income-editor svg{min-width:600px;max-height:none}.ramp-income-row{flex-basis:128px}.ramp-income-row>.field{width:120px}}
