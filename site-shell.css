@@ -136,3 +136,23 @@ body[data-tool=ramp]{--purple:#267f54;--secondary:#84bc9e}.timeline-phase.ramp{b
 .calculator-page .tool-label{overflow-wrap:break-word}
 @media(max-width:1050px) and (min-width:741px){.calculator-page .tabs{grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media(max-width:740px){.calculator-page .tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.calculator-page .tabs .tool-icon,.calculator-page .numbers-next .tool-icon{width:56px;height:56px;border-radius:15px}.calculator-page .tabs .tool-icon svg,.calculator-page .numbers-next .tool-icon svg{width:36px;height:36px}}
+
+/* One shared, compact year grid keeps dots and controls aligned while scrolling. */
+.ramp-income-editor{padding:12px;margin-top:10px}
+.ramp-income-editor h3{margin-bottom:4px}
+.ramp-income-scroll{overflow-x:auto}
+.ramp-income-preview{overflow:visible}
+.ramp-income-editor svg{height:140px;min-width:0;max-height:none;margin:0}
+.ramp-income-rows{display:grid;grid-template-columns:repeat(var(--year-count),minmax(0,1fr));gap:0;overflow:visible;padding:0}
+.ramp-income-row{padding:0 6px 4px;gap:6px}
+.ramp-income-row>label{display:none}
+.ramp-income-row input[type=range]{height:85px;min-height:85px}
+.ramp-income-row>.field{width:100%;max-width:108px}
+.ramp-income-row .input-wrap input{padding-top:8px;padding-bottom:8px}
+.ramp-income-editor>.hint{margin:8px 0 0;font-size:.8rem}
+.shared-ramp-editor{margin-bottom:16px}
+.shared-ramp-editor>.ramp-income-editor{margin-top:0}
+.shared-ramp-editor>.text-button{margin-top:6px}
+.ramp-scenario-card{padding:14px}
+.ramp-scenario-card h3{margin:0 0 10px}
+.ramp-scenario-card .field{margin-bottom:10px}
