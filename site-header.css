@@ -40,4 +40,6 @@ header.podcast-header{grid-template-columns:minmax(0,1fr) auto;grid-template-row
 .podcast-header nav a[aria-current]{background:transparent;box-shadow:inset 0 -3px 0 #ffc52b}
 .podcast-header nav a:hover{background:#ffffff14}
 .podcast-header nav img{width:28px;height:28px}
-@media(max-width:740px){header.podcast-header{gap:10px;padding:6px 12px}.podcast-header nav{gap:4px}.podcast-header nav a{width:44px;height:44px;padding:7px}.podcast-header nav a span{display:none}.podcast-header nav img{width:30px;height:30px}.podcast-header .podcast-brand{font-size:.7rem;gap:8px}}
+@media(max-width:540px){header.podcast-header{gap:10px;padding:6px 12px}.podcast-header nav{gap:4px}.podcast-header nav a{width:44px;height:44px;padding:7px}.podcast-header nav a span{display:none}.podcast-header nav img{width:30px;height:30px}.podcast-header .podcast-brand{font-size:.7rem;gap:8px}}
+
+@media(min-width:541px) and (max-width:740px){header.podcast-header{padding:6px 12px;gap:12px}.podcast-header nav{gap:4px}.podcast-header nav a{font-size:12px;white-space:normal;padding:6px;gap:5px}.podcast-header nav a span{max-width:130px}.podcast-header .podcast-brand{font-size:.65rem;gap:6px}.podcast-brand .podcast-brand-icon{width:40px;height:40px}}
