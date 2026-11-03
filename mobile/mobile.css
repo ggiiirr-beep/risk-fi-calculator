@@ -1,0 +1,12 @@
+/* Native web view provides the system safe-area insets. */
+html { scrollbar-gutter: auto; }
+body { -webkit-text-size-adjust: 100%; }
+header.podcast-header { grid-template-columns: 1fr; }
+header.podcast-header nav { display: none; }
+input:not([type=checkbox]):not([type=range]), select { font-size: 16px !important; }
+button, .tabs button, .legal-links a { min-height: 44px; }
+button, a, input, select { touch-action: manipulation; }
+main { padding-bottom: 28px; }
+.storage-controls .storage-status { max-width: 36em; }
+
+.storage-inline .storage-status.storage-error { position:static; width:auto; height:auto; margin:8px 0; overflow:visible; clip-path:none; white-space:normal; color:var(--red); }

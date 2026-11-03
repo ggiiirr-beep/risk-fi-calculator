@@ -1,4 +1,5 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
+const output=process.argv[2]||'.';
 const shell=await readFile('calculator.html','utf8');
 const paths=['','your-numbers','risk-fi','gap-fi','ramp-fi','coast-fi','traditional-fi','compare-paths','help','risk-based-guardrails',...['risk-fi','gap-fi','ramp-fi','coast-fi','traditional-fi'].map(p=>p+'/compare')];
 for(const slug of paths){
@@ -6,7 +7,7 @@ for(const slug of paths){
  const base='../'.repeat(dir.split('/').length);
  let html=shell.replace('<base href="./">','<base href="'+base+'">');
  if(slug==='risk-based-guardrails')html=html.replace('<head>','<head><meta name="robots" content="noindex, nofollow">');
- await mkdir(dir,{recursive:true});await writeFile(dir+'/index.html',html);
+ await mkdir(output+'/'+dir,{recursive:true});await writeFile(output+'/'+dir+'/index.html',html);
 }
 
 // Shared policy content retains calculator identity when opened from its tools.
@@ -18,5 +19,5 @@ for(const [slug,source] of [['privacy','privacy.html'],['terms','terms.html'],['
  if(html.includes('<header'))html=html.replace(/<header\b[\s\S]*?<\/header>/,calculatorHeader);
  else html=html.replace(/<body([^>]*)>/,'<body$1>'+calculatorHeader).replace('</head>','<link rel="stylesheet" href="./site-header.css?v=20261102-phone-nav"></head>');
  for(const [from,to] of [['privacy.html','purpose-fi/privacy/'],['terms.html','purpose-fi/terms/'],['simulation-method.html','purpose-fi/simulation-method/']])html=html.replaceAll('./'+from,'./'+to);
- const dir='purpose-fi/'+slug;await mkdir(dir,{recursive:true});await writeFile(dir+'/index.html',html);
+ const dir='purpose-fi/'+slug;await mkdir(output+'/'+dir,{recursive:true});await writeFile(output+'/'+dir+'/index.html',html);
 }

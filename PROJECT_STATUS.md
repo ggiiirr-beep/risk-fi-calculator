@@ -342,3 +342,25 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - To FI/Lifetime and the end horizon are shared preferences and included in optional saved settings. Comparisons apply retirement withdrawals using the same transition policy instead of continuing accumulation indefinitely. Fractional FI endpoints are retained in comparison charts.
 - Risk Fi's annual cash-flow model is retained. Tests establish parity at zero returns and the expected timing difference at positive returns versus monthly models; Help documents this distinction.
 - Verification: full 202-test suite passed; targeted solver/comparison tests passed after final fixes; build and syntax checks passed. Desktop 1280px and mobile 390px browser checks covered all five calculators, new Ramp solvers, comparisons, shared horizon and blank-age fallback. RSS refresh unavailable in restricted build; existing snapshot retained.
+
+## Purpose Fi iOS foundation — November 3, 2026
+
+- Owner selected iOS first, with Android later. Website retains full functionality;
+  one shared calculator source. Explicitly no accounts or syncing between website,
+  apps or devices. Work is on `codex/purpose-fi-ios`; website publication is unchanged.
+- Added Capacitor 8 iOS/SPM project, calculator-only offline build, Purpose Fi app
+  icon/launch screen, phone input styling, app privacy page and privacy manifest.
+- Remember Numbers uses native Preferences in the app; website keeps its existing
+  optional browser storage. Startup hydration precedes calculator initialization;
+  queued snapshots preserve write order and surface failures. No financial-engine changes.
+- Existing 202 calculator tests passed; five focused native/browser storage tests
+  passed. Simulator build launched and visually rendered the calculator on isolated
+  iPhone 17e / iOS 27. Native UI testing stopped to avoid interfering with owner's
+  concurrent Device Hub work. No physical devices or App Store systems changed.
+- Final Debug simulator and unsigned Release iPhone builds passed; bundled
+  HTML references and the Release privacy manifest passed validation.
+- Maturity: integrated local development build, not device-tested or store-ready.
+  Next: choose signing team and test on an explicitly authorized physical iPhone;
+  complete interactive save/relaunch/offline/keyboard/navigation/accessibility checks.
+  See `mobile/README.md` for reproducible builds and remaining distribution work.
+- Pre-existing `episodes.json` changes are left untouched and excluded from this work.

@@ -1,1 +1,24 @@
-{"name":"risk-fi-calculator","version":"1.0.0","private":true,"type":"module","scripts":{"test":"node --test *.test.js","start":"node server.mjs","build":"node build.mjs","validate:guardrails":"node scripts/validate-guardrails.mjs"}}
+{
+  "name": "risk-fi-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test *.test.js",
+    "start": "node server.mjs",
+    "build": "node build.mjs",
+    "validate:guardrails": "node scripts/validate-guardrails.mjs",
+    "build:mobile": "node mobile/build.mjs",
+    "ios:sync": "npm run build:mobile && cap sync ios",
+    "ios:open": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/ios": "^8.6.0",
+    "@capacitor/preferences": "^8.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
+    "esbuild": "^0.28.2"
+  }
+}

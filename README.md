@@ -97,3 +97,9 @@ Starting withdrawals are solved from confidence targets, preserving entered asse
 Calculator pages live under `purpose-fi/`, including `your-numbers/`, `risk-fi/`, `gap-fi/`, `ramp-fi/`, `coast-fi/`, `traditional-fi/`, `compare-paths/` and `help/`. Legacy calculator.html hash links are upgraded in the browser. Risk-Based Guardrails is unlisted at `purpose-fi/risk-based-guardrails/`; its implementation is retained.
 
 After editing calculator.html, run `node scripts/generate-routes.mjs` (also run by `npm run build`) and commit the generated route shells. GitHub Pages serves these files from the repository root, so direct visits and refreshes do not depend on server rewrites.
+
+## iOS app
+
+Purpose Fi also has a Capacitor iOS project using the same calculator source.
+Run `npm run ios:sync`, then `npm run ios:open`. See [iOS build and testing](mobile/README.md)
+for local storage, simulator setup, release boundaries and later Android support.

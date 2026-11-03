@@ -1,0 +1,6 @@
+{
+  "appId": "com.frompaycheckstopurpose.purposefi",
+  "appName": "Purpose Fi",
+  "webDir": "mobile-dist",
+  "ios": { "contentInset": "always", "backgroundColor": "#c6e0f3" }
+}
