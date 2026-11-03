@@ -21,7 +21,7 @@ export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true,retirement
  const rows=[{year:0,investment,cash,total:investment+cash,target,withdrawals:0,contributions:0,period:0,nominalWithdrawals:0,nominalContributions:0}], boundaries=[];
  let elapsed=0;periods.forEach(p=>{elapsed+=p.years??Infinity;boundaries.push(elapsed);});
  let reached=investment+cash>=target?0:null,shortfall=openingPaid<opening.expense-1e-7?0:null,withdrawals=0,contributions=0,nominalWithdrawals=0,nominalContributions=0,periodIncome=0,periodRequested=0,periodExpense=0,periodIncomeUsed=0,periodSurplus=0,nominalIncomeUsed=0,nominalSurplus=0,nominalRequested=0,nominalExpense=0;
- for(let month=1;(!stopAtGoal||reached===null)&&month<=maxYears*12&&shortfall===null;month++){
+ for(let month=1;(!stopAtGoal||reached===null)&&month<=Math.round(maxYears*12)&&shortfall===null;month++){
   const start=(month-1)/12,year=month/12,index=boundaries.findIndex(end=>start<end),p=periods[index];
   growLedger(ledger,plan.inflation,1/12);const flows=futureFlows(plan.futureChanges,start,year,plan.inflation);changeLedger(ledger,flows.addition);
   investment=ledgerTotal(ledger);cash=ledgerTotal(ledger,true);
@@ -40,7 +40,7 @@ export function projectGap(plan,periods,{maxYears=100,stopAtGoal=true,retirement
    if(need>1e-7)shortfall=year;
   }
   if(reached===null&&investment+cash>=target-1e-7)reached=year;
-  if(month%12===0||(stopAtGoal&&reached!==null)||shortfall!==null){rows.push({year,investment,cash,total:investment+cash,target,withdrawals,contributions,nominalWithdrawals,nominalContributions,income:periodIncome,incomeUsed:periodIncomeUsed,nominalIncomeUsed,nominalSurplus,nominalRequested,nominalExpense,surplus:periodSurplus,requested:periodRequested,expense:periodExpense,period:retired?'retirement':index});withdrawals=0;contributions=0;nominalWithdrawals=0;nominalContributions=0;periodIncome=0;periodRequested=0;periodExpense=0;periodIncomeUsed=0;periodSurplus=0;nominalIncomeUsed=0;nominalSurplus=0;nominalRequested=0;nominalExpense=0;}
+  if(month%12===0||month===Math.round(maxYears*12)||(stopAtGoal&&reached!==null)||shortfall!==null){rows.push({year,investment,cash,total:investment+cash,target,withdrawals,contributions,nominalWithdrawals,nominalContributions,income:periodIncome,incomeUsed:periodIncomeUsed,nominalIncomeUsed,nominalSurplus,nominalRequested,nominalExpense,surplus:periodSurplus,requested:periodRequested,expense:periodExpense,period:retired?'retirement':index});withdrawals=0;contributions=0;nominalWithdrawals=0;nominalContributions=0;periodIncome=0;periodRequested=0;periodExpense=0;periodIncomeUsed=0;periodSurplus=0;nominalIncomeUsed=0;nominalSurplus=0;nominalRequested=0;nominalExpense=0;}
   if(shortfall!==null)break;
  }
  return {rows,reached,shortfall,target,boundaries:boundaries.filter(Number.isFinite)};

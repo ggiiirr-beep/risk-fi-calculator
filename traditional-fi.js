@@ -1,4 +1,4 @@
-import {projectGap} from './gap-fi.js?v=20261102-ramp2';
+import {projectGap} from './gap-fi.js?v=20261103-consistency';
 /** Constant contributions paid monthly at month end, in today's dollars. */
 export function traditionalProjection(plan,{contribution=0,years=100,adjust=true,stopAtGoal=true}={}){
  if(!Number.isFinite(contribution)||contribution<0)throw Error('Enter a nonnegative annual contribution.');

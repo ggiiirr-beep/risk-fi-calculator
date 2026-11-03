@@ -1,4 +1,4 @@
-import {projectGap} from './gap-fi.js?v=20261102-ramp2';
+import {projectGap} from './gap-fi.js?v=20261103-consistency';
 export function coastProjection(plan,{years=30,contribution=0,coastAt=0}={}){
  if(!Number.isInteger(years)||years<1||years>100||!Number.isFinite(contribution)||contribution<0||!Number.isFinite(coastAt)||coastAt<0)throw Error('Enter a 1 to 100 year retirement horizon and nonnegative contributions.');
  return projectGap({...plan,coastAt,adjustWithdrawals:true,cashStrategy:'first'},[{action:'contribute',amount:contribution,years:null}],{maxYears:years,stopAtGoal:false});

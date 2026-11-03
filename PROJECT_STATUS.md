@@ -335,3 +335,10 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 ## Publication restored (October 31, 2026)
 - Owner explicitly requested republication. Re-enabled GitHub Pages from main / root, retained frompaycheckstopurpose.com and enabled Enforce HTTPS. This supersedes the October 23 offline instruction.
 - Initial deployment is building; public verification will follow. Includes the latest owner-supplied introduction copy.
+
+## Calculator consistency (November 3, 2026)
+- All five planning calculators use Solve for dropdowns. Ramp Fi adds income-needed and spending-supported solvers with a fixed duration/relative shape and funded-deadline validation; both also work in scenario comparisons.
+- Shared assumptions remain collapsed; removed Ramp's duplicate FI-target editor. Deadlines use current age when supplied, otherwise years from now. Calculated fields use a consistent result indicator. Numeric results refresh on committed edits; sliders remain live.
+- To FI/Lifetime and the end horizon are shared preferences and included in optional saved settings. Comparisons apply retirement withdrawals using the same transition policy instead of continuing accumulation indefinitely. Fractional FI endpoints are retained in comparison charts.
+- Risk Fi's annual cash-flow model is retained. Tests establish parity at zero returns and the expected timing difference at positive returns versus monthly models; Help documents this distinction.
+- Verification: full 202-test suite passed; targeted solver/comparison tests passed after final fixes; build and syntax checks passed. Desktop 1280px and mobile 390px browser checks covered all five calculators, new Ramp solvers, comparisons, shared horizon and blank-age fallback. RSS refresh unavailable in restricted build; existing snapshot retained.
