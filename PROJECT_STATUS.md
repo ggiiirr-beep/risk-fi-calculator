@@ -364,3 +364,17 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
   complete interactive save/relaunch/offline/keyboard/navigation/accessibility checks.
   See `mobile/README.md` for reproducible builds and remaining distribution work.
 - Pre-existing `episodes.json` changes are left untouched and excluded from this work.
+
+## Owner-authorized iPhone installation — November 3, 2026
+
+- Owner explicitly requested installation on their iPhone. Resolved the paired
+  physical iPhone 17 and confirmed Purpose Fi was not already installed.
+- Built Debug for that iPhone with the existing Apple developer signing identity
+  and automatic provisioning. Signed build and strict code-signature validation passed.
+- Installed `com.frompaycheckstopurpose.purposefi` successfully using devicectl.
+  Left the app closed to avoid interrupting concurrent testing; Device Hub UI
+  was not operated. No other app, iPad, or user data was changed.
+- Maturity: signed development build installed, not yet physically interaction-tested.
+  Owner can open Purpose Fi and enable Remember Numbers to test local saving.
+  TestFlight and App Store submission remain outstanding. Signing identity and
+  device identifiers remain outside source control.
