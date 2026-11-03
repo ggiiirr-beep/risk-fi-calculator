@@ -39,3 +39,7 @@ Current assets: `blue-character-smooth.png`, `blue-welcome-smooth.png`, and `pod
 Current approved appearances use the `-highlights.png` versions of blue-character, blue-welcome, and podcast-cover-blue: near-black shoulder-length hair with subtle muted brown highlights, retaining smooth clothing.
 
 Current approved appearances use the `-straight.png` versions of blue-character, blue-welcome, and podcast-cover-blue: straighter even bob ends without outward flare or strong inward curl; glasses adjusted slightly upward from the highlights version. Preserve the subtle highlights and smooth clothing.
+
+## Banner proportions, November 2, 2026
+
+`blue-hero-relaxed-waist.png` adjusts the hand-on-hip banner pose with a straighter sweater and less pinched waist, using `podcast-cover-blue-gradient.png` as the proportions reference. Generated with the built-in image tool from that cover and `blue-hero-hand-on-hip.png`. Pose, clothing, hair, glasses and framing retained. Prior asset preserved. Checked in desktop and mobile homepage layouts.
