@@ -66,8 +66,9 @@ VoiceOver, larger text, rotation and iPad layout. Unit tests exercise storage
 ordering and reopen behavior with a Preferences double; they do not establish
 physical-device persistence or interaction acceptance. Store listing, screenshots,
 pricing, signing, TestFlight and submission are not completed by this build.
-The existing 512px brand mark is exported at 1024px for the app icon; a higher
-resolution original would improve final artwork sharpness.
+The app icon is a full-bleed opaque 1024px square derived from the existing
+sun/compass mark. Do not substitute the website PNG: its white rounded corners
+are hidden by CSS on the website but remain visible under the iOS icon mask.
 
 ## Later Android support
 

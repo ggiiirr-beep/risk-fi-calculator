@@ -378,3 +378,15 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
   Owner can open Purpose Fi and enable Remember Numbers to test local saving.
   TestFlight and App Store submission remain outstanding. Signing identity and
   device identifiers remain outside source control.
+
+## iOS icon correction — November 3, 2026
+
+- Fixed the Home Screen icon's baked-in white margin and rounded corners. The
+  website PNG relies on CSS clipping and was unsuitable as a direct iOS export.
+- App icon now uses an opaque 1024×1024 full-bleed square with blue/cyan extending
+  through all corners, preserving the sun/compass design. iOS supplies its own mask.
+  Website and calculator UI assets remain unchanged.
+- Inspected the corrected image and verified dimensions/no alpha with sips.
+  Signed iPhone build and strict signature verification passed. Installed and
+  verified version 1.0 build 2 on the owner's authorized iPhone, without uninstalling
+  or launching the app. Home Screen appearance awaits the owner's visual check.
