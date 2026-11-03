@@ -32,10 +32,10 @@ export function validateGuardrails(a,strategies=defaultStrategies){
  if(a.initialCash!=null&&(!Number.isFinite(a.initialCash)||a.initialCash<0||a.initialCash>a.portfolio))throw Error('Starting cash must fit within total assets.');
  if(a.volatilityMode!=null&&!['historical','custom'].includes(a.volatilityMode))throw Error('Choose historical or custom volatility.');
  if(a.portfolio<=0||a.portfolio>1e12)throw Error('Starting portfolio must be above $0 and at most $1 trillion.');
- if(!Number.isInteger(a.years)||a.years<1||a.years>60)throw Error('Use a retirement duration of 1–60 whole years.');
+ if(!Number.isInteger(a.years)||a.years<1||a.years>60)throw Error('Use a retirement duration of 1 to 60 whole years.');
  if(a.stockMean<=-.9||a.stockMean>1||a.stockVol<0||a.stockVol>1||a.inflation<=-.5||a.inflation>.5||a.cashReturn<=-.5||a.cashReturn>.5)throw Error('Check your return, volatility, and inflation assumptions.');
- if(a.reserveYears<0||a.reserveYears>5||a.floor<0||a.floor>a.portfolio)throw Error('Use 0–5 reserve years and a withdrawal floor between $0 and the starting portfolio.');
- if(!Number.isInteger(a.count)||a.count<10000||a.count>100000)throw Error('Use 10,000–100,000 outer scenarios.');
+ if(a.reserveYears<0||a.reserveYears>5||a.floor<0||a.floor>a.portfolio)throw Error('Use 0 to 5 reserve years and a withdrawal floor between $0 and the starting portfolio.');
+ if(!Number.isInteger(a.count)||a.count<10000||a.count>100000)throw Error('Use 10,000 to 100,000 outer scenarios.');
  if(![512,1024,2048,4096].includes(a.innerCount))throw Error('Choose a supported probability sample size.');
  if(!Number.isInteger(a.seed)||a.seed<0||a.seed>4294967295)throw Error('Seed must be a whole number between 0 and 4,294,967,295.');
  if(!['bootstrap','historical','parametric'].includes(a.model))throw Error('Choose a supported market model.');

@@ -126,7 +126,7 @@ export function solve(p,unknown){
 export function seededRandom(seed=7301){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
 export function monteCarlo(p,{count=2000,volatility=.16,seed=7301,guards=null}={}){
  p=resolveWithdrawals(p);
- validate(p);if(!Number.isInteger(count)||count<100||count>10000||!Number.isFinite(volatility)||volatility<0||volatility>1)throw Error('Use 100–10,000 simulations and volatility between 0% and 100%.');
+ validate(p);if(!Number.isInteger(count)||count<100||count>10000||!Number.isFinite(volatility)||volatility<0||volatility>1)throw Error('Use 100 to 10,000 simulations and volatility between 0% and 100%.');
  if(guards?.enabled){for(const k of ['reduceBelow','stopBelow','incomeBelow','extraIncome','cashMonths'])if(!Number.isFinite(guards[k])||guards[k]<0)throw Error('Guardrail amounts must be nonnegative.');for(const k of ['reducePercent','cashReducePercent'])if(!Number.isFinite(guards[k])||guards[k]<0||guards[k]>1)throw Error('Spending cuts must be between 0% and 100%.');}
  const rand=seededRandom(seed),mean=expectedReturn(p),sigma=Math.sqrt(Math.log1p(volatility**2/(1+mean)**2)),mu=Math.log1p(mean)-sigma**2/2;
  const outcomes=[];let success=0,depleted=0,gaps=0,touched=0;const bands=Array.from({length:Math.ceil(p.years)+1},()=>[]);
@@ -151,7 +151,7 @@ export function annualCheckIn(originalPlan,current,elapsed){
 export function lifetimeProjection(p){
  const arrival=solve(p,'time'),transitionAt=arrival.error?null:arrival.value;
  const after=p.afterFIYears??30;
- if(!Number.isFinite(after)||after<0||after>100)throw Error('Choose 0–100 years after FI.');
+ if(!Number.isFinite(after)||after<0||after>100)throw Error('Choose 0 to 100 years after FI.');
  const years=Math.min(100,Math.max(p.years,transitionAt===null?p.years:transitionAt+after));
  return {...project(p,{years,transitionAt}),transitionAt,capped:transitionAt!==null&&transitionAt+after>100};
 }

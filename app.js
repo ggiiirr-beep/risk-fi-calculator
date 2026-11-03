@@ -11,16 +11,16 @@ import {projectGap,gapDefaults,solveGapAmount} from './gap-fi.js?v=20261102-ramp
 import {compareWithdrawals,compareReturns,compareTargetDates} from './withdrawal-scenarios.js?v=20261102-ramp2';
 import {simplifyPlan,yearsToAge,baselinePlan} from './plan-settings.js?v=20261102-ramp2';
 import {guardrailPlanInputs,editConnectedPlan} from './plan-transfer.js?v=20261102-ramp2';
-import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261102-definitions';
+import {mountGuardrails,leaveGuardrails,connectGuardrailPlan} from './guardrails-ui.js?v=20261102-plain-copy';
 import {formatAmount,readNumber,formatAmountInput} from './number-inputs.js?v=20261102-ramp2';
 import {defaults,withdrawalAmount,resolveWithdrawals,traditionalWithdrawals,realReturn,nominalReturn,expectedReturn,fiTarget,cashAmount,toNominal,project,solve,lifetimeProjection,annualCheckIn} from './finance.js?v=20261102-ramp2';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'—';
+const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v):'N/A';
 const short=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'m':Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':money(v);
 const ageAt=(age,years,digits=1,start=today)=>num(age+years,digits)+' ('+(years===0?'now':'in '+num(years,2)+' years')+')';
 const milestoneTime=(p,years)=>Number.isFinite(p.age)?'Age '+ageAt(p.age,years,1):'In '+num(years,2)+' years';
-const percent=v=>Number.isFinite(v)?(v*100).toFixed(2)+'%':'—';
-const num=(v,d=1)=>Number.isFinite(v)?v.toLocaleString('en-US',{maximumFractionDigits:d}):'—';
+const percent=v=>Number.isFinite(v)?(v*100).toFixed(2)+'%':'N/A';
+const num=(v,d=1)=>Number.isFinite(v)?v.toLocaleString('en-US',{maximumFractionDigits:d}):'N/A';
 const dateValue=d=>new Date(d).toISOString().slice(0,10),today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()),yearMS=365.2425*86400000;
 const dateAfter=(years,start=today)=>new Date(new Date(start+'T12:00:00Z').getTime()+years*yearMS);
 const dateLabel=(years,start=today)=>dateAfter(years,start).toLocaleDateString('en-US',{month:'short',year:'numeric',timeZone:'UTC'});
@@ -88,10 +88,10 @@ function syncTime(active=''){
  for(const [key,value] of Object.entries(values))if(key!==active&&$('#'+key))$('#'+key).value=$('#'+key).disabled&&key!=='horizonSlider'?'':value;
 }
 function syncSolved(){const p=resolveWithdrawals(state);
- if($('#fi-target-preview'))$('#fi-target-preview').textContent=Number.isFinite(p.fiWithdrawals)&&p.fiWithdrawals>0&&Number.isFinite(p.fiRate)&&p.fiRate>0?money(fiTarget(p)):'—';
+ if($('#fi-target-preview'))$('#fi-target-preview').textContent=Number.isFinite(p.fiWithdrawals)&&p.fiWithdrawals>0&&Number.isFinite(p.fiRate)&&p.fiRate>0?money(fiTarget(p)):'N/A';
  if($('#withdrawal-summary'))$('#withdrawal-summary').textContent=(state.withdrawalMode==='dollars'?money(p.spending)+' per year · '+money(p.spending/12)+' per month':percent(state.withdrawalRate)+' = '+money(p.spending)+' in the first year · '+money(p.spending/12)+' per month')+(state.withdrawalMode==='annual'?'. Recalculated from each year’s opening investment balance.':state.withdrawalMode==='starting'?'. Based on starting investments; the dollar amount follows your inflation choice.':'. Amount needed after income you already earn.');
  if(unknown==='spending'&&$('#withdrawal-summary'))$('#withdrawal-summary').textContent='';
- if($('#monthly'))$('#monthly').textContent=Number.isFinite(p.spending)?money(p.spending/12):'—';
+ if($('#monthly'))$('#monthly').textContent=Number.isFinite(p.spending)?money(p.spending/12):'N/A';
  if(unknown==='portfolio'&&state.withdrawalMode!=='dollars'&&$('#withdrawal-summary'))$('#withdrawal-summary').textContent=percent(state.withdrawalRate)+' of the calculated investments shown in the results'+(state.withdrawalMode==='annual'?', recalculated each year.':'. The dollar amount follows your inflation choice.');
  if($('#real-summary'))$('#real-summary').textContent=unknown==='return'?'':percent(expectedReturn(p))+' real return after inflation';
  if($('#cash-equivalent'))$('#cash-equivalent').textContent=unknown==='spending'?(p.cashMode==='years'?'Cash amount follows the calculated withdrawals.':money(p.cash)):money(cashAmount(p))+' · '+(p.spending?num(cashAmount(p)/p.spending,2)+' years of withdrawals':'no withdrawals entered');
@@ -132,7 +132,7 @@ const colors={investment:'var(--purple)',cash:'var(--red)',total:'var(--secondar
 const seriesMain=[{key:'investment',label:'Investments',color:colors.investment},{key:'cash',label:'Cash reserve',color:colors.cash},{key:'total',label:'Total assets',color:colors.total},{key:'target',label:'FI target',color:colors.target,dash:true}];
 const displayAmount=(value,p,year)=>nominal?toNominal(value,p.inflation,year):value;
 const dollarControls=()=>`<div class="section-head"><p>Results in ${nominal?'future dollars at each date':'today’s purchasing power'}</p><div class="segmented" aria-label="Result dollar format"><button data-dollars="real" class="${!nominal?'active':''}">Today’s dollars</button><button data-dollars="nominal" class="${nominal?'active':''}">Future dollars</button></div></div>`;
-function table(q,p){const rs=displayRows(q.rows,p);return `<details class="panel table-details"><summary>Year-by-year projection · ${nominal?'future':'today’s'} dollars</summary><div class="table-scroll"><table><thead><tr>${['Year','Phase during period','Withdrawals requested','Withdrawals funded','Investments','Cash','Total assets','FI target','Unfunded'].map(t=>`<th>${t}</th>`).join('')}</tr></thead><tbody>${rs.map(r=>`<tr><td>${num(r.year,3)}${q.transitionAt!==null&&Math.abs(r.year-q.transitionAt)<1e-7?' · FI reached':''}</td><td>${r.year===0?'Starting point':r.phase}</td><td>${r.year===0?'—':money(r.spending)}</td><td>${r.year===0?'—':money(r.investmentWithdrawal+r.cashWithdrawal)}</td>${['investment','cash','total','target','unfunded'].map(k=>`<td>${money(r[k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="chart-caption">Withdrawals are totals for each period. Partial years are prorated. Future-dollar amounts use each period’s ending date.</p></details>`;}
+function table(q,p){const rs=displayRows(q.rows,p);return `<details class="panel table-details"><summary>Year-by-year projection · ${nominal?'future':'today’s'} dollars</summary><div class="table-scroll"><table><thead><tr>${['Year','Phase during period','Withdrawals requested','Withdrawals funded','Investments','Cash','Total assets','FI target','Unfunded'].map(t=>`<th>${t}</th>`).join('')}</tr></thead><tbody>${rs.map(r=>`<tr><td>${num(r.year,3)}${q.transitionAt!==null&&Math.abs(r.year-q.transitionAt)<1e-7?' · FI reached':''}</td><td>${r.year===0?'Starting point':r.phase}</td><td>${r.year===0?'N/A':money(r.spending)}</td><td>${r.year===0?'N/A':money(r.investmentWithdrawal+r.cashWithdrawal)}</td>${['investment','cash','total','target','unfunded'].map(k=>`<td>${money(r[k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="chart-caption">Withdrawals are totals for each period. Partial years are prorated. Future-dollar amounts use each period’s ending date.</p></details>`;}
 function projectionHorizon(p,id){return id==='asset-horizon'?projectionView('risk'):'';}
 function planView(p,q,sol){
  const baseFull=lifetimeProjection(p),arrival=outcome(p),at=arrival.years??p.years;

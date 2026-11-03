@@ -7,7 +7,7 @@ export const comparisonQuestions={ramp:{time:'When will I reach FI?'},plan:{time
 export function runScenario(source,question,scenario,horizon=30){
  try{
  const c=structuredClone(scenario);let p=c.plan,settings=c.settings||{},periods=c.periods||[],value,kind='money',projection;
- if(!Number.isInteger(horizon)||horizon<1||horizon>100)throw Error('Chart horizon must be 1–100 whole years.');
+ if(!Number.isInteger(horizon)||horizon<1||horizon>100)throw Error('Chart horizon must be 1 to 100 whole years.');
  if(!comparisonQuestions[source]?.[question])throw Error('Choose a comparison question.');
  for(const key of ['portfolio','cash','nominal','inflation'])if(!(source==='plan'&&((question==='portfolio'&&key==='portfolio')||(question==='return'&&key==='nominal')))&&!Number.isFinite(p[key]))throw Error('Enter valid starting assets and return assumptions.');
  if(source==='plan'){
@@ -26,7 +26,7 @@ export function runScenario(source,question,scenario,horizon=30){
   projection=traditionalProjection(p,{...settings,contribution,years:horizon,stopAtGoal:false});
  }else{
   if(question==='arrival'){
-   if(!Number.isFinite(settings.coastAt)||settings.coastAt<0||settings.coastAt>100)throw Error('Enter a contribution stop date within 0–100 years.');
+   if(!Number.isFinite(settings.coastAt)||settings.coastAt<0||settings.coastAt>100)throw Error('Enter a contribution stop date within 0 to 100 years.');
    const q=coastProjection(p,{...settings,years:100,coastAt:settings.coastAt||0});if(q.reached===null||q.shortfall!==null&&q.shortfall<=q.reached)throw Error('FI is not reached before a funding shortfall within 100 years.');value=q.reached;kind='time';projection=coastProjection(p,{...settings,years:horizon,coastAt:settings.coastAt||0});
   }else{
    const s=solveCoast(p,{...settings,mode:question});value=s.value;kind=question==='amount'?'money':'time';
