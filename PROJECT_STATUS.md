@@ -390,3 +390,23 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
   Signed iPhone build and strict signature verification passed. Installed and
   verified version 1.0 build 2 on the owner's authorized iPhone, without uninstalling
   or launching the app. Home Screen appearance awaits the owner's visual check.
+
+## Named saved sets — November 3, 2026
+
+- Added app-only Saved sets of numbers: explicit named snapshots with save-new,
+  load, update, rename and delete. Captures the complete persisted calculator
+  and guardrail settings; temporary comparison drafts are excluded.
+- Saved copies remain independent of the current Remember Numbers toggle.
+  Clear current numbers affects the working plan only; named copies have their
+  own explicit delete action. Loading warns before replacement, atomically
+  restores the selected numbers/settings, enables remembering and reloads.
+- Separate native Preferences library preserves existing data without migration.
+  Names render as text, duplicates/empty names are rejected, and failed library
+  writes retain the prior durable library. Website has no saved-set UI changes.
+- Full 208-test suite passed; eight focused storage/saved-set tests passed.
+  Signed iPhone build 3 passed. Browser preview verified saving independent
+  copies; automation stalled at the native confirmation dialog, so interactive
+  load confirmation and physical-device save/relaunch checks remain outstanding.
+- Verified build 3 installed on the owner's previously authorized iPhone, with
+  strict signature validation and installed-app version confirmation. Updated
+  in place without uninstalling, launching, or operating Device Hub.

@@ -77,3 +77,26 @@ APIs. Add `@capacitor/android` on the matching major version, run `npx cap add
 android`, then build the same mobile bundle and sync Android. Android-specific
 Back-button behavior, keyboard/layout checks, signing and store testing remain
 necessary. No Android project is generated in this iOS-first change.
+
+## Named saved sets (build 3)
+
+Open Saved sets of numbers near the top of the calculator. Enter a name and
+choose Save new copy. Each copy includes shared assets, future changes, FI goals,
+and the persisted settings for all calculators and guardrails. Temporary
+comparison drafts are not included. Theme remains a device preference.
+
+Select a copy to load, update, rename, or delete it. Copies are explicit snapshots,
+not automatically updated by later edits. Loading confirms replacement of the
+current numbers, writes the snapshot atomically, enables Remember Numbers, and
+reloads the calculator. Save your current work as a copy before switching if you
+want to keep it. Remember Numbers still controls the current working plan;
+Clear current numbers and turning saving off do not delete named copies. Delete
+selected removes only that named copy. Copies are local, with no sync or export.
+
+The named library uses a separate Preferences key. Failed save/delete operations
+leave its prior durable contents intact. Existing current-plan storage is not
+migrated or cleared. Tests cover independent copies, reopen, rename, update,
+deletion, duplicate/empty names, failed writes and atomic current-plan loading.
+The full suite passes 208 tests. Browser preview confirmed saving two copies;
+its automation stalled at the native load-confirmation dialog, so end-to-end
+interactive load confirmation remains a physical-device acceptance check.

@@ -1,5 +1,6 @@
 import {Preferences} from '@capacitor/preferences';
 import {configureStorage} from '../privacy-storage.js?v=20261102-privacy';
+import {mountSavedSets} from './plans.js';
 import {createNativeStorage} from './storage.js';
 function storageError() {
   const status = document.querySelector('#storage-status');
@@ -8,7 +9,10 @@ function storageError() {
 try {
   const storage = await createNativeStorage(Preferences, storageError);
   configureStorage(storage, true);
-  await import('../app.js');
+  const {capturePlan}=await import('../app.js');
+  const {captureGuardrails}=await import('../guardrails-ui.js?v=20261102-plain-copy');
+  await mountSavedSets({preferences:Preferences,storage,capture:()=>({plan:capturePlan(),guardrails:captureGuardrails()})});
+  document.querySelector('#clear-saved-data').textContent='Clear current numbers';
   await import('../tool-icons.js');
   document.querySelector('.local-badge').textContent = 'Only on this device';
   document.documentElement.dataset.appReady = 'true';
