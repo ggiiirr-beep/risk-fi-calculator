@@ -458,3 +458,8 @@ Verification: all 207 tests passed; static web build and Capacitor sync passed; 
 - Removed the redundant outer panel border around the compact profile controls and set an explicit status-text line height.
 - Regenerated shared calculator routes and synced the native bundle. Simulator and signed device builds succeeded; code signature verified. Visually checked portrait light and dark appearances in Purpose Fi Development.
 - Updated the existing iPhone app in place and verified installed version 1.0 (7). No profile data was reset; physical app was not launched.
+
+### Build 8 — stable assumption editing (2026-11-03)
+- Shared assumptions retain their expanded state during recalculation. Moving between shared fields preserves the editor DOM; leaving it refreshes results while retaining scroll and the next focused control. Numeric and currency fields select their contents on focus.
+- All 208 tests passed. Browser interaction checks verified replacement typing, field-to-field focus/selection, and the section remaining open after refresh. In the iOS simulator, replaced investments with 1,200,000 and pressed Done: the value remained, the section stayed open, and the viewport stayed in place. Amount and percentage selection were visually checked.
+- Simulator and signed device builds succeeded; strict signature verification passed. Updated the existing physical iPhone app in place and verified version 1.0 (8), without launching it or resetting profiles. Website changes remain on the development branch.

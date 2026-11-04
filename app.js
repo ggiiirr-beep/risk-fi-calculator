@@ -70,6 +70,11 @@ function renderInputs(){
 let inputController=new AbortController();
 function rebuildInputs(){const expanded=$$('#inputs details').map(el=>el.open);inputController.abort();inputController=new AbortController();renderInputs();$$('#inputs details').forEach((el,i)=>el.open=expanded[i]||false);}
 document.addEventListener('input',e=>{if(e.target.matches('input[data-amount]'))formatAmountInput(e.target);},true);
+// Select only on entry, so subsequent taps can still place the caret.
+document.addEventListener('focusin',e=>{
+ const el=e.target;if(!el.matches('input[type=number],input[data-amount]'))return;
+ el.select();requestAnimationFrame(()=>{if(document.activeElement===el)el.select();});
+});
 function onInput(e){const el=e.target,k=el.id;let rebuild=false;
  if(k==='unknown'){unknown=el.value;rebuild=true;}
  else if(k==='withdrawalEntry'){state.withdrawalMode=el.value==='dollars'?'dollars':state.percentageBasis||'starting';rebuild=true;}
@@ -281,10 +286,24 @@ try{document.modelContext?.registerTool({name:'read_risk_fi_plan',description:'R
 function sharedCards(p,scope){
  const row=(key,label,value,percentValue=false,calculated=false)=>`<div class="shared-row"><label for="${scope}-${key}">${label}</label>${calculated?'<span class="hint">Calculated in results</span>':`<input id="${scope}-${key}" data-shared="${key}" ${percentValue?'type="number" step="any"':'type="text" inputmode="decimal" data-amount="true"'} value="${Number.isFinite(value)?percentValue?entry(value,100):formatAmount(value):''}">`}</div>`;
  const solving=scope==='riskfi';
- return `<details class="shared-details"><summary>Your numbers & assumptions</summary><div class="summary-grid shared-cards"><section class="summary-group"><h3>Starting numbers</h3>${row('portfolio','Investments ($)',p.portfolio,false,solving&&unknown==='portfolio')}${row('cash','Cash reserve ($)',cashAmount(p))}${row('fiWithdrawals','Annual withdrawals at FI ($)',p.fiWithdrawals)}${row('fiRate','FI withdrawal rate (%)',p.fiRate,true)}<div class="shared-row"><span>FI target · today’s dollars</span><strong>${money(fiTarget(p))}</strong></div></section><section class="summary-group"><h3>Assumptions</h3>${row('inflation','Inflation (%)',p.inflation,true)}${p.timeEntry==='age'?row('age','Current age',p.age):''}<h4>Future income & one-time changes</h4><dl>${futureAssumptionRows(p).map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl><p class="hint">Shared with Your numbers. Each asset uses its own return. Total edits preserve the allocation.</p></section><section class="summary-group"><h3>Your assets</h3>${assetRows(state).map((a,i)=>`<div class="shared-asset"><strong>${safeText(a.name)} · ${safeText(a.type)}</strong><div class="two-fields">${field(scope+'-asset-amount-'+i,'Amount ($)',a.amount,{prefix:'$',min:0,disabled:solving&&unknown==='portfolio'&&a.type!=='cash'})}${field(scope+'-asset-rate-'+i,'Return before inflation (%)',entry(a.rate,100),{suffix:'%',disabled:solving&&unknown==='return'&&a.type!=='cash'})}</div></div>`).join('')}</section></div></details>`;
+ return `<details id="${scope}-shared-details" class="shared-details" ${document.getElementById(scope+'-shared-details')?.open?'open':''}><summary>Your numbers & assumptions</summary><div class="summary-grid shared-cards"><section class="summary-group"><h3>Starting numbers</h3>${row('portfolio','Investments ($)',p.portfolio,false,solving&&unknown==='portfolio')}${row('cash','Cash reserve ($)',cashAmount(p))}${row('fiWithdrawals','Annual withdrawals at FI ($)',p.fiWithdrawals)}${row('fiRate','FI withdrawal rate (%)',p.fiRate,true)}<div class="shared-row"><span>FI target · today’s dollars</span><strong>${money(fiTarget(p))}</strong></div></section><section class="summary-group"><h3>Assumptions</h3>${row('inflation','Inflation (%)',p.inflation,true)}${p.timeEntry==='age'?row('age','Current age',p.age):''}<h4>Future income & one-time changes</h4><dl>${futureAssumptionRows(p).map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl><p class="hint">Shared with Your numbers. Each asset uses its own return. Total edits preserve the allocation.</p></section><section class="summary-group"><h3>Your assets</h3>${assetRows(state).map((a,i)=>`<div class="shared-asset"><strong>${safeText(a.name)} · ${safeText(a.type)}</strong><div class="two-fields">${field(scope+'-asset-amount-'+i,'Amount ($)',a.amount,{prefix:'$',min:0,disabled:solving&&unknown==='portfolio'&&a.type!=='cash'})}${field(scope+'-asset-rate-'+i,'Return before inflation (%)',entry(a.rate,100),{suffix:'%',disabled:solving&&unknown==='return'&&a.type!=='cash'})}</div></div>`).join('')}</section></div></details>`;
 }
 function bindSharedCards(scope,p){
- assetRows(state).forEach((a,i)=>{for(const key of ['amount','rate']){const el=$('#'+scope+'-asset-'+key+'-'+i);if(!el)continue;el.oninput=()=>{state.assets[i][key]=readNumber(el.value)===null?NaN:readNumber(el.value)/(key==='rate'?100:1);Object.assign(state,assetTotals(state.assets));persist();rebuildInputs();};el.onblur=()=>update();}});
+ const details=document.getElementById(scope+'-shared-details');
+ // Keep the editor DOM stable while moving between its fields. Refresh after
+ // leaving the editor, with its open state retained by sharedCards().
+ details.addEventListener('focusout',()=>{
+  setTimeout(()=>{
+   if(!details.isConnected||details.contains(document.activeElement))return;
+   const active=document.activeElement,id=active?.id;
+   const start=active?.selectionStart,end=active?.selectionEnd,x=scrollX,y=scrollY;
+   update();
+   const next=id&&document.getElementById(id);
+   if(next&&next!==active){next.focus({preventScroll:true});if(start!==null&&start!==undefined)next.setSelectionRange(start,end);}
+   window.scrollTo(x,y);
+  },0);
+ });
+ assetRows(state).forEach((a,i)=>{for(const key of ['amount','rate']){const el=$('#'+scope+'-asset-'+key+'-'+i);if(!el)continue;el.oninput=()=>{state.assets[i][key]=readNumber(el.value)===null?NaN:readNumber(el.value)/(key==='rate'?100:1);Object.assign(state,assetTotals(state.assets));persist();rebuildInputs();};}});
 
  $$('#'+(scope==='riskfi'?'tool-setup':'view')+' [data-shared]').forEach(el=>{el.oninput=()=>{
  const key=el.dataset.shared,value=readNumber(el.value),isRate=['nominal','inflation','cashNominal','fiRate','withdrawalRate'].includes(key);
@@ -294,7 +313,7 @@ function bindSharedCards(scope,p){
  if(key==='cash')state.cashMode='dollars';
  if(key==='spending')state.withdrawalMode='dollars';
  syncAssets(state);persist();rebuildInputs();
- };el.onblur=()=>update();});
+ };});
 }
 function renderToolSetup(){
  const host=$('#tool-setup');host.hidden=tab!=='plan';if(tab!=='plan'){host.innerHTML='';return;}
