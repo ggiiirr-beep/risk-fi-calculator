@@ -17,15 +17,14 @@ function ask({title,message,label,value='',confirm='Confirm',destructive=false})
 }
 export function mountProfiles(profiles,{reload=()=>location.reload(),native=false}={}) {
   const host=document.querySelector('#profile-controls');
-  host.innerHTML='<div class="profile-row"><label for="profile-select">Profile</label><select id="profile-select"></select><button type="button" data-profile-action="new">New profile</button><details class="profile-menu"><summary>Manage profiles ▾</summary><div class="profile-menu-items"><button type="button" data-profile-action="rename">Rename this profile</button><button type="button" data-profile-action="reset">Reset this profile</button><button type="button" data-profile-action="delete">Delete this profile</button><button type="button" data-profile-action="all" class="destructive">Delete all profiles and data</button></div></details></div><p id="profile-status" role="status"></p><button type="button" data-profile-action="retry" hidden>Retry saving</button>';
+  host.innerHTML='<div class="profile-row"><label class="profile-label" for="profile-select">Profile</label><select id="profile-select"></select><details class="profile-menu"><summary aria-label="Manage profiles" title="Manage profiles"><span aria-hidden="true">⋯</span></summary><div class="profile-menu-items"><button type="button" data-profile-action="new">New profile</button><button type="button" data-profile-action="rename">Rename this profile</button><button type="button" data-profile-action="reset">Reset this profile</button><button type="button" data-profile-action="delete">Delete this profile</button><button type="button" data-profile-action="all" class="destructive">Delete all profiles and data</button></div></details></div><p id="profile-status" role="status"></p><button type="button" data-profile-action="retry" hidden>Retry saving</button>';
   const select=host.querySelector('select'),status=host.querySelector('[role=status]'),menu=host.querySelector('details');
   function refresh() {
-    select.replaceChildren(new Option('Unsaved numbers',''));
+    select.replaceChildren();
     for(const p of profiles.list())select.add(new Option(p.name,p.id));
     select.value=profiles.active()?.id||'';
-    select.options[0].disabled=!!profiles.active();
     for(const action of ['rename','reset','delete'])host.querySelector(`[data-profile-action=${action}]`).disabled=!profiles.active();
-    status.textContent=profiles.active()?`Changes save automatically ${native?'on this device':'in this browser'}.`:'Create a profile to save your numbers automatically.';
+    status.textContent=`Saved ${native?'on this device':'in this browser'} automatically.`;
   }
   refresh();let busy=false;
   document.addEventListener('click',event=>{if(!menu.contains(event.target))menu.open=false;});

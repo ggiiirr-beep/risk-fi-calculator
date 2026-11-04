@@ -3,6 +3,10 @@ export const profilesKey = 'purpose-fi-profiles';
 const planKeys = ['riskfi-v1','riskfi-guardrails-v1'];
 const clone = value => JSON.parse(JSON.stringify(value));
 const empty = () => ({version:1,active:null,profiles:[],theme:null});
+function ensureActive(state) {
+  if (!state.profiles.length) state.profiles.push({id:crypto.randomUUID(),name:'Profile 1',data:{}});
+  if (!state.active) state.active=state.profiles[0].id;
+}
 export async function createProfiles(io, onStatus = () => {}) {
   let raw = await io.read(profilesKey), state;
   const uniqueName = (value, items, id) => {
@@ -33,8 +37,12 @@ export async function createProfiles(io, onStatus = () => {}) {
     // Commit before cleanup; an empty record also prevents deleted legacy data returning.
     const next=JSON.stringify(state);await io.write(profilesKey,next,null);raw=next;
   }
+  if (!state.active) {
+    ensureActive(state);
+    const next=JSON.stringify(state);await io.write(profilesKey,next,raw);raw=next;
+  }
   await io.clearLegacy();
-  let draft={},pending=Promise.resolve(),revision=0;
+  let pending=Promise.resolve(),revision=0;
   const current=()=>state.profiles.find(p=>p.id===state.active);
   function queue(snapshot) {
     const seq=++revision;
@@ -50,23 +58,23 @@ export async function createProfiles(io, onStatus = () => {}) {
   async function change(edit) {
     // Never switch away from a profile whose last autosave failed.
     await pending;
-    const next=clone(state);edit(next);
-    await queue(next);state=next;draft={};
+    const next=clone(state);edit(next);ensureActive(next);
+    await queue(next);state=next;
   }
   return {
     list:()=>state.profiles.map(({id,name})=>({id,name})),
     active:()=>current()?{id:current().id,name:current().name}:null,
-    getItem(key) {return key==='riskfi-theme'?state.theme:(current()?.data || draft)[key]??null;},
+    getItem(key) {return key==='riskfi-theme'?state.theme:current().data[key]??null;},
     setItem(key,value) {
       if (key==='riskfi-theme') {state.theme=String(value);queue(clone(state));return;}
       if (!planKeys.includes(key))throw Error('Unknown profile value');
-      (current()?.data || draft)[key]=String(value);
-      if(current())queue(clone(state));
+      current().data[key]=String(value);
+      queue(clone(state));
     },
     flush:()=>pending,
     retry:()=>queue(clone(state)),
     async create(name) {
-      const data=clone(current()?.data || draft),id=crypto.randomUUID();
+      const data=clone(current().data),id=crypto.randomUUID();
       await change(next=>{next.profiles.push({id,name:uniqueName(name,next.profiles),data});next.active=id;});
     },
     async select(id) {await change(next=>{if(!next.profiles.some(p=>p.id===id))throw Error('Profile no longer exists.');next.active=id;});},

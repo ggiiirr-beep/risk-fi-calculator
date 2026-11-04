@@ -40,17 +40,17 @@ xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sd
 
 The app and website share `profiles.js`, `profile-ui.js`, and the calculator
 startup module. The app uses native Preferences; the website uses localStorage.
-Creating a named profile starts automatic saving of the existing calculator's
-persisted inputs/settings. Before that, numbers are temporary. Selecting a
+Profile 1 exists from first launch and automatically saves the calculator's
+persisted inputs/settings. Additional named profiles keep separate numbers. Selecting a
 profile flushes pending changes before changing identity and reloading. Failed
 saves block switching, with a Retry saving action. Profile names are text-only;
 blank and duplicate names are rejected. Theme remains device/browser-wide.
 
-Manage profiles contains rename, reset, delete current and delete all. The three
+The compact profile selector has a single ellipsis menu for new, rename, reset, delete current and delete all. Profile 1 is created automatically when no profiles remain. The three
 destructive operations each use a modal confirmation with Cancel initially
 focused; Escape cancels, and focus stays inside the dialog. Reset replaces all
 calculator and guardrail settings with defaults while retaining the name. Delete
-current selects another remaining profile or returns to unsaved defaults. Delete
+current selects another remaining profile or starts a fresh Profile 1. Delete
 all clears every profile, current values and theme. Temporary scenario comparison
 drafts are not part of persistent profiles.
 

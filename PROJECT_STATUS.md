@@ -438,3 +438,9 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
   or merged into main. No live website publication is claimed.
 
 Verification: all 207 tests passed; static web build and Capacitor sync passed; signed iOS build 4 passed codesign verification and was installed on the connected iPhone. Installation was confirmed through the installed-app listing; the app was not launched, preserving other device testing.
+
+## Default profile and compact controls — November 3, 2026
+
+- Profile 1 is created automatically for new or previously empty libraries; edits save immediately. Existing named profiles are preserved. Deleting the last profile or all data starts a fresh Profile 1 with default numbers.
+- Replaced separate New/Manage controls with a compact selector and a single ellipsis menu containing all profile actions. Existing confirmations remain.
+- Verification: all 208 tests passed, static build and native sync passed, 390px browser preview verified the default and menu layout. Signed build 5 installed and its version verified on the authorized iPhone without launching or using Device Hub. Website remains unpublished on this development branch.
