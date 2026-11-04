@@ -98,5 +98,6 @@ Simulator follow-up (build 6): Device Hub smoke checks cover the main calculator
 screens, profile creation/selection/relaunch, confirmations and cancellation,
 privacy navigation, dark mode, and landscape menu scrolling. Native page reloads
 use a root asset base because Capacitor may serve index.html for directory routes.
-Privacy/terms links point to bundled HTML files. Signed build 6 is prepared;
-physical installation awaits approval after automatic review blocked that step.
+Privacy/terms links point to bundled HTML files. After explicit owner approval, signed build 6 was installed in place on the
+physical iPhone; signing and installed-version checks passed. The app was not
+launched on the physical phone.
