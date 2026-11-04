@@ -97,6 +97,7 @@ The named library uses a separate Preferences key. Failed save/delete operations
 leave its prior durable contents intact. Existing current-plan storage is not
 migrated or cleared. Tests cover independent copies, reopen, rename, update,
 deletion, duplicate/empty names, failed writes and atomic current-plan loading.
-The full suite passes 208 tests. Browser preview confirmed saving two copies;
-its automation stalled at the native load-confirmation dialog, so end-to-end
-interactive load confirmation remains a physical-device acceptance check.
+The full suite passes 208 tests. Browser preview confirmed saving two copies and restoring the baseline amount
+after loading it (1,000,000 restored after editing to 123,456). The dialog
+automation initially timed out, but the reload and restored field were verified.
+Physical-device interaction and relaunch checks remain owner acceptance work.

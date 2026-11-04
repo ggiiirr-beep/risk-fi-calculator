@@ -410,3 +410,6 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Verified build 3 installed on the owner's previously authorized iPhone, with
   strict signature validation and installed-app version confirmation. Updated
   in place without uninstalling, launching, or operating Device Hub.
+- Follow-up browser verification confirmed the load completed after the dialog
+  timeout: the baseline investment field restored to 1,000,000 after a separate
+  copy had been saved with 123,456. Temporary preview server and tab were closed.
