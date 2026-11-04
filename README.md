@@ -13,7 +13,7 @@ An entirely browser-based planning tool for the transition from flexible investm
 - Separate invested assets and cash, nominal/real returns and displays, three cash strategies, temporary income, and beginning/end-of-year withdrawals.
 - Interactive, keyboard-accessible portfolio, withdrawal, and scenario charts; detailed annual cash flows.
 - Seeded Monte Carlo in a worker, with spending cuts, withdrawal stops, income interventions, and separate depletion/unfunded-spending outcomes.
-- Local browser saving, responsive layouts, light/dark themes.
+- Named local profiles with automatic saving, responsive layouts, light/dark themes.
 
 ## Run and test
 
@@ -103,3 +103,12 @@ After editing calculator.html, run `node scripts/generate-routes.mjs` (also run 
 Purpose Fi also has a Capacitor iOS project using the same calculator source.
 Run `npm run ios:sync`, then `npm run ios:open`. See [iOS build and testing](mobile/README.md)
 for local storage, simulator setup, release boundaries and later Android support.
+
+## Profiles
+
+The website and app share automatically saved profiles. Create or select a name,
+then edit normally. Manage profiles contains Rename, Reset this profile, Delete
+this profile, and Delete all profiles and data. Reset and both deletion actions
+require confirmation. Browser and app profiles are independent; there is no sync.
+For a static build without refreshing the unrelated podcast snapshot, use
+`PURPOSE_FI_SKIP_FEED_REFRESH=1 npm run build`.

@@ -1,5 +1,5 @@
 const yearsUntil=y=>y===0?'now':'in '+Number(y.toFixed(2)).toLocaleString('en-US')+' years';
-import {planStorage} from './privacy-storage.js?v=20261102-privacy';
+import {planStorage} from './privacy-storage.js?v=20261103-profiles';
 import {withdrawalBase} from './period-flows.js?v=20261102-ramp2';
 import {guardrailDefaults,defaultStrategies,validateGuardrails,guardrailFiTarget,guardrailGoalTarget,scheduledStrategy} from './guardrails.js?v=20261102-ramp2';
 import {formatAmount,readNumber} from './number-inputs.js?v=20261102-ramp2';
@@ -19,7 +19,7 @@ const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const colors=['var(--purple)','var(--red)'];
 function field(id,label,value,{percent=false,dollars=false,min=0,max,step='any',hint=''}={}){return `<div class="field"><label for="gr-${id}">${label}</label><div class="input-wrap ${dollars?'has-prefix':''} ${percent?'has-suffix':''}">${dollars?'<span class="prefix">$</span>':''}<input id="gr-${id}" data-setting="${id}" ${dollars?'type="text" inputmode="decimal" data-amount="true"':'type="number"'} value="${value===null?'':dollars?formatAmount(Number.isFinite(value)?+value.toFixed(2):value):percent?+(value*100).toFixed(5):value}" min="${min}" ${max===undefined?'':`max="${max}"`} step="${step}">${percent?'<span class="suffix">%</span>':''}</div>${hint?`<small class="hint">${hint}</small>`:''}</div>`;}
 function select(id,label,options,value,setting=true){return `<fieldset class="field gr-options" id="gr-${id}"><legend>${label}</legend><div class="gr-option-list">${Object.entries(options).map(([v,text])=>`<label><input type="radio" name="gr-${id}" value="${v}" ${setting?`data-setting="${id}"`:''} ${String(value)===v?'checked':''}><span>${text}</span></label>`).join('')}</div></fieldset>`;}
-export function captureGuardrails(){return JSON.stringify({assumptions,strategies,scheduleEnding,sharedSignature});}
+function captureGuardrails(){return JSON.stringify({assumptions,strategies,scheduleEnding,sharedSignature});}
 function persist(){try{planStorage.setItem('riskfi-guardrails-v1',captureGuardrails());}catch{}}
 export function connectGuardrailPlan(plan,onEdit,nominal=false,onDollars=null,onChange=null){
  futureDollars=nominal;onDollarChange=onDollars;onPlanChange=onChange;

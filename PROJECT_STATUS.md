@@ -413,3 +413,28 @@ Updated October 21, 2026. Standalone web calculator, separate from Excerpt Track
 - Follow-up browser verification confirmed the load completed after the dialog
   timeout: the baseline investment field restored to 1,000,000 after a separate
   copy had been saved with 123,456. Temporary preview server and tab were closed.
+
+## Automatic profiles and management menu — November 3, 2026
+
+- Supersedes build 3's manual saved-copy workflow. App and website now use one
+  shared profile manager: create/select named profiles, automatically save edits,
+  and rename. No accounts or cross-device/browser syncing. Existing remembered
+  work and saved copies migrate into profiles without discarding either.
+- Manage profiles dropdown contains Rename, Reset this profile, Delete this
+  profile, and Delete all profiles and data. All three reset/deletion actions
+  have separate confirmation dialogs, explicit scope, and Cancel. Reset keeps
+  the name and restores defaults; delete removes one profile; delete-all removes
+  every profile, current entries and theme. The old Remember Numbers, standalone
+  Reset, and manual Update saved copy controls are removed.
+- Serialized atomic records protect profile identity and data. Failed autosave
+  blocks profile switching until retry succeeds. Browser writes detect stale
+  tabs. Migration writes the new record before removing legacy keys; an empty
+  schema marker prevents deleted old data from reappearing.
+- Verification: 207 tests passed (including seven profile tests); mobile and
+  static website builds passed. Browser checks covered migration, automatic
+  save/switch/restore, new profile creation, all confirmations and cancellation,
+  website reload persistence, and 390px menu layout.
+- Website implementation is prepared on the development branch, not published
+  or merged into main. No live website publication is claimed.
+
+Verification: all 207 tests passed; static web build and Capacitor sync passed; signed iOS build 4 passed codesign verification and was installed on the connected iPhone. Installation was confirmed through the installed-app listing; the app was not launched, preserving other device testing.

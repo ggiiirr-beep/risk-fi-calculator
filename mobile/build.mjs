@@ -25,7 +25,7 @@ async function adapt(dir) {
     html = html.replace(/<header\b[\s\S]*?<\/header>/, header);
     html = html.replace('</head>', '<link rel="stylesheet" href="./mobile.css"></head>');
     html = html.replace(/<nav aria-label="Website">[\s\S]*?<\/nav>/, '');
-    html = html.replace(/<script type="module" src="\.\/app.js[^\"]*"><\/script>/, '<script type="module" src="./mobile.js"></script>');
+    html = html.replace(/<script type="module" src="\.\/calculator-entry.js[^\"]*"><\/script>/, '<script type="module" src="./mobile.js"></script>');
     html = html.replace(/<script type="module" src="\.\/tool-icons.js[^\"]*"><\/script>/, '');
     html = html.replace('Saving is optional. Without it, entries stay in this tab and are lost on reload.', 'Remember your numbers on this device. No account or syncing.');
     if (path.endsWith('/purpose-fi/privacy/index.html') || path===`${out}/privacy.html`) {

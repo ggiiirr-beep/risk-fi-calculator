@@ -7,14 +7,3 @@ input:not([type=checkbox]):not([type=range]), select { font-size: 16px !importan
 button, .tabs button, .legal-links a { min-height: 44px; }
 button, a, input, select { touch-action: manipulation; }
 main { padding-bottom: 28px; }
-.storage-controls .storage-status { max-width: 36em; }
-
-.storage-inline .storage-status.storage-error { position:static; width:auto; height:auto; margin:8px 0; overflow:visible; clip-path:none; white-space:normal; color:var(--red); }
-
-.saved-sets { margin:0 0 20px; padding:14px 16px; }
-.saved-sets summary { cursor:pointer; min-height:28px; font-weight:700; }
-.saved-sets-content { display:grid; gap:10px; padding-top:8px; }
-.saved-sets-content p { margin:4px 0; font-size:.85rem; line-height:1.5; }
-.saved-sets-content input,.saved-sets-content select { width:100%; box-sizing:border-box; padding:10px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--ink); }
-.saved-set-actions { display:flex; gap:8px; flex-wrap:wrap; }
-.saved-set-status { min-height:1.5em; }

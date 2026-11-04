@@ -1,31 +1,16 @@
 import {Preferences} from '@capacitor/preferences';
-import {configureStorage} from '../privacy-storage.js?v=20261102-privacy';
-import {mountSavedSets} from './plans.js';
-import {createNativeStorage} from './storage.js';
-function storageError() {
-  const status = document.querySelector('#storage-status');
-  if (status) { status.classList.add('storage-error'); status.textContent = 'Could not save your changes. Keep the app open and try again.'; }
-}
-try {
-  const storage = await createNativeStorage(Preferences, storageError);
-  configureStorage(storage, true);
-  const {capturePlan}=await import('../app.js');
-  const {captureGuardrails}=await import('../guardrails-ui.js?v=20261102-plain-copy');
-  await mountSavedSets({preferences:Preferences,storage,capture:()=>({plan:capturePlan(),guardrails:captureGuardrails()})});
-  document.querySelector('#clear-saved-data').textContent='Clear current numbers';
-  await import('../tool-icons.js');
-  document.querySelector('.local-badge').textContent = 'Only on this device';
-  document.documentElement.dataset.appReady = 'true';
-} catch (error) {
-  console.error('Purpose Fi could not open', error);
-  const main = document.querySelector('main');
-  main.replaceChildren();
-  const heading = document.createElement('h1');
-  heading.textContent = 'Your calculator could not open';
-  const message = document.createElement('p');
-  message.textContent = 'Your saved data has not been changed. Close and reopen the app, or try again.';
-  const retry = document.createElement('button');
-  retry.textContent = 'Try again';
-  retry.onclick = () => location.reload();
-  main.append(heading, message, retry);
-}
+import {startCalculator} from '../calculator-start.js';
+await startCalculator({
+  read:async key=>(await Preferences.get({key})).value,
+  write:async(key,value)=>Preferences.set({key,value}),
+  async legacy() {
+    const current=JSON.parse((await Preferences.get({key:'purpose-fi-local-plan'})).value||'{}');
+    const copies=JSON.parse((await Preferences.get({key:'purpose-fi-saved-sets'})).value||'[]');
+    if(!current||typeof current!=='object'||!Array.isArray(copies)||copies.some(p=>typeof p.name!=='string'||typeof p.plan!=='string'||typeof p.guardrails!=='string'))throw Error('Existing saved numbers could not be read.');
+    return {current,copies};
+  },
+  async clearLegacy() {
+    await Preferences.remove({key:'purpose-fi-local-plan'});
+    await Preferences.remove({key:'purpose-fi-saved-sets'});
+  },
+},{native:true});

@@ -36,39 +36,55 @@ xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk 
 xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos -derivedDataPath .build-ios CODE_SIGNING_ALLOWED=NO build
 ```
 
-## Local data
+## Profiles and local data (build 4)
 
-Remember Numbers remains an explicit choice. The web version keeps browser
-storage. The app hydrates a synchronous calculator cache from Capacitor
-Preferences before importing the calculator, then serializes complete snapshots
-to one native preference. Clear Saved Data also disables saving. Existing
-on-screen entries remain until reload, matching website behavior. Read failures
-stop startup without overwriting saved data; write failures show a visible error.
-System backups may include local app data; no app-level sync is implemented.
+The app and website share `profiles.js`, `profile-ui.js`, and the calculator
+startup module. The app uses native Preferences; the website uses localStorage.
+Creating a named profile starts automatic saving of the existing calculator's
+persisted inputs/settings. Before that, numbers are temporary. Selecting a
+profile flushes pending changes before changing identity and reloading. Failed
+saves block switching, with a Retry saving action. Profile names are text-only;
+blank and duplicate names are rejected. Theme remains device/browser-wide.
 
-The app privacy manifest declares UserDefaults use for this app's own data
-(CA92.1). App Store privacy answers still require a final review of the shipped
-binary and any future SDK changes.
+Manage profiles contains rename, reset, delete current and delete all. The three
+destructive operations each use a modal confirmation with Cancel initially
+focused; Escape cancels, and focus stays inside the dialog. Reset replaces all
+calculator and guardrail settings with defaults while retaining the name. Delete
+current selects another remaining profile or returns to unsaved defaults. Delete
+all clears every profile, current values and theme. Temporary scenario comparison
+drafts are not part of persistent profiles.
+
+One versioned record owns the active profile, profile data and theme. Native
+writes are serialized. Browser writes use a Web Lock where available and check
+the previously read value to reject stale tabs. There is no account, cross-device
+or app/website sync. OS backups may include native app data.
+
+First startup converts legacy remembered work to My profile and imports every
+old app saved copy as a separate profile. Duplicate names are disambiguated.
+The new record is written before old keys are removed; failed migration never
+removes the old data. An empty record remains after Delete all solely as a schema
+marker so old data cannot reappear. The app privacy manifest declares UserDefaults
+use for this app's own data (CA92.1).
 
 ## Verification and remaining release work
 
-November 3, 2026: shared calculator regression suite passed (202 tests); focused
-native storage and opt-in tests passed (5 tests, including two existing tests).
-Both Debug simulator and unsigned Release iPhone builds passed; the Release
-bundle includes the validated privacy manifest. Bundled HTML links/assets were
-checked for missing files. The simulator build launched and rendered the calculator in an isolated iPhone
-17e / iOS 27 simulator named Purpose Fi Development. Device Hub interaction was
-stopped after the owner reported concurrent testing of another app.
+November 3, 2026: 207 automated tests pass, including seven profile tests covering
+migration, independence, autosave/reopen, reset/delete scopes, write failures and
+stale browser tabs. Both mobile and website bundles build. The mobile preview
+migrated the previous test copies; editing to 654,321, switching away and back
+restored that value automatically. All three confirmation dialogs and their
+Cancel actions were checked. A separate website preview restored 246,810 after
+reload. The profile menu was visually checked at a 390px phone width.
 
-Before distribution, verify actual iPhone keyboard dismissal, navigation through
-all tools, saved numbers after force quit/relaunch, clearing, offline behavior,
-VoiceOver, larger text, rotation and iPad layout. Unit tests exercise storage
-ordering and reopen behavior with a Preferences double; they do not establish
-physical-device persistence or interaction acceptance. Store listing, screenshots,
-pricing, signing, TestFlight and submission are not completed by this build.
-The app icon is a full-bleed opaque 1024px square derived from the existing
-sun/compass mark. Do not substitute the website PNG: its white rounded corners
-are hidden by CSS on the website but remain visible under the iOS icon mask.
+Physical-device interaction, VoiceOver, larger text, rotation and iPad layout
+remain release acceptance work. Signing/installing a development build does not
+establish App Store readiness. Store listing, screenshots, pricing, TestFlight
+and submission remain separate. Device Hub is not operated because the owner
+may have concurrent testing there.
+
+The app icon is an opaque 1024px square derived from the sun/compass mark.
+Do not substitute the website PNG; its white corners are hidden by CSS on the
+website but remain visible under the iOS icon mask.
 
 ## Later Android support
 
@@ -77,27 +93,3 @@ APIs. Add `@capacitor/android` on the matching major version, run `npx cap add
 android`, then build the same mobile bundle and sync Android. Android-specific
 Back-button behavior, keyboard/layout checks, signing and store testing remain
 necessary. No Android project is generated in this iOS-first change.
-
-## Named saved sets (build 3)
-
-Open Saved sets of numbers near the top of the calculator. Enter a name and
-choose Save new copy. Each copy includes shared assets, future changes, FI goals,
-and the persisted settings for all calculators and guardrails. Temporary
-comparison drafts are not included. Theme remains a device preference.
-
-Select a copy to load, update, rename, or delete it. Copies are explicit snapshots,
-not automatically updated by later edits. Loading confirms replacement of the
-current numbers, writes the snapshot atomically, enables Remember Numbers, and
-reloads the calculator. Save your current work as a copy before switching if you
-want to keep it. Remember Numbers still controls the current working plan;
-Clear current numbers and turning saving off do not delete named copies. Delete
-selected removes only that named copy. Copies are local, with no sync or export.
-
-The named library uses a separate Preferences key. Failed save/delete operations
-leave its prior durable contents intact. Existing current-plan storage is not
-migrated or cleared. Tests cover independent copies, reopen, rename, update,
-deletion, duplicate/empty names, failed writes and atomic current-plan loading.
-The full suite passes 208 tests. Browser preview confirmed saving two copies and restoring the baseline amount
-after loading it (1,000,000 restored after editing to 123,456). The dialog
-automation initially timed out, but the reload and restored field were verified.
-Physical-device interaction and relaunch checks remain owner acceptance work.
