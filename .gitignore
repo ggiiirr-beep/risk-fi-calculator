@@ -3,3 +3,4 @@ node_modules/
 dist/
 mobile-dist/
 .build-ios/
+.build-simulator/

@@ -22,6 +22,9 @@ async function adapt(dir) {
     if (item.isDirectory()) { await adapt(path); continue; }
     if (!item.name.endsWith('.html')) continue;
     let html = await readFile(path, 'utf8');
+    // Capacitor serves index.html for directory routes; resolve assets from its root.
+    html = html.replace(/<base href="[^"]*">/, '<base href="/">');
+    html = html.replaceAll('./purpose-fi/privacy/', './privacy.html').replaceAll('./purpose-fi/terms/', './terms.html');
     html = html.replace(/<header\b[\s\S]*?<\/header>/, header);
     html = html.replace('</head>', '<link rel="stylesheet" href="./mobile.css"></head>');
     html = html.replace(/<nav aria-label="Website">[\s\S]*?<\/nav>/, '');

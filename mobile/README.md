@@ -93,3 +93,10 @@ APIs. Add `@capacitor/android` on the matching major version, run `npx cap add
 android`, then build the same mobile bundle and sync Android. Android-specific
 Back-button behavior, keyboard/layout checks, signing and store testing remain
 necessary. No Android project is generated in this iOS-first change.
+
+Simulator follow-up (build 6): Device Hub smoke checks cover the main calculator
+screens, profile creation/selection/relaunch, confirmations and cancellation,
+privacy navigation, dark mode, and landscape menu scrolling. Native page reloads
+use a root asset base because Capacitor may serve index.html for directory routes.
+Privacy/terms links point to bundled HTML files. Signed build 6 is prepared;
+physical installation awaits approval after automatic review blocked that step.
