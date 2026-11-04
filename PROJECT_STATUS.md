@@ -453,3 +453,8 @@ Verification: all 207 tests passed; static web build and Capacitor sync passed; 
 - Fixed dark-mode destructive-label contrast and landscape menu clipping (menu now scrolls). Verified the last menu action can be reached in landscape. Dialogs fit their available height. Reused the corrected full-bleed icon asset on the launch screen.
 - Build 6 simulator and signed generic iOS builds pass; strict signing verification passes. Bundled resource resolution checked at sampled directory reload routes. Full 208-test suite passed in the preceding profile checkpoint; financial logic is unchanged here.
 - Following explicit owner approval, build 6 was installed in place on the authorized physical iPhone. Strict signing verification and the installed-app listing confirm version 1.0 build 6. The app was not launched and no other device/app was changed. This supersedes the earlier automatic-review block. Website remains on the development branch only.
+
+### Build 7 — profile status spacing (2026-11-03)
+- Removed the redundant outer panel border around the compact profile controls and set an explicit status-text line height.
+- Regenerated shared calculator routes and synced the native bundle. Simulator and signed device builds succeeded; code signature verified. Visually checked portrait light and dark appearances in Purpose Fi Development.
+- Updated the existing iPhone app in place and verified installed version 1.0 (7). No profile data was reset; physical app was not launched.
